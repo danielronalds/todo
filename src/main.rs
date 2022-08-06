@@ -1,15 +1,20 @@
+mod commands;
+
 mod task;
 
 fn main() {
-    let mut task1 = task::Task {
-        id: 1,
-        desc: String::from("Just a simple task"),
-        status: task::TaskStatus::NotStarted,
+    let task1 = task::Task {
+       desc: String::from("Just a basic task"),
+       status: task::TaskStatus::NotStarted,
     };
 
-    println!("{:?}", task1.status);
+    let mut tasks = vec![task1];
 
-    task1.status = task::TaskStatus::Completed;
+    commands::start_task(&mut tasks[0]);
 
-    println!("{:?}", task1.status);
+    commands::list_tasks(&tasks);
+
+    commands::finish_task(&mut tasks[0]);
+
+    commands::list_tasks(&tasks);
 }

@@ -6,7 +6,6 @@ pub enum TaskStatus {
 }
 
 pub struct Task {
-    pub id: u32,
     pub desc: String,
     pub status: TaskStatus,
 }
