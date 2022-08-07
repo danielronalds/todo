@@ -1,6 +1,7 @@
 use crate::task::Task;
 use crate::task::TaskStatus;
-    
+
+/// Function to update a tasks status to inprogress
 pub fn start_task(t: &mut Task) {
     match t.status {
         TaskStatus::NotStarted => {
@@ -12,8 +13,8 @@ pub fn start_task(t: &mut Task) {
     }
 }
 
+// Function to updatea taks status to completed
 pub fn finish_task(t: &mut Task) {
-
     match t.status {
         TaskStatus::NotStarted => {
             t.status = TaskStatus::Completed;
@@ -27,6 +28,24 @@ pub fn finish_task(t: &mut Task) {
     }
 }
 
+// Adds a task to a tasks vec
+pub fn add_task(tasks: &mut Vec<Task>, desc: String) {
+    let new_task = Task {
+        desc: String::from(desc),
+        status: TaskStatus::NotStarted,
+    };
+
+    tasks.push(new_task);
+}
+
+// Removes a task from a tasks vec
+pub fn remove_task(tasks: &mut Vec<Task>, index: usize) {
+    let task_desc = &tasks[index].desc;
+    println!("Task '{}' removed!", task_desc);
+    tasks.remove(index);
+}
+
+// Function to list task
 pub fn list_tasks(tasks: &[Task]) {
     // Creating vectors to store the sorted tasks into
     let mut completed_tasks: Vec<&Task> = Vec::new();
