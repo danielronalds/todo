@@ -13,7 +13,7 @@ fn main() {
     
     commands::start_task(&mut tasks[0]);
 
-    commands::remove_task(&mut tasks, 2);
+    commands::remove_task(&mut tasks, 3);
 
     commands::list_tasks(&tasks);
 }

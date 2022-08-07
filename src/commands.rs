@@ -1,6 +1,7 @@
 use crate::task::Task;
 use crate::task::TaskStatus;
 
+
 /// Function to update a tasks status to inprogress
 pub fn start_task(t: &mut Task) {
     match t.status {
@@ -12,6 +13,7 @@ pub fn start_task(t: &mut Task) {
         TaskStatus::Completed => println!("Task already completed"),
     }
 }
+
 
 // Function to updatea taks status to completed
 pub fn finish_task(t: &mut Task) {
@@ -28,6 +30,7 @@ pub fn finish_task(t: &mut Task) {
     }
 }
 
+
 // Adds a task to a tasks vec
 pub fn add_task(tasks: &mut Vec<Task>, desc: String) {
     let new_task = Task {
@@ -38,12 +41,22 @@ pub fn add_task(tasks: &mut Vec<Task>, desc: String) {
     tasks.push(new_task);
 }
 
+
 // Removes a task from a tasks vec
 pub fn remove_task(tasks: &mut Vec<Task>, index: usize) {
-    let task_desc = &tasks[index].desc;
-    println!("Task '{}' removed!", task_desc);
-    tasks.remove(index);
+    // Checks to make sure the task is in range to prevent panic!
+    if tasks.len() < index {
+        let task_desc = &tasks[index].desc;
+        println!("Task '{}' removed!", task_desc);
+
+        // if the task does exist, remove it 
+        tasks.remove(index);
+    }
+    else {
+        println!("Task does not exist!");
+    }
 }
+
 
 // Function to list task
 pub fn list_tasks(tasks: &[Task]) {
