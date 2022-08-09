@@ -1,4 +1,3 @@
-#[derive(Debug)]
 pub enum TaskStatus {
     Completed,
     InProgress,

@@ -2,31 +2,31 @@ use crate::task::Task;
 use crate::task::TaskStatus;
 
 
-/// Function to update a tasks status to inprogress
+/// Function to update a task's status to inprogress
 pub fn start_task(t: &mut Task) {
     match t.status {
         TaskStatus::NotStarted => {
             t.status = TaskStatus::InProgress;
-            println!("Started task '{}'", t.desc);
+            println!("Started task '{}'\n", t.desc);
         },
-        TaskStatus::InProgress => println!("Task already in progress!"),
-        TaskStatus::Completed => println!("Task already completed"),
+        TaskStatus::InProgress => println!("Task already in progress!\n"),
+        TaskStatus::Completed => println!("Task already completed\n"),
     }
 }
 
 
-// Function to updatea taks status to completed
+// Function to update a task's status to completed
 pub fn finish_task(t: &mut Task) {
     match t.status {
         TaskStatus::NotStarted => {
             t.status = TaskStatus::Completed;
-            println!("Task completed!");
+            println!("Task completed!\n");
         },
         TaskStatus::InProgress => {
             t.status = TaskStatus::Completed;
-            println!("Task completed!");
+            println!("Task completed!\n");
         },
-        TaskStatus::Completed => println!("Task already completed"),
+        TaskStatus::Completed => println!("Task already completed\n"),
     }
 }
 
@@ -47,13 +47,13 @@ pub fn remove_task(tasks: &mut Vec<Task>, index: usize) {
     // Checks to make sure the task is in range to prevent panic!
     if tasks.len() < index {
         let task_desc = &tasks[index].desc;
-        println!("Task '{}' removed!", task_desc);
+        println!("Task '{}' removed!\n", task_desc);
 
         // if the task does exist, remove it 
         tasks.remove(index);
     }
     else {
-        println!("Task does not exist!");
+        println!("Task does not exist!\n");
     }
 }
 
@@ -89,6 +89,9 @@ pub fn list_tasks(tasks: &[Task]) {
     for task in notstarted_tasks {
         println!("{}", task.desc);
     }
+
+    // printing new line for formating
+    println!("");
 }
 
 
