@@ -23,11 +23,11 @@ pub fn finish_task(t: &mut Task) {
         // If the task is either not started or in progress, complete it
         TaskStatus::NotStarted => {
             t.status = TaskStatus::Completed;
-            println!("Task completed!\n");
+            println!("Task '{}' completed!\n", t.desc);
         },
         TaskStatus::InProgress => {
             t.status = TaskStatus::Completed;
-            println!("Task completed!\n");
+            println!("Task '{}' completed!\n", t.desc);
         },
         // Otherwise inform the user it has already been completed
         TaskStatus::Completed => println!("Task already completed\n"),
@@ -58,7 +58,7 @@ pub fn add_task(tasks: &mut Vec<Task>, desc: String) {
 // Removes a task from a tasks vec
 pub fn remove_task(tasks: &mut Vec<Task>, index: usize) {
     // Checks to make sure the task is in range to prevent panic!
-    if tasks.len() < index {
+    if tasks.len() > index {
         let task_desc = &tasks[index].desc;
         println!("Task '{}' removed!\n", task_desc);
 
