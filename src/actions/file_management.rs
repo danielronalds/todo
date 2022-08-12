@@ -1,15 +1,16 @@
-use std::{path::Path, fs::File, io::BufReader, io::BufRead};
+use std::{path::Path, fs, fs::File, io::BufReader, io::BufRead};
+
+use crate::task::{Task, TaskStatus};
 
 const FILENAME: &str = ".tasks";
 
-use crate::task::{Task, TaskStatus};
 
 // Function to create a .tasks file to store tasks in csv format
 pub fn init_list() {
     // Checks to see if a .tasks file exists already
     if !Path::new(FILENAME).exists() {
         // If it doesn't create a .tasks file
-        match File::create("./.tasks") {
+        match File::create(FILENAME) {
            Ok(fc) => {
                println!("Tasklist created succesfully!");
                drop(fc);
@@ -22,6 +23,21 @@ pub fn init_list() {
         println!("A tasks list already exists!");   
     }
 }
+
+
+// Function to write to the .tasks file to store tasks in csv 
+pub fn save_task_list(tasks: Vec<Task>) {
+    let mut tasks_to_write: String = String::new();
+    
+    for task in tasks {
+        let line = format!("{},{}\n", task.desc, task.status_to_string());
+
+        tasks_to_write.push_str(&line);
+    }
+    
+    fs::write(FILENAME, tasks_to_write).expect("Couldn't write to file");
+}
+
 
 // Function to read the task file into a Vec of tasks
 pub fn read_task_list() -> Vec<Task> {
@@ -42,8 +58,8 @@ pub fn read_task_list() -> Vec<Task> {
     for line in lines {
         let task_vec = read_csv_line(line);
         
-        // Figuring out the task's status
         if task_vec.len() == 2 {
+            // Figuring out the task's status
             let task_status = match task_vec[1].as_str() {
                 "Completed"  => TaskStatus::Completed,
                 "InProgress" => TaskStatus::InProgress,
@@ -63,6 +79,8 @@ pub fn read_task_list() -> Vec<Task> {
 
     task_list
 }
+
+
 // Function to read a string in csv formating
 fn read_csv_line(line: String) -> Vec<String>{
     let data_points: Vec<&str> = line.split(",").collect();
