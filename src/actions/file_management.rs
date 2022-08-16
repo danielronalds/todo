@@ -1,4 +1,4 @@
-use std::{path::Path, fs, fs::File, io::BufReader, io::BufRead};
+use std::{path::Path, fs, fs::File, io::BufReader, io::BufRead, process};
 
 use crate::task::{Task, TaskStatus};
 
@@ -42,7 +42,11 @@ pub fn save_task_list(tasks: Vec<Task>) {
 // Function to read the task file into a Vec of tasks
 pub fn read_task_list() -> Vec<Task> {
     // Open the file where tasks are stored
-    let file = File::open(FILENAME).expect("Could not open file!");
+    let file = File::open(FILENAME).unwrap_or_else(|_| {
+        // If the file can't be opened, handle the error
+        println!("A task list doesn't exist in this directory!");
+        process::exit(1);
+    });
 
     // Declare a reader for the file
     let buf_reader = BufReader::new(file);

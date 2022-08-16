@@ -4,6 +4,7 @@ mod actions;
 
 mod task;
 
+
 pub struct Config {
     pub command: String,
     pub command_arg: String,
@@ -47,11 +48,13 @@ pub fn run(config: Config) {
     match config.command.as_str() {
         // List the current tasks
         "list" => actions::task_management::list_tasks(&tasks),
+
         // Add a task
         "add" => {
             let task_desc = config.command_arg;
             actions::task_management::add_task(&mut tasks, task_desc);
         },
+
         // Delete a task
         "delete" => {
             let task_index = config.command_arg.parse().unwrap_or_else(|_| {
@@ -60,6 +63,7 @@ pub fn run(config: Config) {
             });
             actions::task_management::remove_task(&mut tasks, task_index);
         },
+
         // Start a task
         "start" => {
             // Parsing second argument into an index for accessing the task vec
@@ -74,6 +78,7 @@ pub fn run(config: Config) {
             }
             actions::task_management::start_task(&mut tasks[task_index]);
         },
+
         // Finish a task
         "finish" => {
             // Parsing second argument into an index for accessing the task vec
@@ -88,6 +93,7 @@ pub fn run(config: Config) {
             }
             actions::task_management::finish_task(&mut tasks[task_index]);
         },
+
         // If the user has not typed a valid command, inform them
         _ => eprintln!("Unrecognised command!"),
     }
