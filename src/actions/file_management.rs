@@ -71,10 +71,10 @@ pub fn read_task_list() -> Vec<Task> {
                 &_ => TaskStatus::NotStarted,
             };
 
-            let task_description = &task_vec[0];
+            let task_desc = &task_vec[0];
 
             task_list.push(
-                Task { desc: task_description.to_string(), status: task_status }
+                Task::new(task_desc, task_status)
             );
         } else {
             println!("ERROR WITH LINE");

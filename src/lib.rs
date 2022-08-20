@@ -46,6 +46,8 @@ pub fn run(config: Config) {
     // This is shit, hobbled together code. However for now it works, which means
     // this program by bare definition, does something!
     match config.command.as_str() {
+        "help" => actions::show_help(),
+
         // List the current tasks
         "list" => actions::task_management::list_tasks(&tasks),
 
@@ -56,7 +58,7 @@ pub fn run(config: Config) {
         },
 
         // Delete a task
-        "delete" => {
+        "delete" | "remove" => {
             let task_index = config.command_arg.parse().unwrap_or_else(|_| {
                 eprintln!("That is not a valid Task ID!");
                 process::exit(1);
@@ -67,10 +69,11 @@ pub fn run(config: Config) {
         // Start a task
         "start" => {
             // Parsing second argument into an index for accessing the task vec
-            let task_index: usize = config.command_arg.parse().unwrap_or_else(|_| {
+            let mut task_index: usize = config.command_arg.parse().unwrap_or_else(|_| {
                 eprintln!("That is not a valid Task ID!");
                 process::exit(1);
             });
+            task_index -= 1;
             // Check to see if the task exists
             if task_index > tasks.len() {
                 eprint!("Task does not exist!");
@@ -82,10 +85,11 @@ pub fn run(config: Config) {
         // Finish a task
         "finish" => {
             // Parsing second argument into an index for accessing the task vec
-            let task_index: usize = config.command_arg.parse().unwrap_or_else(|_| {
+            let mut task_index: usize = config.command_arg.parse().unwrap_or_else(|_| {
                 eprintln!("That is not a valid Task ID!");
                 process::exit(1);
             });
+            task_index -= 1;
             // Check to see if the task exists
             if task_index > tasks.len() {
                 eprint!("Task does not exist!");

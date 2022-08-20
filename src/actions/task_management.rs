@@ -12,7 +12,7 @@ pub fn start_task(t: &mut Task) {
         },
         // Otherwise inform the user of the tasks' current status
         TaskStatus::InProgress => println!("Task already in progress!\n"),
-        TaskStatus::Completed => println!("Task already completed\n"),
+        TaskStatus::Completed => println!("Task already completed!\n"),
     }
 }
 
@@ -30,7 +30,7 @@ pub fn finish_task(t: &mut Task) {
             println!("Task '{}' completed!\n", t.desc);
         },
         // Otherwise inform the user it has already been completed
-        TaskStatus::Completed => println!("Task already completed\n"),
+        TaskStatus::Completed => println!("Task already completed!\n"),
     }
 }
 
@@ -57,8 +57,10 @@ pub fn add_task(tasks: &mut Vec<Task>, desc: String) {
 
 // Removes a task from a tasks vec
 pub fn remove_task(tasks: &mut Vec<Task>, index: usize) {
+    let index = index - 1;
     // Checks to make sure the task is in range to prevent panic!
     if tasks.len() > index {
+        // Adding 1 to index so the task id's start at 1
         let task_desc = &tasks[index].desc;
         println!("Task '{}' removed!\n", task_desc);
 
@@ -74,38 +76,12 @@ pub fn remove_task(tasks: &mut Vec<Task>, index: usize) {
 
 // Function to list task
 pub fn list_tasks(tasks: &[Task]) {
-    // Creating vectors to store the sorted tasks into
-    let mut completed_tasks: Vec<&Task> = Vec::new();
-    let mut inprogress_tasks: Vec<&Task> = Vec::new();
-    let mut notstarted_tasks: Vec<&Task> = Vec::new();
+    let mut task_id = 1;
 
-    // Sorting the tasks into the appropriate list
     for task in tasks {
-        match task.status {
-            TaskStatus::Completed => completed_tasks.push(task),
-            TaskStatus::InProgress => inprogress_tasks.push(task),
-            TaskStatus::NotStarted => notstarted_tasks.push(task),
-        } 
+        println!("{}", task.to_string(&task_id));
+        task_id += 1;
     }
-
-    // Printing tasks
-    println!("Completed tasks:");
-    for task in completed_tasks {
-        println!("{}", task.desc);
-    }
-
-    println!("\nTasks in progress:");
-    for task in inprogress_tasks {
-        println!("{}", task.desc);
-    }
-    
-    println!("\nTasks not started:");
-    for task in notstarted_tasks {
-        println!("{}", task.desc);
-    }
-
-    // Printing new line for formating
-    println!("");
 }
 
 
