@@ -83,7 +83,7 @@ pub fn run(config: Config) {
         },
 
         // Finish a task
-        "finish" => {
+        "finish" | "tick" => {
             // Parsing second argument into an index for accessing the task vec
             let mut task_index: usize = config.command_arg.parse().unwrap_or_else(|_| {
                 eprintln!("That is not a valid Task ID!");

@@ -11,10 +11,7 @@ pub fn init_list() {
     if !Path::new(FILENAME).exists() {
         // If it doesn't create a .tasks file
         match File::create(FILENAME) {
-           Ok(fc) => {
-               println!("Tasklist created succesfully!");
-               drop(fc);
-           }
+           Ok(_) => println!("Tasklist created succesfully!"),
            // Inform the user if there is a problem with creating the file
            Err(_) => println!("Couldn't create the file!"),
         }
@@ -35,7 +32,9 @@ pub fn save_task_list(tasks: Vec<Task>) {
         tasks_to_write.push_str(&line);
     }
     
-    fs::write(FILENAME, tasks_to_write).expect("Couldn't write to file");
+    fs::write(FILENAME, tasks_to_write).unwrap_or_else(|_| {
+        eprintln!("Failed to write to file!");
+    });
 }
 
 
@@ -73,9 +72,7 @@ pub fn read_task_list() -> Vec<Task> {
 
             let task_desc = &task_vec[0];
 
-            task_list.push(
-                Task::new(task_desc, task_status)
-            );
+            task_list.push(Task::build(task_desc, task_status).unwrap());
         } else {
             println!("ERROR WITH LINE");
         }
