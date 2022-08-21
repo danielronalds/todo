@@ -1,3 +1,6 @@
+// For pretty formating
+use colored::Colorize;
+
 pub enum TaskStatus {
     Completed,
     InProgress,
@@ -29,10 +32,12 @@ impl Task {
 
     // Method to return Task as String 
     pub fn to_string(&self, task_id: &u32) -> String {
-        match &self.status {
-            TaskStatus::NotStarted => String::from(format!("{}: [x] {}", task_id, &self.desc)),
-            TaskStatus::InProgress => String::from(format!("{}: [~] {}", task_id, &self.desc)),
-            TaskStatus::Completed => String::from(format!("{}: [✓] {}", task_id, &self.desc)),
-        }
+        let symbol = match &self.status {
+            TaskStatus::NotStarted => format!("{}", "x".red()),
+            TaskStatus::InProgress => format!("{}", "~".yellow()),
+            TaskStatus::Completed => format!("{}", "✔".green()),
+        };
+
+        format!("{task_id}: {} {}", format!("[{}]", symbol).bold(), &self.desc)
     }
 }
