@@ -31,21 +31,22 @@ impl Task {
     // Method to output the task's status to a String
     pub fn status_to_string(&self) -> String {
         match &self.status {
-            TaskStatus::Completed => String::from("Completed"),
-            TaskStatus::InProgress => String::from("InProgress"),
             TaskStatus::NotStarted => String::from("NotStarted"),
+            TaskStatus::InProgress => String::from("InProgress"),
+            TaskStatus::Completed  => String::from("Completed"),
         }
     }
 
 
     // Method to return Task as String 
-    pub fn to_string(&self, task_id: &u32) -> String {
-        let symbol = format!("[{}]", match &self.status {
+    pub fn to_string(&self, _task_id: &u32) -> String {
+        let task_status = format!("[{}]", match &self.status {
             TaskStatus::NotStarted => format!("{}", "x".red()),
             TaskStatus::InProgress => format!("{}", "~".yellow()),
-            TaskStatus::Completed => format!("{}", "✔".green()),
+            TaskStatus::Completed  => format!("{}", "✔".green()),
         }).bold();
 
-        format!("{task_id}: {} {}", symbol, &self.desc)
+        // format!("{task_id}: {} {}", symbol, &self.desc)
+        format!("{} {}", task_status, &self.desc)
     }
 }

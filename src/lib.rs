@@ -1,4 +1,4 @@
-use std::process;
+use std::process::exit;
 
 mod actions;
 
@@ -38,7 +38,7 @@ pub fn run(config: Config) {
     // To prevent accessing the task list if it doesn't exit
     if config.command.as_str() == "init" {
         actions::file_management::init_list();
-        process::exit(1);
+        exit(1);
     }
     
     let mut tasks = actions::file_management::read_task_list();
@@ -61,7 +61,7 @@ pub fn run(config: Config) {
         "delete" | "remove" => {
             let task_index = config.command_arg.parse().unwrap_or_else(|_| {
                 eprintln!("That is not a valid Task ID!");
-                process::exit(1);
+                exit(1);
             });
             actions::task_management::remove_task(&mut tasks, task_index);
         },
@@ -71,13 +71,13 @@ pub fn run(config: Config) {
             // Parsing second argument into an index for accessing the task vec
             let mut task_index: usize = config.command_arg.parse().unwrap_or_else(|_| {
                 eprintln!("That is not a valid Task ID!");
-                process::exit(1);
+                exit(1);
             });
             task_index -= 1;
             // Check to see if the task exists
             if task_index > tasks.len() {
                 eprint!("Task does not exist!");
-                process::exit(1);
+                exit(1);
             }
             actions::task_management::start_task(&mut tasks[task_index]);
         },
@@ -87,13 +87,13 @@ pub fn run(config: Config) {
             // Parsing second argument into an index for accessing the task vec
             let mut task_index: usize = config.command_arg.parse().unwrap_or_else(|_| {
                 eprintln!("That is not a valid Task ID!");
-                process::exit(1);
+                exit(1);
             });
             task_index -= 1;
             // Check to see if the task exists
             if task_index > tasks.len() {
                 eprint!("Task does not exist!");
-                process::exit(1);
+                exit(1);
             }
             actions::task_management::finish_task(&mut tasks[task_index]);
         },

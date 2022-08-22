@@ -1,4 +1,4 @@
-use std::{env, process};
+use std::{env, process::exit};
 
 use todo::{self, Config};
 
@@ -7,7 +7,7 @@ fn main() {
 
     let config = Config::build(args).unwrap_or_else(|err| {
         println!("{}", err);
-        process::exit(1);
+        exit(1);
     });
     
     todo::run(config);

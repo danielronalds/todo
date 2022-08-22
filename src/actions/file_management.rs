@@ -1,4 +1,4 @@
-use std::{path::Path, fs, fs::File, io::BufReader, io::BufRead, process};
+use std::{path::Path, fs, fs::File, io::BufReader, io::BufRead, process::exit};
 
 use crate::task::{Task, TaskStatus};
 
@@ -40,11 +40,10 @@ pub fn save_task_list(tasks: Vec<Task>) {
 
 // Function to read the task file into a Vec of tasks
 pub fn read_task_list() -> Vec<Task> {
-    // Open the file where tasks are stored
+    // Open the file where tasks are stored, exiting the programs if there are errors
     let file = File::open(FILENAME).unwrap_or_else(|_| {
-        // If the file can't be opened, handle the error
         println!("A task list doesn't exist in this directory!");
-        process::exit(1);
+        exit(1);
     });
 
     // Declare a reader for the file
@@ -55,27 +54,32 @@ pub fn read_task_list() -> Vec<Task> {
         .map(|l| l.expect("Could not parse line")) // ...now this is a bit of a mystery
         .collect(); // This also makes sense, its collecting everything into a vec
 
-    // Go through every line and add the task to a tasklist that the method return
+    // Go through every line and add the task to a tasklist that the method returns
     let mut task_list: Vec<Task> = Vec::new();
+
+    // int to keep track of the line number for reporting errors within the tasks file
+    let mut line_num = 1;
 
     for line in lines {
         let task_vec = read_csv_line(line);
         
-        if task_vec.len() == 2 {
-            // Figuring out the task's status
-            let task_status = match task_vec[1].as_str() {
-                "Completed"  => TaskStatus::Completed,
-                "InProgress" => TaskStatus::InProgress,
-                "NotStarted" => TaskStatus::NotStarted,
-                &_ => TaskStatus::NotStarted,
-            };
-
-            let task_desc = &task_vec[0];
-
-            task_list.push(Task::build(task_desc, task_status).unwrap());
-        } else {
-            println!("ERROR WITH LINE");
+        if task_vec.len() != 2 {
+            eprintln!("Wrong number of elements in line {line_num}!");
+            continue;
         }
+
+        // If the line has the correct number of csv elements, then build a Task and 
+        // push it to hte task_list vec
+        task_list.push(Task::build(&task_vec[0], match task_vec[1].as_str() {
+            "Completed"  => TaskStatus::Completed,
+            "InProgress" => TaskStatus::InProgress,
+            "NotStarted" => TaskStatus::NotStarted,
+            &_ => TaskStatus::NotStarted,
+        }).unwrap()); // Presumes an unwrap is safe as the .tasks file should only be 
+                      // edited by the program, which means the task should always have
+                      // a description
+
+        line_num += 1;
     }
 
     task_list
