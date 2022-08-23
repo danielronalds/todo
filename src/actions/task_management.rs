@@ -4,7 +4,7 @@ use crate::task::Task;
 use crate::task::TaskStatus;
 
 
-/// Function to update a task's status to inprogress
+// Function to update a task's status to inprogress
 pub fn start_task(t: &mut Task) {
     match t.status {
         // If the task is not started, start it 

@@ -31,9 +31,26 @@ impl Config {
             command_arg: cmd_arg,
         })
     }
+
+    pub fn argument_to_index(&self) -> usize {
+        self.command_arg.parse().unwrap_or_else(|_| {
+            eprintln!("That is not a valid Task ID!");
+            exit(1);
+        })
+    }
 }
 
 
+// Function to check if a task exists in the tasklist
+fn task_exists(task_index: usize, tasklist: &Vec<task::Task>) {
+    if task_index > tasklist.len() {
+        eprint!("Task does not exist!");
+        exit(1);
+    }
+}
+
+
+// Main run function
 pub fn run(config: Config) {
     // To prevent accessing the task list if it doesn't exit
     if config.command.as_str() == "init" {
@@ -61,42 +78,33 @@ pub fn run(config: Config) {
 
         // Delete a task
         "delete" | "remove" => {
-            let task_index = config.command_arg.parse().unwrap_or_else(|_| {
-                eprintln!("That is not a valid Task ID!");
-                exit(1);
-            });
+            let task_index = config.argument_to_index();
             actions::task_management::remove_task(&mut tasks, task_index);
         },
 
         // Start a task
         "start" => {
-            // Parsing second argument into an index for accessing the task vec
-            let mut task_index: usize = config.command_arg.parse().unwrap_or_else(|_| {
-                eprintln!("That is not a valid Task ID!");
-                exit(1);
-            });
+            // Getting the task's index
+            let mut task_index = config.argument_to_index();
+
             task_index -= 1;
+
             // Check to see if the task exists
-            if task_index > tasks.len() {
-                eprint!("Task does not exist!");
-                exit(1);
-            }
+            task_exists(task_index, &tasks);
+
             actions::task_management::start_task(&mut tasks[task_index]);
         },
 
         // Finish a task
         "finish" | "tick" => {
-            // Parsing second argument into an index for accessing the task vec
-            let mut task_index: usize = config.command_arg.parse().unwrap_or_else(|_| {
-                eprintln!("That is not a valid Task ID!");
-                exit(1);
-            });
+            // Getting the task's index
+            let mut task_index = config.argument_to_index();
+
             task_index -= 1;
+
             // Check to see if the task exists
-            if task_index > tasks.len() {
-                eprint!("Task does not exist!");
-                exit(1);
-            }
+            task_exists(task_index, &tasks);
+
             actions::task_management::finish_task(&mut tasks[task_index]);
         },
 
