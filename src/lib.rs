@@ -1,8 +1,12 @@
-use std::process::exit;
-
+// Declaring Modules
 mod actions;
 
 mod task;
+
+// Use statments
+use std::process::exit;
+
+use task::Task;
 
 
 pub struct Config {
@@ -42,11 +46,25 @@ impl Config {
 
 
 // Function to check if a task exists in the tasklist
-fn task_exists(task_index: usize, tasklist: &Vec<task::Task>) {
-    if task_index > tasklist.len() {
+fn task_exists(task_index: usize, tasklist: &Vec<Task>) {
+    if task_index >= tasklist.len() {
         eprint!("Task does not exist!");
         exit(1);
     }
+}
+
+
+// Function to get the task's id
+fn get_task_index(config: Config, tasklist: &Vec<Task>) -> usize {
+    // Getting the task's index
+    let mut task_index = config.argument_to_index();
+
+    task_index -= 1;
+
+    // Check to see if the task exists
+    task_exists(task_index, tasklist);
+
+    task_index
 }
 
 
@@ -84,27 +102,19 @@ pub fn run(config: Config) {
 
         // Start a task
         "start" => {
-            // Getting the task's index
-            let mut task_index = config.argument_to_index();
-
-            task_index -= 1;
-
-            // Check to see if the task exists
-            task_exists(task_index, &tasks);
-
+            // Getting task index
+            let task_index = get_task_index(config, &tasks);
+            
+            // Updating task status
             actions::task_management::start_task(&mut tasks[task_index]);
         },
 
         // Finish a task
         "finish" | "tick" => {
-            // Getting the task's index
-            let mut task_index = config.argument_to_index();
-
-            task_index -= 1;
-
-            // Check to see if the task exists
-            task_exists(task_index, &tasks);
-
+            // Getting task index
+            let task_index = get_task_index(config, &tasks);
+            
+            // Updating task status
             actions::task_management::finish_task(&mut tasks[task_index]);
         },
 

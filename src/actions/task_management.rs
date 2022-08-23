@@ -3,6 +3,8 @@ use std::process::exit;
 use crate::task::Task;
 use crate::task::TaskStatus;
 
+use crate::task_exists;
+
 
 // Function to update a task's status to inprogress
 pub fn start_task(t: &mut Task) {
@@ -51,22 +53,19 @@ pub fn add_task(tasks: &mut Vec<Task>, desc: String) {
 
 
 // Removes a task from a tasks vec
-pub fn remove_task(tasks: &mut Vec<Task>, index: usize) {
+pub fn remove_task(tasks: &mut Vec<Task>, task_index: usize) {
     // Removing 1 off error
-    let index = index - 1;
-    // Checks to make sure the task is in range to prevent panic!
-    if tasks.len() > index {
-        // Adding 1 to index so the task id's start at 1
-        let task_desc = &tasks[index].desc;
-        println!("Task '{}' removed!", task_desc);
+    let task_index = task_index - 1;
 
-        // If the task does exist, remove it 
-        tasks.remove(index);
-    }
-    else {
-        // Informs the user if the task is not in range
-        println!("Task does not exist!");
-    }
+    // Checks to make sure the task is in range to prevent panic!
+    task_exists(task_index, tasks);
+
+    // Printing out the task description so the user knows what task was deleted
+    let task_desc = &tasks[task_index].desc;
+    println!("Task '{}' removed!", task_desc);
+
+    // Remove the task from the tasklist
+    tasks.remove(task_index);
 }
 
 
