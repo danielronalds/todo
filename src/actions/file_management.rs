@@ -86,14 +86,23 @@ pub fn read_task_list() -> Result<Vec<Task>, &'static str> {
         }
 
         // If the line has the correct number of csv elements, then build a Task and push it to
-        // the task_list vec
-        task_list.push(Task::build(&task_vec[0], match task_vec[1].as_str() {
+        // the task_list vec, printing an error if the task fails to build
+        let new_task = Task::build(&task_vec[0], match task_vec[1].as_str() {
             "Completed"  => TaskStatus::Completed,
             "InProgress" => TaskStatus::InProgress,
             "NotStarted" => TaskStatus::NotStarted,
             &_ => TaskStatus::NotStarted,
-        }).unwrap()); // Presumes an unwrap is safe as the .tasks file should only be edited by 
-                      // the program, which means the task should always have a description
+        });
+
+        match &new_task {
+            Ok(_) => (),
+            Err(err) => {
+                eprintln!("Error on line {line_num}: {}", err);
+                continue;
+            }
+        }
+
+        task_list.push(new_task.unwrap());
 
         line_num += 1;
     }
