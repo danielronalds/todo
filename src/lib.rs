@@ -95,7 +95,10 @@ pub fn run(config: Config) {
         // Add a task
         "add" => {
             let task_desc = config.command_arg;
-            actions::task_management::add_task(&mut tasks, task_desc);
+            actions::task_management::add_task(&mut tasks, task_desc).unwrap_or_else(|err| {
+                eprintln!("{}", err);
+                exit(1);
+            });
         },
 
         // Delete a task

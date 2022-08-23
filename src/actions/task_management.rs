@@ -1,5 +1,3 @@
-use std::process::exit;
-
 use crate::task::Task;
 use crate::task::TaskStatus;
 
@@ -40,15 +38,23 @@ pub fn finish_task(t: &mut Task) {
 
 
 // Adds a task to a tasks vec
-pub fn add_task(tasks: &mut Vec<Task>, desc: String) {
-    let new_task = Task::build(&desc, TaskStatus::NotStarted).unwrap_or_else(|err| {
-        eprintln!("{}", err);
-        exit(1);
-    });
+pub fn add_task(tasks: &mut Vec<Task>, desc: String) -> Result<(), &'static str>{
+    let new_task = Task::build(&desc, TaskStatus::NotStarted);
+
+    // Checks to see if the task was created succesfully, returning an error if not
+    match &new_task {
+        Ok(_) => (),
+        Err(err) => return Err(err),
+    }
+
+    // Unwrapping the task if it was created succesfully
+    let new_task = new_task.unwrap();
 
     println!("Task '{}' added!", &new_task.desc);
 
     tasks.push(new_task);
+
+    Ok(())
 }
 
 
