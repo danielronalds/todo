@@ -37,7 +37,9 @@ impl Config {
 pub fn run(config: Config) {
     // To prevent accessing the task list if it doesn't exit
     if config.command.as_str() == "init" {
-        actions::file_management::init_list();
+        actions::file_management::init_list().unwrap_or_else(|err| {
+            eprintln!("{}", err)
+        });
         exit(1);
     }
     

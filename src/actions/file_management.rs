@@ -6,18 +6,22 @@ const FILENAME: &str = ".tasks";
 
 
 // Function to create a .tasks file to store tasks in csv format
-pub fn init_list() {
+pub fn init_list() -> Result<(), &'static str>{
     // Checks to see if a .tasks file exists already
-    if !Path::new(FILENAME).exists() {
-        // If it doesn't create a .tasks file
-        match File::create(FILENAME) {
-           Ok(_) => println!("Tasklist created succesfully!"),
-           // Inform the user if there is a problem with creating the file
-           Err(_) => println!("Couldn't create the file!"),
-        }
-    } else {
-        // If the file already exists, inform the user
-        println!("A tasks list already exists!");   
+    if Path::new(FILENAME).exists() {
+        return Err("A tasks file already exists!");
+    }
+
+    // Creates the file
+    let file = File::create(FILENAME);
+
+    // Checks to see if the file was created, returning an error result if it wasn't
+    match file {
+        Ok(_) => {
+            println!("Task list created successfully!");
+            Ok(())
+        },
+        Err(_) => return Err("Error creating file!"),
     }
 }
 
