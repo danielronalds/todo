@@ -1,4 +1,4 @@
-use std::{path::Path, fs, fs::File, io::BufReader, io::BufRead, process::exit};
+use std::{path::Path, fs, fs::File, io::BufReader, io::BufRead};
 
 use crate::task::{Task, TaskStatus};
 
@@ -28,14 +28,17 @@ pub fn init_list() -> Result<(), &'static str>{
 
 // Function to write to the .tasks file to store tasks in csv 
 pub fn save_task_list(tasks: Vec<Task>) {
+    // Creating a vec to store the data in csv format that will be written to the .tasks file
     let mut tasks_to_write: String = String::new();
     
+    // Looping through every task and converting it to csv format, and adding it to the vec
     for task in tasks {
         let line = format!("{},{}\n", task.desc, task.status_to_string());
 
         tasks_to_write.push_str(&line);
     }
     
+    // Writing the string containing all the csv data to the .tasks file 
     fs::write(FILENAME, tasks_to_write).unwrap_or_else(|_| {
         eprintln!("Failed to write to file!");
     });
@@ -43,15 +46,18 @@ pub fn save_task_list(tasks: Vec<Task>) {
 
 
 // Function to read the task file into a Vec of tasks
-pub fn read_task_list() -> Vec<Task> {
-    // Open the file where tasks are stored, exiting the programs if there are errors
-    let file = File::open(FILENAME).unwrap_or_else(|_| {
-        println!("A task list doesn't exist in this directory!");
-        exit(1);
-    });
+pub fn read_task_list() -> Result<Vec<Task>, &'static str> {
+    // Opening the tasks file, and check if the file was opened successfully, returning an Err() 
+    // if it wasn't, so that the run function can handle it
+    let file = File::open(FILENAME);
+
+    match &file {
+        Ok(file) => file,
+        Err(_) => return Err("Couldn't open Tasks file!")
+    };
 
     // Declare a reader for the file
-    let buf_reader = BufReader::new(file);
+    let buf_reader = BufReader::new(file.unwrap());
     
     // Don't quite understand this line fully
     let lines: Vec<String> = buf_reader.lines() // This makes sense, 
@@ -72,21 +78,20 @@ pub fn read_task_list() -> Vec<Task> {
             continue;
         }
 
-        // If the line has the correct number of csv elements, then build a Task and 
-        // push it to hte task_list vec
+        // If the line has the correct number of csv elements, then build a Task and push it to
+        // the task_list vec
         task_list.push(Task::build(&task_vec[0], match task_vec[1].as_str() {
             "Completed"  => TaskStatus::Completed,
             "InProgress" => TaskStatus::InProgress,
             "NotStarted" => TaskStatus::NotStarted,
             &_ => TaskStatus::NotStarted,
-        }).unwrap()); // Presumes an unwrap is safe as the .tasks file should only be 
-                      // edited by the program, which means the task should always have
-                      // a description
+        }).unwrap()); // Presumes an unwrap is safe as the .tasks file should only be edited by 
+                      // the program, which means the task should always have a description
 
         line_num += 1;
     }
 
-    task_list
+    Ok(task_list)
 }
 
 

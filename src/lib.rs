@@ -70,7 +70,9 @@ fn get_task_index(config: Config, tasklist: &Vec<Task>) -> usize {
 
 // Main run function
 pub fn run(config: Config) {
-    // To prevent accessing the task list if it doesn't exit
+    // Checks to see if the user is trying to create a task list before attempting to open one, 
+    // to prevent the user from never being able to create a tasks list, as when the function
+    // read_task_list() returns an Err() the program exists.
     if config.command.as_str() == "init" {
         actions::file_management::init_list().unwrap_or_else(|err| {
             eprintln!("{}", err)
@@ -78,10 +80,12 @@ pub fn run(config: Config) {
         exit(1);
     }
     
-    let mut tasks = actions::file_management::read_task_list();
+    // Open the tasks file, exiting the program with an error message if the file fails to open
+    let mut tasks = actions::file_management::read_task_list().unwrap_or_else(|err| {
+        eprintln!("{}", err);
+        exit(1);
+    });
 
-    // This is shit, hobbled together code. However for now it works, which means
-    // this program by bare definition, does something!
     match config.command.as_str() {
         "help" => actions::show_help(),
 
