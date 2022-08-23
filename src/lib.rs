@@ -125,6 +125,15 @@ pub fn run(config: Config) {
             actions::task_management::finish_task(&mut tasks[task_index]);
         },
 
+        // Sort the task list
+        "sort" => {
+            // Sorting the task list
+            tasks = actions::task_management::sort_tasks(tasks);
+
+            // Displaying the sorted list
+            actions::task_management::list_tasks(&tasks);
+        }
+
         // If the user has not typed a valid command, inform them
         _ => eprintln!("Unrecognised command!"),
     }

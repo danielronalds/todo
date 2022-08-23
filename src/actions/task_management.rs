@@ -75,6 +75,45 @@ pub fn remove_task(tasks: &mut Vec<Task>, task_index: usize) {
 }
 
 
+// Function to sort tasks from completed to not started
+pub fn sort_tasks(tasks: Vec<Task>) -> Vec<Task> {
+
+    // This is probably a rough implementation, however it does work, and I don't think my
+    // knowledge in rust is sufficient enough to simplify this code... yet
+
+    // Declaring vecs to store sorted tasks
+    let mut sorted_tasks: Vec<Task> = Vec::new();
+    
+    let mut completed_tasks: Vec<Task> = Vec::new();
+    let mut inprogress_tasks: Vec<Task> = Vec::new();
+    let mut notstarted_tasks: Vec<Task> = Vec::new();
+
+    // Sorting tasks
+    for task in tasks {
+        match task.status {
+            TaskStatus::Completed => completed_tasks.push(task),
+            TaskStatus::InProgress => inprogress_tasks.push(task),
+            TaskStatus::NotStarted => notstarted_tasks.push(task),
+        } 
+    }
+
+    // Combining all the sorted vecs into one vec to return
+    for task in completed_tasks {
+        sorted_tasks.push(task);
+    }
+
+    for task in inprogress_tasks {
+        sorted_tasks.push(task);
+    }
+
+    for task in notstarted_tasks {
+        sorted_tasks.push(task);
+    }
+
+    sorted_tasks
+}
+
+
 // Function to list task
 pub fn list_tasks(tasks: &[Task]) {
     let mut task_id = 1;
