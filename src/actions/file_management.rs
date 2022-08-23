@@ -21,13 +21,13 @@ pub fn init_list() -> Result<(), &'static str>{
             println!("Task list created successfully!");
             Ok(())
         },
-        Err(_) => return Err("Error creating file!"),
+        Err(_) => Err("Error creating file!"),
     }
 }
 
 
 // Function to write to the .tasks file to store tasks in csv 
-pub fn save_task_list(tasks: Vec<Task>) {
+pub fn save_task_list(tasks: Vec<Task>) -> Result<(), &'static str>{
     // Creating a vec to store the data in csv format that will be written to the .tasks file
     let mut tasks_to_write: String = String::new();
     
@@ -39,9 +39,13 @@ pub fn save_task_list(tasks: Vec<Task>) {
     }
     
     // Writing the string containing all the csv data to the .tasks file 
-    fs::write(FILENAME, tasks_to_write).unwrap_or_else(|_| {
-        eprintln!("Failed to write to file!");
-    });
+    let file = fs::write(FILENAME, tasks_to_write);
+
+    // Returns an Err() if the file was unable to be written
+    match file {
+        Ok(_) => Ok(()),
+        Err(_) => Err("Failed to write to file!") 
+    }
 }
 
 
@@ -59,10 +63,13 @@ pub fn read_task_list() -> Result<Vec<Task>, &'static str> {
     // Declare a reader for the file
     let buf_reader = BufReader::new(file.unwrap());
     
-    // Don't quite understand this line fully
-    let lines: Vec<String> = buf_reader.lines() // This makes sense, 
-        .map(|l| l.expect("Could not parse line")) // ...now this is a bit of a mystery
-        .collect(); // This also makes sense, its collecting everything into a vec
+    // Collecting all the lines into a String Vec
+    let lines: Vec<String> = buf_reader.lines().map(|l| {
+        l.unwrap_or_else(|err| {
+            eprintln!("Could not unwrap line! {}", err);
+            String::new()
+        })
+    }).collect(); 
 
     // Go through every line and add the task to a tasklist that the method returns
     let mut task_list: Vec<Task> = Vec::new();
@@ -75,7 +82,7 @@ pub fn read_task_list() -> Result<Vec<Task>, &'static str> {
         
         if task_vec.len() != 2 {
             eprintln!("Wrong number of elements in line {line_num}!");
-            continue;
+            continue
         }
 
         // If the line has the correct number of csv elements, then build a Task and push it to

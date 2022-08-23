@@ -126,5 +126,7 @@ pub fn run(config: Config) {
         _ => eprintln!("Unrecognised command!"),
     }
 
-    actions::file_management::save_task_list(tasks);
+    actions::file_management::save_task_list(tasks).unwrap_or_else(|err| {
+        eprintln!("{}", err);
+    });
 }
