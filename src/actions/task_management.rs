@@ -114,6 +114,34 @@ pub fn sort_tasks(tasks: Vec<Task>) -> Vec<Task> {
 }
 
 
+// Function to delete completed tasks from the task list
+pub fn cleanup_list(tasks: &mut Vec<Task>) {
+    let mut tasks_to_remove: Vec<usize> = Vec::new();
+
+    // Collects the index's of completed tasks in reverse order so that when deleting tasks, the 
+    // index of the next task to get deleted changes due to an element before it being removed 
+    // from the list
+    let mut current_index = tasks.len();
+
+    while current_index > 0 {
+        // Removes 1 off the current_index first, so that it doesn't panic when attempting to
+        // access an out of bounds element of the vec
+        current_index -= 1;
+
+        match tasks[current_index].status {
+            TaskStatus::Completed => tasks_to_remove.push(current_index),
+            _ => continue,
+        }
+    }
+
+    println!("Removed {} Completed tasks!", tasks_to_remove.len());
+
+    for index in tasks_to_remove {
+        tasks.remove(index);
+    }
+}
+
+
 // Function to list task
 pub fn list_tasks(tasks: &[Task]) {
     let mut task_id = 1;

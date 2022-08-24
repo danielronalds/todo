@@ -134,6 +134,13 @@ pub fn run(config: Config) {
             actions::task_management::list_tasks(&tasks);
         }
 
+        // Remove completed tasks
+        "cleanup" => {
+            actions::task_management::cleanup_list(&mut tasks);
+
+            actions::task_management::list_tasks(&tasks);
+        }
+
         // If the user has not typed a valid command, inform them
         _ => eprintln!("Unrecognised command!"),
     }
