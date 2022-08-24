@@ -3,6 +3,7 @@ pub mod file_management;
 
 // Function to list all the commands
 pub fn show_help() {
+    println!("usage: <COMMAND> <ARGUMENT>");
     println!("help: Shows this dialog");
     println!("init: Creates a tasklist in the current directory");
     println!("list: Shows all the tasks on the tasks list");

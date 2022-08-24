@@ -13,8 +13,7 @@ pub fn start_task(t: &mut Task) {
             println!("Started task '{}'", t.desc);
         },
         // Otherwise inform the user of the tasks' current status
-        TaskStatus::InProgress => println!("Task already in progress!"),
-        TaskStatus::Completed => println!("Task already completed!"),
+        _ => println!("Task already in progress!"),
     }
 }
 
@@ -22,18 +21,21 @@ pub fn start_task(t: &mut Task) {
 // Function to update a task's status to completed
 pub fn finish_task(t: &mut Task) {
     match t.status {
-        // If the task is either not started or in progress, complete it
-        TaskStatus::NotStarted => {
-            t.status = TaskStatus::Completed;
-            println!("Task '{}' completed!", t.desc);
-        },
-        TaskStatus::InProgress => {
-            t.status = TaskStatus::Completed;
-            println!("Task '{}' completed!", t.desc);
-        },
-        // Otherwise inform the user it has already been completed
+        // Inform the user if the task has already been completed
         TaskStatus::Completed => println!("Task already completed!"),
+        // If the task is either not started or in progress, complete it
+        _ => {
+            t.status = TaskStatus::Completed;
+            println!("Task '{}' completed!", t.desc);
+        },
     }
+}
+
+
+// Function to set the status of any task to NotStarted
+pub fn restart_task(t: &mut Task) {
+    t.status = TaskStatus::NotStarted;
+    println!("Task '{}' restarted!", t.desc);
 }
 
 

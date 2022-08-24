@@ -125,6 +125,15 @@ pub fn run(config: Config) {
             actions::task_management::finish_task(&mut tasks[task_index]);
         },
 
+        // Restart a task
+        "restart" => {
+            // Getting task index
+            let task_index = get_task_index(config, &tasks);
+            
+            // Updating task status
+            actions::task_management::restart_task(&mut tasks[task_index]);
+        }
+
         // Sort the task list
         "sort" => {
             // Sorting the task list
