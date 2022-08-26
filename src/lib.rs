@@ -9,6 +9,7 @@ use std::process::exit;
 use actions::task_management;
 use actions::file_management;
 
+use colored::Colorize;
 use task::Task;
 
 
@@ -51,7 +52,7 @@ impl Config {
 // Function to check if a task exists in the tasklist
 fn task_exists(task_index: usize, tasklist: &Vec<Task>) {
     if task_index >= tasklist.len() {
-        eprint!("Task does not exist!");
+        print_error("Task does not exist!");
         exit(1);
     }
 }
@@ -71,6 +72,14 @@ fn get_task_index(config: Config, tasklist: &Vec<Task>) -> usize {
 }
 
 
+// Function to print errors
+fn print_error(error_message: &str) {
+   let error_symbol = format!("[{}]", "!".red());
+
+   eprint!("{} {}", error_symbol.bold(), error_message);
+}
+
+
 // Main run function
 pub fn run(config: Config) {
     // Checks to see if the user is trying to create a task list before attempting to open one, 
@@ -85,7 +94,7 @@ pub fn run(config: Config) {
     
     // Open the tasks file, exiting the program with an error message if the file fails to open
     let mut tasks = file_management::read_task_list().unwrap_or_else(|err| {
-        eprintln!("{}", err);
+        print_error(err);
         exit(1);
     });
 
@@ -99,7 +108,7 @@ pub fn run(config: Config) {
         "add" => {
             let task_desc = config.command_arg;
             task_management::add_task(&mut tasks, task_desc).unwrap_or_else(|err| {
-                eprintln!("{}", err);
+                print_error(err);
                 exit(1);
             });
         },
@@ -154,7 +163,11 @@ pub fn run(config: Config) {
         }
 
         // If the user has not typed a valid command, inform them
-        _ => eprintln!("Unrecognised command, try help to see the list of commands!"),
+        _ => {
+            print_error("Unrecognised command");
+            println!("");
+            actions::show_help();
+        },
     }
 
     file_management::save_task_list(tasks).unwrap_or_else(|err| {
