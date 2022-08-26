@@ -146,6 +146,10 @@ pub fn cleanup_list(tasks: &mut Vec<Task>) {
 
 // Function to list task
 pub fn list_tasks(tasks: &[Task]) {
+    if tasks.is_empty() {
+        crate::print_error("No tasks found, Add a task with the add command!");
+    }
+
     let mut task_id = 1;
 
     for task in tasks {
