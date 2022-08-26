@@ -6,6 +6,9 @@ mod task;
 // Use statments
 use std::process::exit;
 
+use actions::task_management;
+use actions::file_management;
+
 use task::Task;
 
 
@@ -74,14 +77,14 @@ pub fn run(config: Config) {
     // to prevent the user from never being able to create a tasks list, as when the function
     // read_task_list() returns an Err() the program exists.
     if config.command.as_str() == "init" {
-        actions::file_management::init_list().unwrap_or_else(|err| {
+        file_management::init_list().unwrap_or_else(|err| {
             eprintln!("{}", err)
         });
         exit(1);
     }
     
     // Open the tasks file, exiting the program with an error message if the file fails to open
-    let mut tasks = actions::file_management::read_task_list().unwrap_or_else(|err| {
+    let mut tasks = file_management::read_task_list().unwrap_or_else(|err| {
         eprintln!("{}", err);
         exit(1);
     });
@@ -90,12 +93,12 @@ pub fn run(config: Config) {
         "help" => actions::show_help(),
 
         // List the current tasks
-        "list" => actions::task_management::list_tasks(&tasks),
+        "list" => task_management::list_tasks(&tasks),
 
         // Add a task
         "add" => {
             let task_desc = config.command_arg;
-            actions::task_management::add_task(&mut tasks, task_desc).unwrap_or_else(|err| {
+            task_management::add_task(&mut tasks, task_desc).unwrap_or_else(|err| {
                 eprintln!("{}", err);
                 exit(1);
             });
@@ -104,7 +107,7 @@ pub fn run(config: Config) {
         // Delete a task
         "delete" | "remove" => {
             let task_index = config.argument_to_index();
-            actions::task_management::remove_task(&mut tasks, task_index);
+            task_management::remove_task(&mut tasks, task_index);
         },
 
         // Start a task
@@ -113,7 +116,7 @@ pub fn run(config: Config) {
             let task_index = get_task_index(config, &tasks);
             
             // Updating task status
-            actions::task_management::start_task(&mut tasks[task_index]);
+            task_management::start_task(&mut tasks[task_index]);
         },
 
         // Finish a task
@@ -122,7 +125,7 @@ pub fn run(config: Config) {
             let task_index = get_task_index(config, &tasks);
             
             // Updating task status
-            actions::task_management::finish_task(&mut tasks[task_index]);
+            task_management::finish_task(&mut tasks[task_index]);
         },
 
         // Restart a task
@@ -131,30 +134,30 @@ pub fn run(config: Config) {
             let task_index = get_task_index(config, &tasks);
             
             // Updating task status
-            actions::task_management::restart_task(&mut tasks[task_index]);
+            task_management::restart_task(&mut tasks[task_index]);
         }
 
         // Sort the task list
         "sort" => {
             // Sorting the task list
-            tasks = actions::task_management::sort_tasks(tasks);
+            tasks = task_management::sort_tasks(tasks);
 
             // Displaying the sorted list
-            actions::task_management::list_tasks(&tasks);
+            task_management::list_tasks(&tasks);
         }
 
         // Remove completed tasks
         "cleanup" => {
-            actions::task_management::cleanup_list(&mut tasks);
+            task_management::cleanup_list(&mut tasks);
 
-            actions::task_management::list_tasks(&tasks);
+            task_management::list_tasks(&tasks);
         }
 
         // If the user has not typed a valid command, inform them
-        _ => eprintln!("Unrecognised command!"),
+        _ => eprintln!("Unrecognised command, try help to see the list of commands!"),
     }
 
-    actions::file_management::save_task_list(tasks).unwrap_or_else(|err| {
+    file_management::save_task_list(tasks).unwrap_or_else(|err| {
         eprintln!("{}", err);
     });
 }

@@ -57,7 +57,7 @@ pub fn read_task_list() -> Result<Vec<Task>, &'static str> {
 
     match &file {
         Ok(file) => file,
-        Err(_) => return Err("Couldn't open Tasks file!")
+        Err(_) => return Err("Couldn't open Tasks file, Try running init to create a tasks file!")
     };
 
     // Declare a reader for the file
