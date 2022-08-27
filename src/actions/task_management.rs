@@ -2,6 +2,8 @@ use crate::task::Task;
 use crate::task::TaskStatus;
 
 use crate::task_exists;
+use crate::print_success;
+use crate::print_error;
 
 
 // Function to update a task's status to inprogress
@@ -10,10 +12,10 @@ pub fn start_task(t: &mut Task) {
         // If the task is not started, start it 
         TaskStatus::NotStarted => {
             t.status = TaskStatus::InProgress;
-            println!("Started task '{}'", t.desc);
+            print_success(format!("Started task '{}'", t.desc).as_str());
         },
         // Otherwise inform the user of the tasks' current status
-        _ => println!("Task already in progress!"),
+        _ => print_error("Task already in progress!"),
     }
 }
 
@@ -26,7 +28,7 @@ pub fn finish_task(t: &mut Task) {
         // If the task is either not started or in progress, complete it
         _ => {
             t.status = TaskStatus::Completed;
-            println!("Task '{}' completed!", t.desc);
+            print_success(format!("Task '{}' completed!", t.desc).as_str());
         },
     }
 }
@@ -35,7 +37,7 @@ pub fn finish_task(t: &mut Task) {
 // Function to set the status of any task to NotStarted
 pub fn restart_task(t: &mut Task) {
     t.status = TaskStatus::NotStarted;
-    println!("Task '{}' restarted!", t.desc);
+    print_success(format!("Task '{}' restarted!", t.desc).as_str());
 }
 
 
@@ -52,7 +54,7 @@ pub fn add_task(tasks: &mut Vec<Task>, desc: String) -> Result<(), &'static str>
     // Unwrapping the task if it was created succesfully
     let new_task = new_task.unwrap();
 
-    println!("Task '{}' added!", &new_task.desc);
+    print_success(format!("Task '{}' added!", &new_task.desc).as_str());
 
     tasks.push(new_task);
 
@@ -70,7 +72,7 @@ pub fn remove_task(tasks: &mut Vec<Task>, task_index: usize) {
 
     // Printing out the task description so the user knows what task was deleted
     let task_desc = &tasks[task_index].desc;
-    println!("Task '{}' removed!", task_desc);
+    print_success(format!("Task '{}' removed!", task_desc).as_str());
 
     // Remove the task from the tasklist
     tasks.remove(task_index);
@@ -136,7 +138,7 @@ pub fn cleanup_list(tasks: &mut Vec<Task>) {
         }
     }
 
-    println!("Removed {} Completed tasks!", tasks_to_remove.len());
+    print_success(format!("Removed {} Completed tasks!", tasks_to_remove.len()).as_str());
 
     for index in tasks_to_remove {
         tasks.remove(index);
@@ -146,8 +148,9 @@ pub fn cleanup_list(tasks: &mut Vec<Task>) {
 
 // Function to list task
 pub fn list_tasks(tasks: &[Task]) {
+    // Prints an output informing the user that there are no tasks if the tasklist is empty
     if tasks.is_empty() {
-        crate::print_error("No tasks found, Add a task with the add command!");
+        print_error("No tasks found, Add a task with the add command!");
     }
 
     let mut task_id = 1;

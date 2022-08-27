@@ -18,7 +18,7 @@ pub fn init_list() -> Result<(), &'static str>{
     // Checks to see if the file was created, returning an error result if it wasn't
     match file {
         Ok(_) => {
-            println!("Task list created successfully!");
+            crate::print_success("Task list created successfully!");
             Ok(())
         },
         Err(_) => Err("Error creating file!"),

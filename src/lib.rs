@@ -73,10 +73,18 @@ fn get_task_index(config: Config, tasklist: &Vec<Task>) -> usize {
 
 
 // Function to print errors
-fn print_error(error_message: &str) {
-   let error_symbol = format!("[{}]", "!".red());
+fn print_error(message: &str) {
+    let error_symbol = format!("[{}]", "!".red());
 
-   eprint!("{} {}", error_symbol.bold(), error_message);
+    eprint!("{} {}", error_symbol.bold(), message);
+}
+
+
+// Function to print success messages
+fn print_success(message: &str) {
+    let success_symbol = format!("[{}]", "!".blue());
+
+    eprint!("{} {}\n", success_symbol.bold(), message);
 }
 
 
@@ -157,8 +165,12 @@ pub fn run(config: Config) {
 
         // Remove completed tasks
         "cleanup" => {
+            // Removing completed tasks
             task_management::cleanup_list(&mut tasks);
 
+            println!("");
+            
+            // Displaying the cleaned up task list
             task_management::list_tasks(&tasks);
         }
 
