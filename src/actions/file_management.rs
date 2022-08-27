@@ -33,7 +33,7 @@ pub fn save_task_list(tasks: Vec<Task>) -> Result<(), &'static str>{
     
     // Looping through every task and converting it to csv format, and adding it to the vec
     for task in tasks {
-        let line = format!("{},{}\n", task.desc, task.status_to_string());
+        let line = format!("{}|{}\n", task.desc, task.status_to_string());
 
         tasks_to_write.push_str(&line);
     }
@@ -113,7 +113,7 @@ pub fn read_task_list() -> Result<Vec<Task>, &'static str> {
 
 // Function to read a string in csv formating
 fn read_csv_line(line: String) -> Vec<String>{
-    let data_points: Vec<&str> = line.split(",").collect();
+    let data_points: Vec<&str> = line.split("|").collect();
 
     let mut data:Vec<String> = Vec::new();
 
