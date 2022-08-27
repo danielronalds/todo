@@ -20,6 +20,12 @@ impl Task {
             return Err("Tasks cannot have an empty desciption!")
         }
 
+        // Checks that the string doesn't contain a | character, as that would mess with saving the
+        // tasks to the .tasks file as it is used as the seperator of the task desc, and status
+        if task_desc.contains("|") {
+            return Err("Tasks cannot contain the | character in their descriptions!")
+        }
+
         // Otherwise returning a task struct
         Ok(Task {
             desc: task_desc.to_string(),
