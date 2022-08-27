@@ -79,6 +79,25 @@ pub fn remove_task(tasks: &mut Vec<Task>, task_index: usize) {
 }
 
 
+// Function that updates the given tasks description
+pub fn update_task(task: &Task, new_desc: &str) -> Result<Task, &'static str> {
+    // Creates a new task that the function returns, so that error checking of what a proper task
+    // desciption should be doesn't have to be repeated twice, meaning that if the requirments 
+    // changed, this code wouldn't have to be
+    let new_task = Task::build(&new_desc, task.status.clone());
+
+    // Checking if it's safe to unwrap the task and return it, to avoid a panic!
+    match new_task {
+        Ok(_) => (),
+        Err(err) => return Err(err),
+    }
+
+    print_success(format!("Updated Task to '{}'", new_desc).as_str());
+
+    Ok(new_task.unwrap())
+}
+
+
 // Function to sort tasks from completed to not started
 pub fn sort_tasks(tasks: Vec<Task>) -> Vec<Task> {
 

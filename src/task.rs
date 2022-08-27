@@ -1,6 +1,7 @@
 // For pretty formating
 use colored::Colorize;
 
+#[derive(Clone)]
 pub enum TaskStatus {
     Completed,
     InProgress,
