@@ -3,6 +3,8 @@ mod actions;
 
 mod task;
 
+mod user_config;
+
 // Use statments
 use std::process::exit;
 
