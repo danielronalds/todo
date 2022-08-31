@@ -6,7 +6,7 @@ fn main() {
     let args: Vec<String> = env::args().collect();
 
     let config = Config::build(args).unwrap_or_else(|err| {
-        println!("{}", err);
+        todo::print_error(format!("{}", err).as_str());
         exit(1);
     });
     

@@ -80,7 +80,7 @@ fn get_task_index(config: Config, tasklist: &Vec<Task>) -> usize {
 
 
 // Function to print errors
-fn print_error(message: &str) {
+pub fn print_error(message: &str) {
     let error_symbol = format!("[{}]", "!".red());
 
     eprint!("{} {}", error_symbol.bold(), message);
@@ -102,7 +102,7 @@ pub fn run(config: Config) {
     // read_task_list() returns an Err() the program exists.
     if config.command.as_str() == "init" {
         file_management::init_list().unwrap_or_else(|err| {
-            eprintln!("{}", err)
+            print_error(format!("{}", err).as_str());
         });
         exit(1);
     }

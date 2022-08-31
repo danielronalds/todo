@@ -1,3 +1,5 @@
+use colored::Colorize;
+
 use crate::task::Task;
 use crate::task::TaskStatus;
 
@@ -175,7 +177,11 @@ pub fn list_tasks(tasks: &[Task]) {
     let mut task_id = 1;
 
     for task in tasks {
-        println!("{}", task.to_string(&task_id));
+        if tasks.len() > 4 {
+            println!("{}: {}", &task_id.to_string().bold(), task.to_string(&task_id));
+        } else {
+            println!("{}", task.to_string(&task_id));
+        }
         task_id += 1;
     }
 }
