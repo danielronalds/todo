@@ -90,6 +90,7 @@ pub fn read_task_list() -> Result<(Vec<Task>, UserConfig), &'static str> {
         // Grabs the config out of the first line of the file
         if line_num == 1 {
             config = UserConfig::build(line_vec);
+            line_num += 1;
             continue;
         }
 

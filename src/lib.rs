@@ -123,7 +123,7 @@ pub fn run(config: Config) {
         "help" => actions::show_help(),
 
         // List the current tasks
-        "list" => task_management::list_tasks(&tasks),
+        "list" => task_management::list_tasks(&tasks, &users_config),
 
         // Add a task
         "add" => {
@@ -186,7 +186,7 @@ pub fn run(config: Config) {
             tasks = task_management::sort_tasks(tasks);
 
             // Displaying the sorted list
-            task_management::list_tasks(&tasks);
+            task_management::list_tasks(&tasks, &users_config);
         }
 
         // Remove completed tasks
@@ -197,7 +197,7 @@ pub fn run(config: Config) {
             println!("");
             
             // Displaying the cleaned up task list
-            task_management::list_tasks(&tasks);
+            task_management::list_tasks(&tasks, &users_config);
         }
 
         // If the user has not typed a valid command, inform them

@@ -45,6 +45,6 @@ impl UserConfig {
     }
 
     pub fn to_save_format(&self) -> String {
-        format!("{}|{}|{}", &self.always_show_id, &self.smart_id, &self.smart_id_num)
+        format!("{}|{}|{}\n", &self.always_show_id, &self.smart_id, &self.smart_id_num)
     }
 }

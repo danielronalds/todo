@@ -6,6 +6,7 @@ use crate::task::TaskStatus;
 use crate::task_exists;
 use crate::print_success;
 use crate::print_error;
+use crate::user_config::UserConfig;
 
 
 // Function to update a task's status to inprogress
@@ -168,7 +169,7 @@ pub fn cleanup_list(tasks: &mut Vec<Task>) {
 
 
 // Function to list task
-pub fn list_tasks(tasks: &[Task]) {
+pub fn list_tasks(tasks: &[Task], users_config: &UserConfig) {
     // Prints an output informing the user that there are no tasks if the tasklist is empty
     if tasks.is_empty() {
         print_error("No tasks found, Add a task with the add command!");
@@ -177,7 +178,8 @@ pub fn list_tasks(tasks: &[Task]) {
     let mut task_id = 1;
 
     for task in tasks {
-        if tasks.len() > 4 {
+        if users_config.always_show_id ||
+           users_config.smart_id && tasks.len() >= users_config.smart_id_num.into() {
             println!("{}: {}", &task_id.to_string().bold(), task.to_string(&task_id));
         } else {
             println!("{}", task.to_string(&task_id));
