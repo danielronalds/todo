@@ -2,6 +2,8 @@ use std::{path::Path, fs, fs::File, io::BufReader, io::BufRead};
 
 use crate::task::{Task, TaskStatus};
 
+use crate::user_config::UserConfig;
+
 const FILENAME: &str = ".tasks";
 
 
@@ -27,19 +29,22 @@ pub fn init_list() -> Result<(), &'static str>{
 
 
 // Function to write to the .tasks file to store tasks in csv 
-pub fn save_task_list(tasks: Vec<Task>) -> Result<(), &'static str>{
+pub fn save_task_list(tasks: Vec<Task>, users_config: UserConfig) -> Result<(), &'static str>{
     // Creating a vec to store the data in csv format that will be written to the .tasks file
-    let mut tasks_to_write: String = String::new();
+    let mut save_data: String = String::new();
+
+    // Saving the user's config
+    save_data.push_str(&users_config.to_save_format());
     
     // Looping through every task and converting it to csv format, and adding it to the vec
     for task in tasks {
         let line = format!("{}|{}\n", task.desc, task.status_to_string());
 
-        tasks_to_write.push_str(&line);
+        save_data.push_str(&line);
     }
     
     // Writing the string containing all the csv data to the .tasks file 
-    let file = fs::write(FILENAME, tasks_to_write);
+    let file = fs::write(FILENAME, save_data);
 
     // Returns an Err() if the file was unable to be written
     match file {
@@ -50,7 +55,7 @@ pub fn save_task_list(tasks: Vec<Task>) -> Result<(), &'static str>{
 
 
 // Function to read the task file into a Vec of tasks
-pub fn read_task_list() -> Result<Vec<Task>, &'static str> {
+pub fn read_task_list() -> Result<(Vec<Task>, UserConfig), &'static str> {
     // Opening the tasks file, and check if the file was opened successfully, returning an Err() 
     // if it wasn't, so that the run function can handle it
     let file = File::open(FILENAME);
@@ -74,20 +79,28 @@ pub fn read_task_list() -> Result<Vec<Task>, &'static str> {
     // Go through every line and add the task to a tasklist that the method returns
     let mut task_list: Vec<Task> = Vec::new();
 
+    let mut config = UserConfig::default();
+
     // int to keep track of the line number for reporting errors within the tasks file
     let mut line_num = 1;
 
     for line in lines {
-        let task_vec = read_csv_line(line);
+        let line_vec = read_csv_line(line);
         
-        if task_vec.len() != 2 {
+        // Grabs the config out of the first line of the file
+        if line_num == 1 {
+            config = UserConfig::build(line_vec);
+            continue;
+        }
+
+        if line_vec.len() != 2 {
             eprintln!("Wrong number of elements in line {line_num}!");
             continue
         }
 
         // If the line has the correct number of csv elements, then build a Task and push it to
         // the task_list vec, printing an error if the task fails to build
-        let new_task = Task::build(&task_vec[0], match task_vec[1].as_str() {
+        let new_task = Task::build(&line_vec[0], match line_vec[1].as_str() {
             "Completed"  => TaskStatus::Completed,
             "InProgress" => TaskStatus::InProgress,
             "NotStarted" => TaskStatus::NotStarted,
@@ -107,7 +120,7 @@ pub fn read_task_list() -> Result<Vec<Task>, &'static str> {
         line_num += 1;
     }
 
-    Ok(task_list)
+    Ok((task_list, config))
 }
 
 

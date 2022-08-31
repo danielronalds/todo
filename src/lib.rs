@@ -110,10 +110,14 @@ pub fn run(config: Config) {
     }
     
     // Open the tasks file, exiting the program with an error message if the file fails to open
-    let mut tasks = file_management::read_task_list().unwrap_or_else(|err| {
+    let read_file = file_management::read_task_list().unwrap_or_else(|err| {
         print_error(err);
         exit(1);
     });
+
+    let mut tasks = read_file.0; 
+
+    let users_config = read_file.1;
 
     match config.command.as_str() {
         "help" => actions::show_help(),
@@ -204,7 +208,7 @@ pub fn run(config: Config) {
         },
     }
 
-    file_management::save_task_list(tasks).unwrap_or_else(|err| {
+    file_management::save_task_list(tasks, users_config).unwrap_or_else(|err| {
         eprintln!("{}", err);
     });
 }
