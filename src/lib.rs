@@ -124,8 +124,6 @@ pub fn run(config: Config) {
         // Continues the code if the command requires a tasklist
         _ => (),
     }
-    if config.command.as_str() == "init" {
-    }
     
     // Open the tasks file, exiting the program with an error message if the file fails to open
     let read_file = file_management::read_task_list().unwrap_or_else(|err| {

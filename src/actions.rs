@@ -8,6 +8,10 @@ pub fn show_help() {
     println!("");
     println!("usage: todo <COMMAND> <ARGUMENT> <SECOND_ARGUMENT>");
     println!("");
+    println!("  help                           Show this dialog");
+    println!("");
+    println!("  version                        Prints the version of todo installed");
+    println!("");
     println!("  init                           Creates a tasklist in the current");
     println!("                                 directory");
     println!("");
@@ -16,7 +20,7 @@ pub fn show_help() {
     println!("");
     println!("  list                           Shows all the tasks on the tasks list");
     println!("");
-    println!("  Sort                           Sorts the tasklist in order from");
+    println!("  sort                           Sorts the tasklist in order from");
     println!("                                 Completed to Not Started tasks");
     println!("");
     println!("  cleanup                        Removes all Completed tasks");
@@ -33,7 +37,20 @@ pub fn show_help() {
     println!("");
     println!("  update <TASK_ID> <NEW_DESC>    Update an existing tasks description");
     println!("");
-    println!("  set <CONFIG_OPTION> <VALUE>    Update an existing tasks description");
+    println!("  set <CONFIG_OPTION> <VALUE>    Change configuration options:");
+    println!("");
+    println!("     always_show_id <true/false> Whether task id's should always be shown");
+    println!("                                 regardless of how many tasks there are");
+    println!("                                 Disabled by default");
+    println!("");
+    println!("     smart_id <true/false>       Only show task id's when there are a");
+    println!("                                 certain number of tasks or more on the");
+    println!("                                 task list. Enabled by default.");
+    println!("                                 NOTE: Overridden by always_show_id");
+    println!("");
+    println!("     num_of_tasks <NUM_OF_TAKS>  The number of tasks to start displaying");
+    println!("                                 task id's when smart_id is enabled.");
+    println!("                                 Default is 5.");
 }
 
 // Function to show version
