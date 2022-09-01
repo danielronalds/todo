@@ -10,9 +10,11 @@ use std::process::exit;
 
 use actions::task_management;
 use actions::file_management;
+use actions::config_management;
 
 use colored::Colorize;
 use task::Task;
+use user_config::UserConfig;
 
 
 pub struct Config {
@@ -117,7 +119,7 @@ pub fn run(config: Config) {
 
     let mut tasks = read_file.0; 
 
-    let users_config = read_file.1;
+    let mut users_config = read_file.1;
 
     match config.command.as_str() {
         "help" => actions::show_help(),
@@ -200,6 +202,8 @@ pub fn run(config: Config) {
             task_management::list_tasks(&tasks, &users_config);
         }
 
+        "set" => config_command_management(&config, &mut users_config),
+
         // If the user has not typed a valid command, inform them
         _ => {
             print_error("Unrecognised command");
@@ -211,4 +215,37 @@ pub fn run(config: Config) {
     file_management::save_task_list(tasks, users_config).unwrap_or_else(|err| {
         eprintln!("{}", err);
     });
+}
+
+// Function to manage the set command
+fn config_command_management(config: &Config, users_config: &mut UserConfig) {
+    match config.command_arg.as_str() {
+        "smart_id" => {
+            config_management::set_smart_id(users_config, &config.second_arg)
+                .unwrap_or_else(|err| {
+                    print_error(err);
+                    exit(1);
+                })
+        }
+
+        "num_of_tasks" => {
+            config_management::set_num_of_tasks(users_config, &config.second_arg)
+                .unwrap_or_else(|err| {
+                    print_error(err);
+                    exit(1);
+                })
+        }
+
+        "always_show_id" => {
+            config_management::set_always_show_id(users_config, &config.second_arg)
+                .unwrap_or_else(|err| {
+                    print_error(err);
+                    exit(1);
+                })
+        }
+
+        _ => {
+            print_error("Unrecognised command");
+        }
+    }
 }

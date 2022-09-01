@@ -1,4 +1,0 @@
-Make task id's show up with 5 or more active tasks|Completed
-Add a config file... or implement one into the .tasks file to keep the footprint of the program low. Work on a system that allows the user to toggle options such as task numbers or the tasks file name|InProgress
-Update the help command to show all commands|NotStarted
-Think about adding sub lists... like branches|NotStarted
