@@ -1,5 +1,6 @@
 use std::{path::Path, fs, fs::File, io::BufReader, io::BufRead};
 
+use crate::{print_error, print_success};
 use crate::task::{Task, TaskStatus};
 
 use crate::user_config::UserConfig;
@@ -25,6 +26,30 @@ pub fn init_list() -> Result<(), &'static str>{
         },
         Err(_) => Err("Error creating file!"),
     }
+}
+
+
+// Function to delete the list in the current directory
+pub fn delete_list() -> Result<(), &'static str> {
+    print_error("This will delete the tasks list in this directory, are you sure? [y/N]\n");
+
+    let mut confirmation = String::new();
+
+    std::io::stdin().read_line(&mut confirmation).expect("Couldn't read line");
+
+    match confirmation.trim() {
+        "y" | "Y" | "yes" | "YES"  => {
+            let deleted = fs::remove_file(FILENAME);
+
+            match deleted {
+                Ok(_) => print_success("Tasklist deleted!"),
+                Err(_) => return Err("Tasklist could not be deleted!")
+            };
+        },
+        _ => return Err("Tasklist was not deleted"),
+    }
+
+    Ok(())
 }
 
 

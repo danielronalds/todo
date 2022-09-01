@@ -101,14 +101,30 @@ fn print_success(message: &str) {
 
 // Main run function
 pub fn run(config: Config) {
-    // Checks to see if the user is trying to create a task list before attempting to open one, 
-    // to prevent the user from never being able to create a tasks list, as when the function
-    // read_task_list() returns an Err() the program exists.
+    // Runs the commands that do not require a taskslist 
+    match config.command.as_str() {
+        // Init command
+        "init" => {
+            file_management::init_list().unwrap_or_else(|err| {
+                print_error(format!("{}", err).as_str());
+            });
+            exit(1);
+        },
+
+        "help" => {
+            actions::show_help();
+            exit(1);
+        },
+
+        "version" => {
+            actions::show_version();
+            exit(1);
+        },
+
+        // Continues the code if the command requires a tasklist
+        _ => (),
+    }
     if config.command.as_str() == "init" {
-        file_management::init_list().unwrap_or_else(|err| {
-            print_error(format!("{}", err).as_str());
-        });
-        exit(1);
     }
     
     // Open the tasks file, exiting the program with an error message if the file fails to open
@@ -122,7 +138,14 @@ pub fn run(config: Config) {
     let mut users_config = read_file.1;
 
     match config.command.as_str() {
-        "help" => actions::show_help(),
+        // Deletes the tasklist in the directory
+        "deletelist" => {
+            file_management::delete_list().unwrap_or_else(|err| {
+                print_error(err);
+            });
+
+            exit(1);
+        },
 
         // List the current tasks
         "list" => task_management::list_tasks(&tasks, &users_config),
@@ -216,6 +239,7 @@ pub fn run(config: Config) {
         eprintln!("{}", err);
     });
 }
+
 
 // Function to manage the set command
 fn config_command_management(config: &Config, users_config: &mut UserConfig) {
