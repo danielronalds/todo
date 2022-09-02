@@ -46,7 +46,7 @@ pub fn restart_task(t: &mut Task) {
 
 // Adds a task to a tasks vec
 pub fn add_task(tasks: &mut Vec<Task>, desc: String) -> Result<(), &'static str>{
-    let new_task = Task::build(&desc, TaskStatus::NotStarted);
+    let new_task = Task::build(desc, TaskStatus::NotStarted);
 
     // Checks to see if the task was created succesfully, returning an error if not
     match &new_task {
@@ -83,11 +83,11 @@ pub fn remove_task(tasks: &mut Vec<Task>, task_index: usize) {
 
 
 // Function that updates the given tasks description
-pub fn update_task(task: &Task, new_desc: &str) -> Result<Task, &'static str> {
+pub fn update_task(task: &Task, new_desc: String) -> Result<Task, &'static str> {
     // Creates a new task that the function returns, so that error checking of what a proper task
     // desciption should be doesn't have to be repeated twice, meaning that if the requirments 
     // changed, this code wouldn't have to be
-    let new_task = Task::build(&new_desc, task.status.clone());
+    let new_task = Task::build(new_desc.to_string(), task.status.clone());
 
     // Checking if it's safe to unwrap the task and return it, to avoid a panic!
     match new_task {
@@ -103,38 +103,26 @@ pub fn update_task(task: &Task, new_desc: &str) -> Result<Task, &'static str> {
 
 // Function to sort tasks from completed to not started
 pub fn sort_tasks(tasks: Vec<Task>) -> Vec<Task> {
-
-    // This is probably a rough implementation, however it does work, and I don't think my
-    // knowledge in rust is sufficient enough to simplify this code... yet
-
-    // Declaring vecs to store sorted tasks
+    // Declaring a vec to store sorted tasks, and an array of vecs for sorting
     let mut sorted_tasks: Vec<Task> = Vec::new();
     
-    let mut completed_tasks: Vec<Task> = Vec::new();
-    let mut inprogress_tasks: Vec<Task> = Vec::new();
-    let mut notstarted_tasks: Vec<Task> = Vec::new();
+    let mut sorting_tasks: [Vec<Task>; 3] = Default::default();
 
     // Sorting tasks
     for task in tasks {
         match task.status {
-            TaskStatus::Completed => completed_tasks.push(task),
-            TaskStatus::InProgress => inprogress_tasks.push(task),
-            TaskStatus::NotStarted => notstarted_tasks.push(task),
+            TaskStatus::Completed => sorting_tasks[0].push(task),
+            TaskStatus::InProgress => sorting_tasks[1].push(task),
+            TaskStatus::NotStarted => sorting_tasks[2].push(task),
         } 
     }
 
     // Combining all the sorted vecs into one vec to return
-    for task in completed_tasks {
-        sorted_tasks.push(task);
-    }
-
-    for task in inprogress_tasks {
-        sorted_tasks.push(task);
-    }
-
-    for task in notstarted_tasks {
-        sorted_tasks.push(task);
-    }
+    for tasks in sorting_tasks {
+        for task in tasks {
+            sorted_tasks.push(task);
+        } 
+    } 
 
     sorted_tasks
 }

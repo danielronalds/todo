@@ -15,22 +15,22 @@ pub struct Task {
 
 impl Task {
     // Constructor for task struct
-    pub fn build(task_desc: &str, task_status: TaskStatus) -> Result<Task, &'static str> {
+    pub fn build(desc: String, status: TaskStatus) -> Result<Task, &'static str> {
         // Checking to see if the passed description is empty, returning an error result if it is
-        if task_desc.is_empty() {
+        if desc.is_empty() {
             return Err("Tasks cannot have an empty desciption!")
         }
 
         // Checks that the string doesn't contain a | character, as that would mess with saving the
         // tasks to the .tasks file as it is used as the seperator of the task desc, and status
-        if task_desc.contains("|") {
+        if desc.contains("|") {
             return Err("Tasks cannot contain the | character in their descriptions!")
         }
 
         // Otherwise returning a task struct
         Ok(Task {
-            desc: task_desc.to_string(),
-            status: task_status,
+            desc,
+            status,
         })
     }
 

@@ -31,13 +31,13 @@ impl Config {
         }
 
         // Setting the arguments
-        let cmd = args[1].clone();
-        let mut cmd_arg = String::new();
+        let command = args[1].clone();
+        let mut command_arg = String::new();
         let mut second_arg = String::new();
 
         // Checks to see if a command argument was supplied, setting it if it was 
         if args.len() > 2 {
-            cmd_arg = args[2].clone();
+            command_arg = args[2].clone();
         } 
 
         if args.len() > 3 {
@@ -45,9 +45,9 @@ impl Config {
         }
 
         Ok(Config {
-            command: cmd,
-            command_arg: cmd_arg,
-            second_arg: second_arg,
+            command,
+            command_arg,
+            second_arg,
         })
     }
 
@@ -196,7 +196,7 @@ pub fn run(config: Config) {
 
             let task_index = get_task_index(config, &tasks); 
 
-            tasks[task_index] = task_management::update_task(&tasks[task_index], &new_desc)
+            tasks[task_index] = task_management::update_task(&tasks[task_index], new_desc)
                 .unwrap_or_else(|err| {
                     print_error(err);
                     exit(1);

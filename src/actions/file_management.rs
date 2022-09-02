@@ -126,7 +126,7 @@ pub fn read_task_list() -> Result<(Vec<Task>, UserConfig), &'static str> {
 
         // If the line has the correct number of csv elements, then build a Task and push it to
         // the task_list vec, printing an error if the task fails to build
-        let new_task = Task::build(&line_vec[0], match line_vec[1].as_str() {
+        let new_task = Task::build(line_vec[0].clone(), match line_vec[1].as_str() {
             "Completed"  => TaskStatus::Completed,
             "InProgress" => TaskStatus::InProgress,
             "NotStarted" => TaskStatus::NotStarted,
