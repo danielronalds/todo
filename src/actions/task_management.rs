@@ -46,16 +46,11 @@ pub fn restart_task(t: &mut Task) {
 
 // Adds a task to a tasks vec
 pub fn add_task(tasks: &mut Vec<Task>, desc: String) -> Result<(), &'static str>{
-    let new_task = Task::build(desc, TaskStatus::NotStarted);
-
-    // Checks to see if the task was created succesfully, returning an error if not
-    match &new_task {
-        Ok(_) => (),
+    // Creates the task and checks if it was created succesfully, returning an error if not
+    let new_task = match Task::build(desc, TaskStatus::NotStarted) {
+        Ok(new_task) => new_task,
         Err(err) => return Err(err),
-    }
-
-    // Unwrapping the task if it was created succesfully
-    let new_task = new_task.unwrap();
+    };
 
     print_success(format!("Task '{}' added!", &new_task.desc).as_str());
 
@@ -87,17 +82,14 @@ pub fn update_task(task: &Task, new_desc: String) -> Result<Task, &'static str> 
     // Creates a new task that the function returns, so that error checking of what a proper task
     // desciption should be doesn't have to be repeated twice, meaning that if the requirments 
     // changed, this code wouldn't have to be
-    let new_task = Task::build(new_desc.to_string(), task.status.clone());
-
-    // Checking if it's safe to unwrap the task and return it, to avoid a panic!
-    match new_task {
-        Ok(_) => (),
+    let new_task = match Task::build(new_desc, task.status.clone()) {
+        Ok(new_task) => new_task,
         Err(err) => return Err(err),
-    }
+    };
 
-    print_success(format!("Updated Task to '{}'", new_desc).as_str());
+    print_success(format!("Updated Task to '{}'", &new_task.desc).as_str());
 
-    Ok(new_task.unwrap())
+    Ok(new_task)
 }
 
 

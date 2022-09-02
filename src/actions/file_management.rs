@@ -15,11 +15,9 @@ pub fn init_list() -> Result<(), &'static str>{
         return Err("A tasks file already exists!");
     }
 
-    // Creates the file
-    let file = File::create(FILENAME);
-
-    // Checks to see if the file was created, returning an error result if it wasn't
-    match file {
+    // Creates the file Checks to see if the file was created, returning an error result if it 
+    // wasn't
+    match File::create(FILENAME) {
         Ok(_) => {
             crate::print_success("Task list created successfully!");
             Ok(())
@@ -68,11 +66,9 @@ pub fn save_task_list(tasks: Vec<Task>, users_config: UserConfig) -> Result<(), 
         save_data.push_str(&line);
     }
     
-    // Writing the string containing all the csv data to the .tasks file 
-    let file = fs::write(FILENAME, save_data);
-
-    // Returns an Err() if the file was unable to be written
-    match file {
+    // Writing the string containing all the csv data to the .tasks file, and Returns an Err() if 
+    // the file was unable to be written
+    match fs::write(FILENAME, save_data) {
         Ok(_) => Ok(()),
         Err(_) => Err("Failed to write to file!") 
     }
@@ -119,15 +115,13 @@ pub fn read_task_list() -> Result<(Vec<Task>, UserConfig), &'static str> {
             &_ => TaskStatus::NotStarted,
         });
 
-        match &new_task {
-            Ok(_) => (),
+        task_list.push(match new_task {
+            Ok(new_task) => new_task,
             Err(err) => {
-                eprintln!("Error on line {line_num}: {}", err);
+                print_error(format!("Error on line {line_num}: {}", err).as_str());
                 continue;
             }
-        }
-
-        task_list.push(new_task.unwrap());
+        });
 
         line_num += 1;
     }
@@ -140,15 +134,13 @@ pub fn read_task_list() -> Result<(Vec<Task>, UserConfig), &'static str> {
 fn read_file(file_name: &str) -> Result<Vec<String>, &'static str> {
     // Opening the tasks file, and check if the file was opened successfully, returning an Err() 
     // if it wasn't, so that the run function can handle it
-    let file = File::open(file_name);
-
-    match &file {
+    let file = match File::open(file_name) {
         Ok(file) => file,
         Err(_) => return Err("Couldn't open Tasks file, Try running init to create a tasks file!")
     };
 
     // Declare a reader for the file
-    let buf_reader = BufReader::new(file.unwrap());
+    let buf_reader = BufReader::new(file);
     
     // Collecting all the lines into a String Vec
     let lines: Vec<String> = buf_reader.lines().map(|l| {
