@@ -53,7 +53,7 @@ impl Config {
 
     pub fn argument_to_index(&self) -> usize {
         self.command_arg.parse().unwrap_or_else(|_| {
-            eprintln!("That is not a valid Task ID!");
+            print_error("That is not a valid Task ID!");
             exit(1);
         })
     }
@@ -159,7 +159,8 @@ pub fn run(config: Config) {
 
         // Delete a task
         "delete" | "remove" => {
-            let task_index = config.argument_to_index();
+            let task_index = get_task_index(config, &tasks);
+
             task_management::remove_task(&mut tasks, task_index);
         },
 

@@ -11,10 +11,12 @@ pub fn set_smart_id(users_config: &mut UserConfig, value: &str) -> Result<(), &'
                         users_config.smart_id_num).as_str()
             );
         },
+
         "false" => {
             users_config.smart_id = false;
             print_success("Disabled smart id!")
         },
+
         _ => return Err("Invalid option, Must be either true or false!"), 
     };
     
@@ -24,20 +26,16 @@ pub fn set_smart_id(users_config: &mut UserConfig, value: &str) -> Result<(), &'
 
 // Function to set the number of tasks for smart id to trigger
 pub fn set_num_of_tasks(users_config: &mut UserConfig, value: &str) -> Result<(), &'static str> {
-    // Parses the value given, and checks if it is safe to unwrap, returning an error if not
-    let num_of_tasks = value.parse();
-
-    match num_of_tasks {
-        Ok(_) => (),
+    // Parses the value given, returning an error if the parse failed
+    let num_of_tasks = match value.parse() {
+        Ok(num) => num,
         Err(_) => return Err("Incorrect value, must be an integar!"),
-    }
+    };
 
-    users_config.smart_id_num = num_of_tasks.unwrap();
+    users_config.smart_id_num = num_of_tasks;
 
-    print_success(
-        format!("Task Id's will now show up when there are {} or more Tasks!", 
-                users_config.smart_id_num).as_str()
-    );
+    print_success(format!("Task Id's will now show up when there are {} or more Tasks!", 
+                  users_config.smart_id_num).as_str());
 
     Ok(())
 }
@@ -50,10 +48,12 @@ pub fn set_always_show_id(users_config: &mut UserConfig, value: &str) -> Result<
             users_config.always_show_id = true;
             print_success("Enabled always showing Task Id's!")
         },
+
         "false" => {
             users_config.always_show_id = false;
             print_success("Disabled always showing Task Id's!")
         },
+
         _ => return Err("Invalid option, Must be either true or false!"), 
     };
     

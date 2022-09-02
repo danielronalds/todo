@@ -3,7 +3,6 @@ use colored::Colorize;
 use crate::task::Task;
 use crate::task::TaskStatus;
 
-use crate::task_exists;
 use crate::print_success;
 use crate::print_error;
 use crate::user_config::UserConfig;
@@ -27,7 +26,7 @@ pub fn start_task(t: &mut Task) {
 pub fn finish_task(t: &mut Task) {
     match t.status {
         // Inform the user if the task has already been completed
-        TaskStatus::Completed => println!("Task already completed!"),
+        TaskStatus::Completed => print_error("Task already completed!"),
         // If the task is either not started or in progress, complete it
         _ => {
             t.status = TaskStatus::Completed;
@@ -40,6 +39,7 @@ pub fn finish_task(t: &mut Task) {
 // Function to set the status of any task to NotStarted
 pub fn restart_task(t: &mut Task) {
     t.status = TaskStatus::NotStarted;
+
     print_success(format!("Task '{}' restarted!", t.desc).as_str());
 }
 
@@ -62,12 +62,6 @@ pub fn add_task(tasks: &mut Vec<Task>, desc: String) -> Result<(), &'static str>
 
 // Removes a task from a tasks vec
 pub fn remove_task(tasks: &mut Vec<Task>, task_index: usize) {
-    // Removing 1 off error
-    let task_index = task_index - 1;
-
-    // Checks to make sure the task is in range to prevent panic!
-    task_exists(task_index, tasks);
-
     // Printing out the task description so the user knows what task was deleted
     let task_desc = &tasks[task_index].desc;
     print_success(format!("Task '{}' removed!", task_desc).as_str());
@@ -98,19 +92,19 @@ pub fn sort_tasks(tasks: Vec<Task>) -> Vec<Task> {
     // Declaring a vec to store sorted tasks, and an array of vecs for sorting
     let mut sorted_tasks: Vec<Task> = Vec::new();
     
-    let mut sorting_tasks: [Vec<Task>; 3] = Default::default();
+    let mut sorting_vecs: [Vec<Task>; 3] = Default::default();
 
     // Sorting tasks
     for task in tasks {
         match task.status {
-            TaskStatus::Completed => sorting_tasks[0].push(task),
-            TaskStatus::InProgress => sorting_tasks[1].push(task),
-            TaskStatus::NotStarted => sorting_tasks[2].push(task),
+            TaskStatus::Completed => sorting_vecs[0].push(task),
+            TaskStatus::InProgress => sorting_vecs[1].push(task),
+            TaskStatus::NotStarted => sorting_vecs[2].push(task),
         } 
     }
 
     // Combining all the sorted vecs into one vec to return
-    for tasks in sorting_tasks {
+    for tasks in sorting_vecs {
         for task in tasks {
             sorted_tasks.push(task);
         } 
