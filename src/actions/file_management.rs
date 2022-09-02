@@ -81,25 +81,11 @@ pub fn save_task_list(tasks: Vec<Task>, users_config: UserConfig) -> Result<(), 
 
 // Function to read the task file into a Vec of tasks
 pub fn read_task_list() -> Result<(Vec<Task>, UserConfig), &'static str> {
-    // Opening the tasks file, and check if the file was opened successfully, returning an Err() 
-    // if it wasn't, so that the run function can handle it
-    let file = File::open(FILENAME);
-
-    match &file {
-        Ok(file) => file,
-        Err(_) => return Err("Couldn't open Tasks file, Try running init to create a tasks file!")
+    // Opening task file
+    let lines: Vec<String> = match read_file(FILENAME) {
+        Ok(lines) => lines,
+        Err(err) => return Err(err),
     };
-
-    // Declare a reader for the file
-    let buf_reader = BufReader::new(file.unwrap());
-    
-    // Collecting all the lines into a String Vec
-    let lines: Vec<String> = buf_reader.lines().map(|l| {
-        l.unwrap_or_else(|err| {
-            eprintln!("Could not unwrap line! {}", err);
-            String::new()
-        })
-    }).collect(); 
 
     // Go through every line and add the task to a tasklist that the method returns
     let mut task_list: Vec<Task> = Vec::new();
@@ -150,8 +136,34 @@ pub fn read_task_list() -> Result<(Vec<Task>, UserConfig), &'static str> {
 }
 
 
+// Function to open a file, returning a vec of all the lines
+fn read_file(file_name: &str) -> Result<Vec<String>, &'static str> {
+    // Opening the tasks file, and check if the file was opened successfully, returning an Err() 
+    // if it wasn't, so that the run function can handle it
+    let file = File::open(file_name);
+
+    match &file {
+        Ok(file) => file,
+        Err(_) => return Err("Couldn't open Tasks file, Try running init to create a tasks file!")
+    };
+
+    // Declare a reader for the file
+    let buf_reader = BufReader::new(file.unwrap());
+    
+    // Collecting all the lines into a String Vec
+    let lines: Vec<String> = buf_reader.lines().map(|l| {
+        l.unwrap_or_else(|err| {
+            eprintln!("Could not unwrap line! {}", err);
+            String::new()
+        })
+    }).collect();
+
+    Ok(lines)
+}
+
+
 // Function to read a string in csv formating
-fn read_csv_line(line: String) -> Vec<String>{
+fn read_csv_line(line: String) -> Vec<String> {
     let data_points: Vec<&str> = line.split("|").collect();
 
     let mut data:Vec<String> = Vec::new();
