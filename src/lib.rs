@@ -150,6 +150,15 @@ pub fn run(config: Config) {
             exit(1);
         },
 
+        // Changes the current tasklist
+        "tasklist" => {
+            let new_list = config.command_arg;
+            match config_management::set_current_tasklist(&mut users_config, new_list) {
+                Ok(_) => (),
+                Err(err) => print_error(err),
+            }
+        }
+
         // List the current tasks
         "list" => task_management::list_tasks(&tasks, &users_config),
 

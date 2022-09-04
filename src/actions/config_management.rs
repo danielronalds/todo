@@ -1,6 +1,22 @@
 use crate::user_config::UserConfig;
 use crate::print_success;
 
+
+// Function to set the current tasklist
+pub fn set_current_tasklist(users_config: &mut UserConfig, new_tasklist: String) 
+    -> Result<(), &'static str> {
+    if new_tasklist.is_empty() {
+        return Err("No tasklist name supplied!");
+    }
+
+    users_config.current_list = new_tasklist;
+
+    print_success(format!("Switched to {} list!", users_config.current_list).as_str());
+
+    Ok(())
+}
+
+
 // Function to update the smart Id option
 pub fn set_smart_id(users_config: &mut UserConfig, value: &str) -> Result<(), &'static str> {
     match value {
