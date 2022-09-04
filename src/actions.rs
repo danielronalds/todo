@@ -37,7 +37,12 @@ pub fn show_help() {
     println!("");
     println!("  update <TASK_ID> <NEW_DESC>    Update an existing tasks description");
     println!("");
+    println!("  tasklists                      List all the current tasklists");
+    println!("");
+    println!("  tasklist <LIST_NAME>           Changes the current tasklist");
+    println!("");
     println!("  set <CONFIG_OPTION> <VALUE>    Change configuration options:");
+    println!("");
     println!("");
     println!("     always_show_id <true/false> Whether task id's should always be shown");
     println!("                                 regardless of how many tasks there are");
