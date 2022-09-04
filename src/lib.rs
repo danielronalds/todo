@@ -131,15 +131,14 @@ pub fn run(config: Config) {
         exit(1);
     });
     
-    // TEMPORARY, this will be taken from the config
-    let current_list = String::from("Default");
+    let mut users_config = read_file.1;
+
+    // Getting the current task list from the config
+    let current_list = users_config.current_list.clone();
 
     let sorted_tasks = task_management::sort_by_current_list(current_list.clone(), read_file.0);
 
     let mut tasks = sorted_tasks.0; 
-
-    let mut users_config = read_file.1;
-
 
     match config.command.as_str() {
         // Deletes the tasklist in the directory
