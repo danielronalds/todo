@@ -1,11 +1,11 @@
 use std::{path::Path, fs, fs::File, io::BufReader, io::BufRead};
 
 use crate::{print_error, print_success};
-use crate::task::{Task, TaskStatus};
+use crate::task::{TaskList, Task, TaskStatus};
 
 use crate::user_config::UserConfig;
 
-const FILENAME: &str = ".tasks";
+const FILENAME: &str = ".tasks.testing";
 
 
 // Function to create a .tasks file to store tasks in csv format
@@ -52,18 +52,24 @@ pub fn delete_list() -> Result<(), &'static str> {
 
 
 // Function to write to the .tasks file to store tasks in csv 
-pub fn save_task_list(tasks: Vec<Task>, users_config: UserConfig) -> Result<(), &'static str>{
+pub fn save_task_list(tasklists: Vec<TaskList>, users_config: UserConfig) -> Result<(), &'static str>{
     // Creating a vec to store the data in csv format that will be written to the .tasks file
     let mut save_data: String = String::new();
 
     // Saving the user's config
     save_data.push_str(&users_config.to_save_format());
     
-    // Looping through every task and converting it to csv format, and adding it to the vec
-    for task in tasks {
-        let line = format!("{}|{}\n", task.desc, task.status_to_string());
+    // Looping through every tasklist and writing its name on its own line, so that the read 
+    // function can recognise the begining of a new tasklist. Tasks and then listed in the normal 
+    // format underneath
+    for tasklist in tasklists {
+        save_data.push_str(format!("{}\n", tasklist.name).as_str());
 
-        save_data.push_str(&line);
+        for task in tasklist.tasks {
+            let line = format!("{}|{}\n", task.desc, task.status_to_string());
+
+            save_data.push_str(&line);
+        }
     }
     
     // Writing the string containing all the csv data to the .tasks file, and Returns an Err() if 

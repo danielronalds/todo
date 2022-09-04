@@ -14,6 +14,7 @@ use actions::config_management;
 
 use colored::Colorize;
 use task::Task;
+use task::TaskList;
 use user_config::UserConfig;
 
 
@@ -234,7 +235,12 @@ pub fn run(config: Config) {
         },
     }
 
-    file_management::save_task_list(tasks, users_config).unwrap_or_else(|err| {
+    // ROUGH PROOF OF CONCEPT CODE
+    let mut tasklist_vec: Vec<TaskList> = Vec::new();
+
+    tasklist_vec.push(TaskList::build(String::from("Default List"), tasks).unwrap());
+
+    file_management::save_task_list(tasklist_vec, users_config).unwrap_or_else(|err| {
         eprintln!("{}", err);
     });
 }
