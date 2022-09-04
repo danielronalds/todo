@@ -136,6 +136,8 @@ pub fn run(config: Config) {
 
     let mut users_config = read_file.1;
 
+    let listname = String::from("Default");
+
     match config.command.as_str() {
         // Deletes the tasklist in the directory
         "deletelist" => {
@@ -152,7 +154,7 @@ pub fn run(config: Config) {
         // Add a task
         "add" => {
             let task_desc = config.command_arg;
-            task_management::add_task(&mut tasks, task_desc).unwrap_or_else(|err| {
+            task_management::add_task(&mut tasks, task_desc, listname).unwrap_or_else(|err| {
                 print_error(err);
                 exit(1);
             });
@@ -235,12 +237,7 @@ pub fn run(config: Config) {
         },
     }
 
-    // ROUGH PROOF OF CONCEPT CODE
-    let mut tasklist_vec: Vec<TaskList> = Vec::new();
-
-    tasklist_vec.push(TaskList::build(String::from("Default List"), tasks).unwrap());
-
-    file_management::save_task_list(tasklist_vec, users_config).unwrap_or_else(|err| {
+    file_management::save_task_list(tasks, users_config).unwrap_or_else(|err| {
         eprintln!("{}", err);
     });
 }

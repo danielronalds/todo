@@ -45,9 +45,9 @@ pub fn restart_task(t: &mut Task) {
 
 
 // Adds a task to a tasks vec
-pub fn add_task(tasks: &mut Vec<Task>, desc: String) -> Result<(), &'static str>{
+pub fn add_task(tasks: &mut Vec<Task>, desc: String, list: String) -> Result<(), &'static str> {
     // Creates the task and checks if it was created succesfully, returning an error if not
-    let new_task = match Task::build(desc, TaskStatus::NotStarted) {
+    let new_task = match Task::build(list, desc, TaskStatus::NotStarted) {
         Ok(new_task) => new_task,
         Err(err) => return Err(err),
     };
@@ -76,7 +76,7 @@ pub fn update_task(task: &Task, new_desc: String) -> Result<Task, &'static str> 
     // Creates a new task that the function returns, so that error checking of what a proper task
     // desciption should be doesn't have to be repeated twice, meaning that if the requirments 
     // changed, this code wouldn't have to be
-    let new_task = match Task::build(new_desc, task.status.clone()) {
+    let new_task = match Task::build(task.list.clone(), new_desc, task.status.clone()) {
         Ok(new_task) => new_task,
         Err(err) => return Err(err),
     };

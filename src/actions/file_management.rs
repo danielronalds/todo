@@ -1,7 +1,7 @@
 use std::{path::Path, fs, fs::File, io::BufReader, io::BufRead};
 
 use crate::{print_error, print_success};
-use crate::task::{TaskList, Task, TaskStatus};
+use crate::task::{Task, TaskStatus};
 
 use crate::user_config::UserConfig;
 
@@ -52,24 +52,16 @@ pub fn delete_list() -> Result<(), &'static str> {
 
 
 // Function to write to the .tasks file to store tasks in csv 
-pub fn save_task_list(tasklists: Vec<TaskList>, users_config: UserConfig) -> Result<(), &'static str>{
+pub fn save_task_list(tasks: Vec<Task>, users_config: UserConfig) -> Result<(), &'static str>{
     // Creating a vec to store the data in csv format that will be written to the .tasks file
     let mut save_data: String = String::new();
 
     // Saving the user's config
     save_data.push_str(&users_config.to_save_format());
     
-    // Looping through every tasklist and writing its name on its own line, so that the read 
-    // function can recognise the begining of a new tasklist. Tasks and then listed in the normal 
-    // format underneath
-    for tasklist in tasklists {
-        save_data.push_str(format!("{}\n", tasklist.name).as_str());
-
-        for task in tasklist.tasks {
-            let line = format!("{}|{}\n", task.desc, task.status_to_string());
-
-            save_data.push_str(&line);
-        }
+    for task in tasks {
+        let line = format!("{}|{}|{}\n", task.desc, task.status_to_string(), task.list);
+        save_data.push_str(&line);
     }
     
     // Writing the string containing all the csv data to the .tasks file, and Returns an Err() if 
@@ -90,7 +82,7 @@ pub fn read_task_list() -> Result<(Vec<Task>, UserConfig), &'static str> {
     };
 
     // Go through every line and add the task to a tasklist that the method returns
-    let mut task_list: Vec<Task> = Vec::new();
+    let mut tasks: Vec<Task> = Vec::new();
 
     let mut config = UserConfig::default();
 
@@ -107,21 +99,22 @@ pub fn read_task_list() -> Result<(Vec<Task>, UserConfig), &'static str> {
             continue;
         }
 
-        if line_vec.len() != 2 {
+        if line_vec.len() != 3 {
             eprintln!("Wrong number of elements in line {line_num}!");
             continue
         }
 
         // If the line has the correct number of csv elements, then build a Task and push it to
         // the task_list vec, printing an error if the task fails to build
-        let new_task = Task::build(line_vec[0].clone(), match line_vec[1].as_str() {
-            "Completed"  => TaskStatus::Completed,
-            "InProgress" => TaskStatus::InProgress,
-            "NotStarted" => TaskStatus::NotStarted,
-            &_ => TaskStatus::NotStarted,
-        });
+        let new_task = Task::build(
+            line_vec[2].clone(), line_vec[0].clone(), match line_vec[1].as_str() {
+                "Completed"  => TaskStatus::Completed,
+                "InProgress" => TaskStatus::InProgress,
+                "NotStarted" => TaskStatus::NotStarted,
+                &_ => TaskStatus::NotStarted,
+            });
 
-        task_list.push(match new_task {
+        tasks.push(match new_task {
             Ok(new_task) => new_task,
             Err(err) => {
                 print_error(format!("Error on line {line_num}: {}", err).as_str());
@@ -132,7 +125,7 @@ pub fn read_task_list() -> Result<(Vec<Task>, UserConfig), &'static str> {
         line_num += 1;
     }
 
-    Ok((task_list, config))
+    Ok((tasks, config))
 }
 
 
@@ -151,7 +144,7 @@ fn read_file(file_name: &str) -> Result<Vec<String>, &'static str> {
     // Collecting all the lines into a String Vec
     let lines: Vec<String> = buf_reader.lines().map(|l| {
         l.unwrap_or_else(|err| {
-            eprintln!("Could not unwrap line! {}", err);
+            print_error(format!("Could not unwrap line! {}", err).as_str());
             String::new()
         })
     }).collect();
