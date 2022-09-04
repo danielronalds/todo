@@ -27,6 +27,32 @@ pub fn sort_by_current_list(current_list: String, tasks: Vec<Task>) -> (Vec<Task
 }
 
 
+// Function to add a tasklist
+pub fn add_tasklist(users_config: &mut UserConfig, new_tasklist: String) 
+    -> Result<(), &'static str> {
+    if new_tasklist.is_empty() {
+        return Err("No tasklist name supplied!");
+    }
+    
+    if new_tasklist.contains("|") {
+        return Err("Tasklist names cannot contain the | character");
+    }
+
+    // Checks to see if the tasklist exists, reporting an error if it does
+    for list_name in &users_config.tasklists {
+        if &new_tasklist == list_name {
+            return Err("Tasklist already exists!");
+        }
+    }
+
+    print_success(format!("Tasklist {} Added!", &new_tasklist).as_str());
+
+    users_config.tasklists.push(new_tasklist);
+
+    Ok(())
+}
+
+
 // Function that lists all of the current tasklist
 pub fn list_tasklists(user_config: &UserConfig) {
     for name in &user_config.tasklists {

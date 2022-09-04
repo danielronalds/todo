@@ -9,6 +9,7 @@ pub fn set_current_tasklist(users_config: &mut UserConfig, new_tasklist: String)
         return Err("No tasklist name supplied!");
     }
 
+    // Checks to see if the tasklist exists, setting the current tasklist if it does
     for list_name in &users_config.tasklists {
         if &new_tasklist == list_name {
             users_config.current_list = new_tasklist;

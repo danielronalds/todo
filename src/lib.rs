@@ -162,6 +162,15 @@ pub fn run(config: Config) {
         // Lists the stored tasklists
         "tasklists" => task_management::list_tasklists(&users_config),
 
+        // Creates a new tasklist
+        "new" => {
+            let new_list_name = config.command_arg;
+            task_management::add_tasklist(&mut users_config, new_list_name).unwrap_or_else(|err| {
+                print_error(err);
+                exit(1);
+            })
+        }
+
         // List the current tasks
         "list" => task_management::list_tasks(&tasks, &users_config),
 
