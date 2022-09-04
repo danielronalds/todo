@@ -1,3 +1,5 @@
 false|true|5
-This is an example task 3|NotStarted|Default
+This is an example task 3|Completed|Default
+This is a task on the first list|InProgress|Default
 This is an example task|NotStarted|Default
+This is an in progress task on the second list|InProgress|Second list

@@ -8,6 +8,25 @@ use crate::print_error;
 use crate::user_config::UserConfig;
 
 
+// Function to sort a tasklist and return a vec containing the tasks tagged with the current list
+// as well as vec containing the rest
+pub fn sort_by_current_list(current_list: String, tasks: Vec<Task>) -> (Vec<Task>, Vec<Task>) {
+    let mut tagged_tasks: Vec<Task> = Vec::new();
+
+    let mut other_tasks: Vec<Task> = Vec::new();
+
+    for task in tasks {
+        if task.list == current_list {
+            tagged_tasks.push(task);
+            continue;
+        }
+        other_tasks.push(task);
+    }
+
+    (tagged_tasks, other_tasks)
+}
+
+
 // Function to update a task's status to inprogress
 pub fn start_task(t: &mut Task) {
     match t.status {

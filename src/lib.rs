@@ -14,7 +14,6 @@ use actions::config_management;
 
 use colored::Colorize;
 use task::Task;
-use task::TaskList;
 use user_config::UserConfig;
 
 
@@ -131,12 +130,16 @@ pub fn run(config: Config) {
         print_error(err);
         exit(1);
     });
+    
+    // TEMPORARY, this will be taken from the config
+    let current_list = String::from("Default");
 
-    let mut tasks = read_file.0; 
+    let sorted_tasks = task_management::sort_by_current_list(current_list.clone(), read_file.0);
+
+    let mut tasks = sorted_tasks.0; 
 
     let mut users_config = read_file.1;
 
-    let listname = String::from("Default");
 
     match config.command.as_str() {
         // Deletes the tasklist in the directory
@@ -154,7 +157,7 @@ pub fn run(config: Config) {
         // Add a task
         "add" => {
             let task_desc = config.command_arg;
-            task_management::add_task(&mut tasks, task_desc, listname).unwrap_or_else(|err| {
+            task_management::add_task(&mut tasks, task_desc, current_list).unwrap_or_else(|err| {
                 print_error(err);
                 exit(1);
             });
@@ -237,7 +240,17 @@ pub fn run(config: Config) {
         },
     }
 
-    file_management::save_task_list(tasks, users_config).unwrap_or_else(|err| {
+    // Combined tasklist
+    // ROUGH CODE
+    let mut all_tasks: Vec<Task> = Vec::new();
+    for task in tasks {
+        all_tasks.push(task);
+    }
+    for task in sorted_tasks.1 {
+        all_tasks.push(task);
+    }
+
+    file_management::save_task_list(all_tasks, users_config).unwrap_or_else(|err| {
         eprintln!("{}", err);
     });
 }
