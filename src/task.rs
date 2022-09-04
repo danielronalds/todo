@@ -1,16 +1,38 @@
 // For pretty formating
 use colored::Colorize;
 
+// Struct to store tasks, to allow for multiple task lists in one directory
+pub struct TaskList {
+    pub name: String,
+    pub tasks: Vec<Task>,
+}
+
+impl TaskList {
+    // Function to build a TaskList
+    pub fn build(name: String, tasks: Vec<Task>) -> Result<TaskList, &'static str> {
+        if name.is_empty() {
+            return Err("Tasklist's must have a name!");
+        }
+
+        Ok(TaskList {
+            name,
+            tasks,
+        })
+    }
+}
+
+
+// Struct to store a Task
+pub struct Task {
+    pub desc: String,
+    pub status: TaskStatus,
+}
+
 #[derive(Clone)]
 pub enum TaskStatus {
     Completed,
     InProgress,
     NotStarted,
-}
-
-pub struct Task {
-    pub desc: String,
-    pub status: TaskStatus,
 }
 
 impl Task {

@@ -1,8 +1,0 @@
-false|true|5
-Make task id's show up with 5 or more active tasks|Completed
-Add a config file... or implement one into the .tasks file to keep the footprint of the program low. Work on a system that allows the user to toggle options such as task numbers or the tasks file name|Completed
-Create a version command|Completed
-Add a comand to remove a taskslist from the current directory|Completed
-Update the help command to show all commands|Completed
-Look through all the code and refactor and otherwise clean it up a bit. There are definitely better ways to do some of what I've done|InProgress
-Think about adding sub lists... like branches|NotStarted
