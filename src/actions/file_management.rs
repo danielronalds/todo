@@ -58,6 +58,7 @@ pub fn save_task_list(tasks: Vec<Task>, users_config: UserConfig) -> Result<(), 
 
     // Saving the user's config
     save_data.push_str(&users_config.to_save_format());
+    save_data.push_str(&users_config.tasklists_to_save_format());
     
     for task in tasks {
         let line = format!("{}|{}|{}\n", task.desc, task.status_to_string(), task.list);
@@ -96,7 +97,14 @@ pub fn read_task_list() -> Result<(Vec<Task>, UserConfig), &'static str> {
         if line_num == 1 {
             config = UserConfig::build(line_vec);
             line_num += 1;
-            continue;
+            continue
+        }
+
+        // Grabs the exisiting tasklists out of the second line
+        if line_num == 2 {
+            config.tasklists = line_vec;
+            line_num += 1;
+            continue
         }
 
         if line_vec.len() != 3 {

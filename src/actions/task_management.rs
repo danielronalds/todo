@@ -27,6 +27,14 @@ pub fn sort_by_current_list(current_list: String, tasks: Vec<Task>) -> (Vec<Task
 }
 
 
+// Function that lists all of the current tasklist
+pub fn list_tasklists(user_config: &UserConfig) {
+    for name in &user_config.tasklists {
+        println!("{name}");
+    }
+}
+
+
 // Function to update a task's status to inprogress
 pub fn start_task(t: &mut Task) {
     match t.status {

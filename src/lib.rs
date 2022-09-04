@@ -159,6 +159,9 @@ pub fn run(config: Config) {
             }
         }
 
+        // Lists the stored tasklists
+        "tasklists" => task_management::list_tasklists(&users_config),
+
         // List the current tasks
         "list" => task_management::list_tasks(&tasks, &users_config),
 

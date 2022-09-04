@@ -1,6 +1,5 @@
 false|true|5|Default
-This is an example task 3|Completed|Default
-This is a task on the first list|InProgress|Default
+Default|Main|Second list
 This is an example task|NotStarted|Default
 This is a task on the main default list|NotStarted|Default
 This is an in progress task on the second list|InProgress|Second list
