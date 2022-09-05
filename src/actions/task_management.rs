@@ -56,6 +56,10 @@ pub fn add_tasklist(users_config: &mut UserConfig, new_tasklist: String)
 // Function that lists all of the current tasklist
 pub fn list_tasklists(user_config: &UserConfig) {
     for name in &user_config.tasklists {
+        if name == &user_config.current_list {
+            println!("{name} {}", "✔".green());
+            continue
+        }
         println!("{name}");
     }
 }
