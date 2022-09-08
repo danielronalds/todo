@@ -150,34 +150,6 @@ pub fn run(config: Config) {
             exit(1);
         },
 
-        "deletetasklist" => {
-            match task_management::delete_tasklist(&mut users_config, &mut tasks) {
-                Ok(message) => print_success(message),
-                Err(err) => print_error(err),
-            }
-        }
-
-        // Changes the current tasklist
-        "tasklist" => {
-            let new_list = config.command_arg;
-            match config_management::set_current_tasklist(&mut users_config, new_list) {
-                Ok(_) => (),
-                Err(err) => print_error(err),
-            }
-        }
-
-        // Lists the stored tasklists
-        "tasklists" => task_management::list_tasklists(&users_config),
-
-        // Creates a new tasklist
-        "new" => {
-            let new_list_name = config.command_arg;
-            task_management::add_tasklist(&mut users_config, new_list_name).unwrap_or_else(|err| {
-                print_error(err);
-                exit(1);
-            })
-        }
-
         // List the current tasks
         "list" => task_management::list_tasks(&tasks, &users_config),
 
@@ -257,7 +229,13 @@ pub fn run(config: Config) {
             task_management::list_tasks(&tasks, &users_config);
         }
 
+        // Manages the set command
         "set" => config_command_management(&config, &mut users_config),
+
+        // Manages the tasklist command (Everything to do with them)
+        "tasklist" | "tasklists" => {
+            tasklist_command_management(&config, &mut users_config, &mut tasks);
+        }
 
         // If the user has not typed a valid command, inform them
         _ => {
@@ -280,6 +258,47 @@ pub fn run(config: Config) {
     file_management::save_task_list(all_tasks, users_config).unwrap_or_else(|err| {
         eprintln!("{}", err);
     });
+}
+
+
+// Function to manage tasklist related commands
+fn tasklist_command_management(config: &Config, users_config: &mut UserConfig, 
+                               tasks: &mut Vec<Task>) {
+    // Lists all the current tasklists
+    if config.command.as_str() == "tasklists" {
+        task_management::list_tasklists(&users_config);
+        return
+    }
+
+    match config.command_arg.as_str() {
+        // Creating a new tasklist
+        "new" => {
+            let new_list_name = config.second_arg.clone();
+            task_management::add_tasklist(users_config, new_list_name).unwrap_or_else(|err| {
+                print_error(err);
+                exit(1);
+            })
+        }
+
+        // Sets the current tasklist
+        "set" => {
+            let new_list = config.second_arg.clone();
+            match config_management::set_current_tasklist(users_config, new_list) {
+                Ok(_) => (),
+                Err(err) => print_error(err),
+            }
+        }
+
+        // Deletes the current tasklist
+        "delete" => {
+            match task_management::delete_tasklist(users_config, tasks) {
+                Ok(message) => print_success(message),
+                Err(err) => print_error(err),
+            }
+        }
+
+        _ => print_error("Unrecognised command"),
+    }
 }
 
 
@@ -310,8 +329,6 @@ fn config_command_management(config: &Config, users_config: &mut UserConfig) {
                 })
         }
 
-        _ => {
-            print_error("Unrecognised command");
-        }
+        _ => print_error("Unrecognised command"),
     }
 }
