@@ -41,6 +41,11 @@ pub fn show_help() {
     println!("");
     println!("  tasklist <LIST_NAME>           Changes the current tasklist");
     println!("");
+    show_config_help();
+}
+
+// The help menu for config management
+pub fn show_config_help() {
     println!("  set <CONFIG_OPTION> <VALUE>    Change configuration options:");
     println!("");
     println!("");

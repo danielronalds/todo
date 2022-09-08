@@ -329,6 +329,8 @@ fn config_command_management(config: &Config, users_config: &mut UserConfig) {
                 })
         }
 
-        _ => print_error("Unrecognised command"),
+        "help" => actions::show_config_help(),
+
+        _ => print_error("Unrecognised command, try the 'set help'!"),
     }
 }

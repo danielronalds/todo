@@ -1,14 +1,5 @@
-false|true|5
-Implement saving a tasklist to the .tasks file|Completed
-Implement reading multiple tasklist from the .tasks file|Completed
-Implement changing tasks|Completed
-Implement a command for switching tasklists|Completed
-Implement a command for viewing all the current lists|Completed
-Implement a command for creating a new tasklist|Completed
-Make the command for viewing all the current tasklists pretty|Completed
-Implement a command for deleting a tasklist|Completed
-Update the help command to show the tasklist commands. Probably need to start grouping commands|NotStarted
+false|true|4
+Update the help command to show the tasklist commands. Probably need to start grouping commands|InProgress
 Add a listall command that shows all the tasks|NotStarted
-Rejig the commands, so that all commands relating to tasklists are have the same prefix|Completed
 Add a command for transfering a task to another tasklist... maybe|NotStarted
 Refactor the code so that all methods that return (), return a &str so that the main run code handles both error messages and success messages. Just to keep the functionality contained and generally cleanup the code, making it more readable|NotStarted
