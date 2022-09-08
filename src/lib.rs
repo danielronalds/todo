@@ -150,6 +150,13 @@ pub fn run(config: Config) {
             exit(1);
         },
 
+        "deletetasklist" => {
+            match task_management::delete_tasklist(&mut users_config, &mut tasks) {
+                Ok(message) => print_success(message),
+                Err(err) => print_error(err),
+            }
+        }
+
         // Changes the current tasklist
         "tasklist" => {
             let new_list = config.command_arg;

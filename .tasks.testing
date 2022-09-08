@@ -1,7 +1,4 @@
-false|true|5|Testing
-Default|Main|Second list|Testing
-this is a task on the testing list|NotStarted|Testing
-This is an in progress task on the second list|InProgress|Second list
+false|true|5|Default
+Default
+This is a task on the main default list|InProgress|Default
 This is an example task|NotStarted|Default
-This is a task on the main default list|NotStarted|Default
-This is a task on the main list|NotStarted|Main

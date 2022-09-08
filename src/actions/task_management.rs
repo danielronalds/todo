@@ -53,6 +53,42 @@ pub fn add_tasklist(users_config: &mut UserConfig, new_tasklist: String)
 }
 
 
+// Function to delete the current tasklist
+pub fn delete_tasklist(users_config: &mut UserConfig, tasklist: &mut Vec<Task>) 
+    -> Result<&'static str, &'static str> {
+    // Checks to make sure that it is not the last checklist
+    if users_config.tasklists.len() < 2 {
+        return Err("Cannot delete this tasklist, you must have at least one tasklist!");
+    }
+    
+    // Confirming the action with the user
+    print_error("This will delete the current tasklist and all its tasks, are you sure? [y/N]\n");
+
+    let mut confirmation = String::new();
+
+    std::io::stdin().read_line(&mut confirmation).expect("Couldn't read line");
+
+    match confirmation.trim() {
+        "y" | "Y" | "yes" | "YES"  => {
+            // Clearing all the tasks under the current tasklist
+            tasklist.clear();
+
+            // Removing tasklist from the list of tasklists
+            users_config.tasklists.retain(|listname| {
+                !(listname == &users_config.current_list)
+            });
+
+            // Updating Current tasklist to the first tasklist
+            users_config.current_list = users_config.tasklists[0].clone();
+
+            return Ok("Removed the tasklist succesfully!");
+        },
+        _ => return Err("Tasklist not deleted"),
+    }
+
+}
+
+
 // Function that lists all of the current tasklist
 pub fn list_tasklists(user_config: &UserConfig) {
     for name in &user_config.tasklists {
