@@ -15,8 +15,9 @@ pub fn show_help() {
     println!("  init                           Creates a tasklist in the current");
     println!("                                 directory");
     println!("");
-    println!("  deletelist                     Deletes the tasklist in the current");
-    println!("                                 directory");
+    println!("  deletelist                     Deletes the todo instance in the current");
+    println!("                                 directory ");
+    println!("                                 WARNING: This action is permanent");
     println!("");
     println!("  list                           Shows all the tasks on the tasks list");
     println!("");
@@ -39,15 +40,40 @@ pub fn show_help() {
     println!("");
     println!("  tasklists                      List all the current tasklists");
     println!("");
-    println!("  tasklist <LIST_NAME>           Changes the current tasklist");
+    show_tasklist_help(false);
     println!("");
-    show_config_help();
+    show_config_help(false);
+}
+
+// The help meny for tasklist management
+pub fn show_tasklist_help(header: bool) {
+    // The header is different depending on whether its called from the help command or the 
+    // tasklist help command
+    if header {
+        println!("usage: todo tasklist <OPTION> <VALUE>");
+    } else {
+        println!("  tasklist <OPTION> <VALUE>      Manage tasklists:");
+    }
+    println!("");
+    println!("     new <NEW_TASKLIST_NAME>     Creates a new tasklist with the given");
+    println!("                                 name");
+    println!("");
+    println!("     set <TASKLIST_NAME>         Changes the current tasklist to the");
+    println!("                                 tasklist with the given name");
+    println!("");
+    println!("     delete                      Deletes the current tasklist as well");
+    println!("                                 as all the tasks listed under it.");
+    println!("                                 WARNING: This action is permanent");
 }
 
 // The help menu for config management
-pub fn show_config_help() {
-    println!("  set <CONFIG_OPTION> <VALUE>    Change configuration options:");
-    println!("");
+pub fn show_config_help(header: bool) {
+    // Same deal as the function above
+    if header {
+        println!("usage: todo set <CONFIG_OPTION> <VALUE>");
+    } else {
+        println!("  set <CONFIG_OPTION> <VALUE>    Change configuration options:");
+    }
     println!("");
     println!("     always_show_id <true/false> Whether task id's should always be shown");
     println!("                                 regardless of how many tasks there are");

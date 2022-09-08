@@ -239,9 +239,7 @@ pub fn run(config: Config) {
 
         // If the user has not typed a valid command, inform them
         _ => {
-            print_error("Unrecognised command");
-            println!("");
-            actions::show_help();
+            print_error("Unrecognised command, try 'help'!");
         },
     }
 
@@ -297,7 +295,10 @@ fn tasklist_command_management(config: &Config, users_config: &mut UserConfig,
             }
         }
 
-        _ => print_error("Unrecognised command"),
+        // Help command
+        "help" => actions::show_tasklist_help(true),
+
+        _ => print_error("Unrecognised command, try 'tasklist help'!"),
     }
 }
 
@@ -329,8 +330,8 @@ fn config_command_management(config: &Config, users_config: &mut UserConfig) {
                 })
         }
 
-        "help" => actions::show_config_help(),
+        "help" => actions::show_config_help(true),
 
-        _ => print_error("Unrecognised command, try the 'set help'!"),
+        _ => print_error("Unrecognised command, try 'set help'!"),
     }
 }

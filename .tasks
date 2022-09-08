@@ -1,5 +1,6 @@
 false|true|4
-Update the help command to show the tasklist commands. Probably need to start grouping commands|InProgress
+Update the help command to show the tasklist commands. Probably need to start grouping commands|Completed
 Add a listall command that shows all the tasks|NotStarted
 Add a command for transfering a task to another tasklist... maybe|NotStarted
 Refactor the code so that all methods that return (), return a &str so that the main run code handles both error messages and success messages. Just to keep the functionality contained and generally cleanup the code, making it more readable|NotStarted
+Add a command to rename the current tasklist|NotStarted
