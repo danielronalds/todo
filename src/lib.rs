@@ -156,10 +156,13 @@ pub fn run(config: Config) {
         // Add a task
         "add" => {
             let task_desc = config.command_arg;
-            task_management::add_task(&mut tasks, task_desc, current_list).unwrap_or_else(|err| {
-                print_error(err);
-                exit(1);
-            });
+            match task_management::add_task(&mut tasks, task_desc, current_list) {
+                Ok(message) => print_success(&message),
+                Err(err) => {
+                    print_error(err);
+                    exit(1);
+                }
+            };
         },
 
         // Delete a task
@@ -272,10 +275,13 @@ fn tasklist_command_management(config: &Config, users_config: &mut UserConfig,
         // Creating a new tasklist
         "new" => {
             let new_list_name = config.second_arg.clone();
-            task_management::add_tasklist(users_config, new_list_name).unwrap_or_else(|err| {
-                print_error(err);
-                exit(1);
-            })
+            match task_management::add_tasklist(users_config, new_list_name) {
+                Ok(message) => print_success(&message),
+                Err(err) => {
+                    print_error(err);
+                    exit(1);
+                }
+            };
         }
 
         // Sets the current tasklist

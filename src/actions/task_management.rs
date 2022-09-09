@@ -29,7 +29,7 @@ pub fn sort_by_current_list(current_list: String, tasks: Vec<Task>) -> (Vec<Task
 
 // Function to add a tasklist
 pub fn add_tasklist(users_config: &mut UserConfig, new_tasklist: String) 
-    -> Result<(), &'static str> {
+    -> Result<String, &'static str> {
     if new_tasklist.is_empty() {
         return Err("No tasklist name supplied!");
     }
@@ -45,11 +45,11 @@ pub fn add_tasklist(users_config: &mut UserConfig, new_tasklist: String)
         }
     }
 
-    print_success(format!("Tasklist {} Added!", &new_tasklist).as_str());
+    let message = format!("Tasklist {} Added!", &new_tasklist);
 
     users_config.tasklists.push(new_tasklist);
 
-    Ok(())
+    Ok(message)
 }
 
 
@@ -138,18 +138,19 @@ pub fn restart_task(t: &mut Task) {
 
 
 // Adds a task to a tasks vec
-pub fn add_task(tasks: &mut Vec<Task>, desc: String, list: String) -> Result<(), &'static str> {
+pub fn add_task(tasks: &mut Vec<Task>, desc: String, list: String) 
+    -> Result<String, &'static str> {
     // Creates the task and checks if it was created succesfully, returning an error if not
     let new_task = match Task::build(list, desc, TaskStatus::NotStarted) {
         Ok(new_task) => new_task,
         Err(err) => return Err(err),
     };
 
-    print_success(format!("Task '{}' added!", &new_task.desc).as_str());
+    let success = format!("Task '{}' added!", new_task.desc.clone());
 
     tasks.push(new_task);
 
-    Ok(())
+    Ok(success)
 }
 
 
