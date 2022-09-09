@@ -288,7 +288,7 @@ fn tasklist_command_management(config: &Config, users_config: &mut UserConfig,
         "set" => {
             let new_list = config.second_arg.clone();
             match config_management::set_current_tasklist(users_config, new_list) {
-                Ok(_) => (),
+                Ok(message) => print_success(&message),
                 Err(err) => print_error(err),
             }
         }
@@ -313,27 +313,34 @@ fn tasklist_command_management(config: &Config, users_config: &mut UserConfig,
 fn config_command_management(config: &Config, users_config: &mut UserConfig) {
     match config.command_arg.as_str() {
         "smart_id" => {
-            config_management::set_smart_id(users_config, &config.second_arg)
-                .unwrap_or_else(|err| {
+            match config_management::set_smart_id(users_config, &config.second_arg) {
+                Ok(message) => print_success(&message),
+                Err(err) => {
                     print_error(err);
                     exit(1);
-                })
+                }
+            }
         }
 
         "num_of_tasks" => {
-            config_management::set_num_of_tasks(users_config, &config.second_arg)
-                .unwrap_or_else(|err| {
+            match config_management::set_num_of_tasks(users_config, &config.second_arg) {
+                Ok(message) => print_success(&message),
+                Err(err) => {
                     print_error(err);
                     exit(1);
-                })
+                }
+            }
         }
 
         "always_show_id" => {
-            config_management::set_always_show_id(users_config, &config.second_arg)
-                .unwrap_or_else(|err| {
+            match config_management::set_always_show_id(users_config, &config.second_arg) {
+
+                Ok(message) => print_success(&message),
+                Err(err) => {
                     print_error(err);
                     exit(1);
-                })
+                }
+            }
         }
 
         "help" => actions::show_config_help(true),
