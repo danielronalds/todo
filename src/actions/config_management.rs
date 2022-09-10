@@ -42,6 +42,25 @@ pub fn set_smart_id(users_config: &mut UserConfig, value: &str) -> Result<String
 }
 
 
+// Function to update the smart Id option
+pub fn set_display_list_name(users_config: &mut UserConfig, value: &str) 
+    -> Result<&'static str, &'static str> {
+    match value {
+        "true" => {
+            users_config.display_list_name = true;
+            return Ok("Displaying the tasklist name above the tasklist enabled!"); 
+        },
+
+        "false" => {
+            users_config.display_list_name = false;
+            return Ok("Displaying the tasklist name above the tasklist disabled!"); 
+        },
+
+        _ => return Err("Invalid option, Must be either true or false!"), 
+    };
+}
+
+
 // Function to set the number of tasks for smart id to trigger
 pub fn set_num_of_tasks(users_config: &mut UserConfig, value: &str) 
     -> Result<String, &'static str> {
