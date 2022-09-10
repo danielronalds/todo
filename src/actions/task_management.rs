@@ -150,6 +150,10 @@ pub fn list_tasks(tasks: &[Task], users_config: &UserConfig) {
         print_error("No tasks found, Add a task with the add command!");
     }
 
+    if users_config.display_list_name {
+        println!("{}", users_config.current_list.bold());
+    }
+
     let mut task_id = 1;
 
     for task in tasks {

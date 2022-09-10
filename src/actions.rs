@@ -79,6 +79,10 @@ pub fn show_config_help(header: bool) {
         println!("  set <CONFIG_OPTION> <VALUE>    Change configuration options:");
     }
     println!("");
+    println!("     show_list_name <true/false> Whether the current tasklists name");
+    println!("                                 should be shown above the tasks printed");
+    println!("                                 by the list command");
+    println!("");
     println!("     always_show_id <true/false> Whether task id's should always be shown");
     println!("                                 regardless of how many tasks there are");
     println!("                                 Disabled by default");

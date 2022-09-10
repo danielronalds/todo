@@ -343,7 +343,7 @@ fn config_command_management(config: &Config, users_config: &mut UserConfig) {
             }
         }
 
-        "display_list_name" => {
+        "show_list_name" => {
             match config_management::set_display_list_name(users_config, &config.second_arg) {
                 Ok(message) => print_success(&message),
                 Err(err) => {
