@@ -61,6 +61,9 @@ pub fn show_tasklist_help(header: bool) {
     println!("     set <TASKLIST_NAME>         Changes the current tasklist to the");
     println!("                                 tasklist with the given name");
     println!("");
+    println!("     update <TASKLIST_NAME>      Changes the current tasklist's name");
+    println!("                                 to the given name");
+    println!("");
     println!("     delete                      Deletes the current tasklist as well");
     println!("                                 as all the tasks listed under it.");
     println!("                                 WARNING: This action is permanent");

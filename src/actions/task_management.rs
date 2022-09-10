@@ -167,7 +167,7 @@ pub fn finish_task(t: &mut Task) {
         // If the task is either not started or in progress, complete it
         _ => {
             t.status = TaskStatus::Completed;
-            print_success(format!("Task '{}' completed!", t.desc).as_str());
+            print_success(format!("Completed '{}'!", t.desc).as_str());
         },
     }
 }
@@ -177,7 +177,7 @@ pub fn finish_task(t: &mut Task) {
 pub fn restart_task(t: &mut Task) {
     t.status = TaskStatus::NotStarted;
 
-    print_success(format!("Task '{}' restarted!", t.desc).as_str());
+    print_success(format!("Restarted task '{}'!", t.desc).as_str());
 }
 
 
@@ -190,7 +190,7 @@ pub fn add_task(tasks: &mut Vec<Task>, desc: String, list: String)
         Err(err) => return Err(err),
     };
 
-    let success = format!("Task '{}' added!", new_task.desc.clone());
+    let success = format!("Added task '{}'!", new_task.desc.clone());
 
     tasks.push(new_task);
 
@@ -202,7 +202,7 @@ pub fn add_task(tasks: &mut Vec<Task>, desc: String, list: String)
 pub fn remove_task(tasks: &mut Vec<Task>, task_index: usize) {
     // Printing out the task description so the user knows what task was deleted
     let task_desc = &tasks[task_index].desc;
-    print_success(format!("Task '{}' removed!", task_desc).as_str());
+    print_success(format!("Removed task '{}'!", task_desc).as_str());
 
     // Remove the task from the tasklist
     tasks.remove(task_index);
