@@ -45,13 +45,15 @@ impl UserConfig {
 
     // Function that returns a default user config
     pub fn default() -> UserConfig {
-        let tasklists: Vec<String> = Vec::new();
+        let mut tasklists: Vec<String> = Vec::new();
+
+        tasklists.push("Default".to_string());
 
         UserConfig {
             always_show_id: false,
             smart_id: true,
             smart_id_num: 5,
-            current_list: String::from("Main"),
+            current_list: String::from("Default"),
             tasklists,
         }
     }

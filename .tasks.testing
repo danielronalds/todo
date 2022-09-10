@@ -1,5 +1,3 @@
-false|true|4|Default
-Default
-This is a task on the main default list|InProgress|Default
-This is an example task|NotStarted|Default
+false|true|5|main
+Default|main
 This is a testing task|NotStarted|Default

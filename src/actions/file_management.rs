@@ -9,20 +9,26 @@ const FILENAME: &str = ".tasks.testing";
 
 
 // Function to create a .tasks file to store tasks in csv format
-pub fn init_list() -> Result<(), &'static str>{
+pub fn init_list() -> Result<&'static str, &'static str>{
     // Checks to see if a .tasks file exists already
     if Path::new(FILENAME).exists() {
         return Err("A tasks file already exists!");
     }
 
-    // Creates the file Checks to see if the file was created, returning an error result if it 
-    // wasn't
-    match File::create(FILENAME) {
-        Ok(_) => {
-            crate::print_success("Task list created successfully!");
-            Ok(())
-        },
-        Err(_) => Err("Error creating file!"),
+    // Creating a default configiration to write to the new list 
+    let mut save_data: String = String::new();
+
+    let user_config = UserConfig::default();
+
+    // Saving the user's config
+    save_data.push_str(&user_config.to_save_format());
+    save_data.push_str(&user_config.tasklists_to_save_format());
+    
+    // Writing the string containing all the csv data to the .tasks file, and Returns an Err() if 
+    // the file was unable to be written
+    match fs::write(FILENAME, save_data) {
+        Ok(_) => Ok("Task list created successfully!"),
+        Err(_) => Err("Failed to write to file!") 
     }
 }
 

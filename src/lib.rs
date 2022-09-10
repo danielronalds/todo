@@ -105,9 +105,10 @@ pub fn run(config: Config) {
     match config.command.as_str() {
         // Init command
         "init" => {
-            file_management::init_list().unwrap_or_else(|err| {
-                print_error(format!("{}", err).as_str());
-            });
+            match file_management::init_list() {
+                Ok(message) => print_success(message),
+                Err(err) => print_error(err),
+            };
             exit(1);
         },
 
