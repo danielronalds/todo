@@ -144,10 +144,10 @@ pub fn run(config: Config) {
     match config.command.as_str() {
         // Deletes the tasklist in the directory
         "deletelist" => {
-            file_management::delete_list().unwrap_or_else(|err| {
-                print_error(err);
-            });
-
+            match file_management::delete_list() {
+                Ok(message) => print_success(message),
+                Err(err) => print_error(err),
+            }
             exit(1);
         },
 
