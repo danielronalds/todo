@@ -44,7 +44,7 @@ pub fn add_tasklist(users_config: &mut UserConfig, new_tasklist: String)
     // Checks to see if the tasklist exists, reporting an error if it does
     for list_name in &users_config.tasklists {
         if &new_tasklist == list_name {
-            return Err("Tasklist already exists!");
+            return Err("A Tasklist with that name already exists!");
         }
     }
 
@@ -59,13 +59,20 @@ pub fn add_tasklist(users_config: &mut UserConfig, new_tasklist: String)
 // Function to update the current tasklists name
 pub fn update_tasklist_name(users_config: &mut UserConfig, tasks: &mut Vec<Task>, new_name: String) 
     -> Result<&'static str, &'static str> {
-    // Checking if the new name is empty or contains illegal characters
+    // Checking if the new name is empty, whether a tasklist wih it already exists or if contains 
+    // illegal characters
     if new_name.is_empty() {
         return Err("No tasklist name supplied!");
     }
     
     if new_name.contains("|") {
         return Err("Tasklist names cannot contain the | character");
+    }
+    
+    for list_name in &users_config.tasklists {
+        if &new_name == list_name {
+            return Err("A Tasklist with that name already exists!");
+        }
     }
 
     // Removing old tasklist name from the list of tasklists

@@ -5,3 +5,4 @@ Refactor the code so that all methods that return (), return a &str so that the 
 Add a command to rename the current tasklist|InProgress
 Add a listall command that shows all the tasks|NotStarted
 Add a command for transfering a task to another tasklist... maybe|NotStarted
+Create a new module for tasklist management related code|NotStarted
