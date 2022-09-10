@@ -8,6 +8,9 @@ use crate::print_error;
 use crate::user_config::UserConfig;
 
 
+// All functions relating to managing tasklists
+
+
 // Function to sort a tasklist and return a vec containing the tasks tagged with the current list
 // as well as vec containing the rest
 pub fn sort_by_current_list(current_list: String, tasks: Vec<Task>) -> (Vec<Task>, Vec<Task>) {
@@ -53,6 +56,37 @@ pub fn add_tasklist(users_config: &mut UserConfig, new_tasklist: String)
 }
 
 
+// Function to update the current tasklists name
+pub fn update_tasklist_name(users_config: &mut UserConfig, tasks: &mut Vec<Task>, new_name: String) 
+    -> Result<&'static str, &'static str> {
+    // Checking if the new name is empty or contains illegal characters
+    if new_name.is_empty() {
+        return Err("No tasklist name supplied!");
+    }
+    
+    if new_name.contains("|") {
+        return Err("Tasklist names cannot contain the | character");
+    }
+
+    // Removing old tasklist name from the list of tasklists
+    users_config.tasklists.retain(|listname| {
+        !(listname == &users_config.current_list)
+    });
+
+    // Adding new name to tasklists and setting it as the current list
+    users_config.tasklists.push(new_name.clone());
+    
+    users_config.current_list = new_name.clone();
+
+    // Updating all the tasks with the new name
+    for task in tasks {
+        task.list = new_name.clone();
+    }
+
+    Ok("Tasklist name updated!")
+}
+
+
 // Function to delete the current tasklist
 pub fn delete_tasklist(users_config: &mut UserConfig, tasklist: &mut Vec<Task>) 
     -> Result<&'static str, &'static str> {
@@ -87,6 +121,9 @@ pub fn delete_tasklist(users_config: &mut UserConfig, tasklist: &mut Vec<Task>)
     }
 
 }
+
+
+// All functions relating to managing tasks
 
 
 // Function that lists all of the current tasklist

@@ -294,6 +294,15 @@ fn tasklist_command_management(config: &Config, users_config: &mut UserConfig,
             }
         }
 
+        // Updates the current tasklists name 
+        "update" => {
+            let new_name = config.second_arg.clone();
+            match task_management::update_tasklist_name(users_config, tasks, new_name) {
+                Ok(message) => print_success(message),
+                Err(err) => print_error(err)
+            }
+        }
+
         // Deletes the current tasklist
         "delete" => {
             match task_management::delete_tasklist(users_config, tasks) {
