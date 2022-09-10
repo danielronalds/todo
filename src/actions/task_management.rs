@@ -162,5 +162,3 @@ pub fn list_tasks(tasks: &[Task], users_config: &UserConfig) {
         task_id += 1;
     }
 }
-
-

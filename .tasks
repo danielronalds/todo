@@ -4,7 +4,7 @@ FIX BUG THAT HAPPENS WITH A NEW LIST|Completed
 Add a command to rename the current tasklist|Completed
 Create a new module for tasklist management related code|Completed
 Refactor the code so that all methods that return (), return a &str so that the main run code handles both error messages and success messages. Just to keep the functionality contained and generally cleanup the code, making it more readable|InProgress
+Add config option for displaying the name of the currentlist above the listed tasks|InProgress
 Add a listall command that shows all the tasks|NotStarted
 Add a command for transfering a task to another tasklist... maybe|NotStarted
 Consider adding a search command?|NotStarted
-Add config option for displaying the name of the currentlist above the listed tasks|NotStarted

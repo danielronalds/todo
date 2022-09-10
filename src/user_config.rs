@@ -3,6 +3,7 @@ pub struct UserConfig {
     pub smart_id: bool,
     pub smart_id_num: u8, 
     pub current_list: String,
+    pub display_list_name: bool,
     pub tasklists: Vec<String>,
 }
 
@@ -10,7 +11,7 @@ impl UserConfig {
     // Function to build a user config
     pub fn build(args: Vec<String>) -> UserConfig {
         // Check if the vec contains the right data, if not returns a default config
-        if args.len() != 4 {
+        if args.len() != 5 {
             return Self::default();
         }
 
@@ -26,6 +27,12 @@ impl UserConfig {
             "false" => false,
             _ => true,
         };
+        
+        let display_list_name = match args[4].as_str() {
+            "true" => true,
+            "false" => false,
+            _ => false,
+        };
 
         // Attempts to parse the string to an int, returning this  ↓ if there is an error
         let smart_id_num: u8 = args[2].parse().unwrap_or_else(|_| {5});
@@ -40,6 +47,7 @@ impl UserConfig {
             smart_id_num,
             current_list,
             tasklists,
+            display_list_name,
         }
     }
 
@@ -55,15 +63,17 @@ impl UserConfig {
             smart_id_num: 5,
             current_list: String::from("Default"),
             tasklists,
+            display_list_name: false,
         }
     }
 
     pub fn to_save_format(&self) -> String {
-        format!("{}|{}|{}|{}\n", 
+        format!("{}|{}|{}|{}|{}\n", 
                 &self.always_show_id, 
                 &self.smart_id, 
                 &self.smart_id_num,
-                &self.current_list)
+                &self.current_list,
+                &self.display_list_name)
     }
 
     pub fn tasklists_to_save_format(&self) -> String {
