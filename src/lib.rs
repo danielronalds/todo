@@ -11,6 +11,7 @@ use std::process::exit;
 use actions::task_management;
 use actions::file_management;
 use actions::config_management;
+use actions::tasklist_management;
 
 use colored::Colorize;
 use task::Task;
@@ -137,7 +138,7 @@ pub fn run(config: Config) {
     // Getting the current task list from the config
     let current_list = users_config.current_list.clone();
 
-    let sorted_tasks = task_management::sort_by_current_list(current_list.clone(), read_file.0);
+    let sorted_tasks = tasklist_management::filter_list(current_list.clone(), read_file.0);
 
     let mut tasks = sorted_tasks.0; 
 
@@ -268,7 +269,7 @@ fn tasklist_command_management(config: &Config, users_config: &mut UserConfig,
                                tasks: &mut Vec<Task>) {
     // Lists all the current tasklists
     if config.command.as_str() == "tasklists" {
-        task_management::list_tasklists(&users_config);
+        tasklist_management::list_tasklists(&users_config);
         return
     }
 
@@ -276,7 +277,7 @@ fn tasklist_command_management(config: &Config, users_config: &mut UserConfig,
         // Creating a new tasklist
         "new" => {
             let new_list_name = config.second_arg.clone();
-            match task_management::add_tasklist(users_config, new_list_name) {
+            match tasklist_management::add_tasklist(users_config, new_list_name) {
                 Ok(message) => print_success(&message),
                 Err(err) => {
                     print_error(err);
@@ -297,7 +298,7 @@ fn tasklist_command_management(config: &Config, users_config: &mut UserConfig,
         // Updates the current tasklists name 
         "update" => {
             let new_name = config.second_arg.clone();
-            match task_management::update_tasklist_name(users_config, tasks, new_name) {
+            match tasklist_management::update_tasklist_name(users_config, tasks, new_name) {
                 Ok(message) => print_success(message),
                 Err(err) => print_error(err)
             }
@@ -305,7 +306,7 @@ fn tasklist_command_management(config: &Config, users_config: &mut UserConfig,
 
         // Deletes the current tasklist
         "delete" => {
-            match task_management::delete_tasklist(users_config, tasks) {
+            match tasklist_management::delete_tasklist(users_config, tasks) {
                 Ok(message) => print_success(message),
                 Err(err) => print_error(err),
             }

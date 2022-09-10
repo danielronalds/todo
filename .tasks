@@ -1,8 +1,10 @@
 false|true|4
 Update the help command to show the tasklist commands. Probably need to start grouping commands|Completed
 FIX BUG THAT HAPPENS WITH A NEW LIST|Completed
+Add a command to rename the current tasklist|Completed
+Create a new module for tasklist management related code|Completed
 Refactor the code so that all methods that return (), return a &str so that the main run code handles both error messages and success messages. Just to keep the functionality contained and generally cleanup the code, making it more readable|InProgress
-Add a command to rename the current tasklist|InProgress
 Add a listall command that shows all the tasks|NotStarted
 Add a command for transfering a task to another tasklist... maybe|NotStarted
-Create a new module for tasklist management related code|NotStarted
+Consider adding a search command?|NotStarted
+Add config option for displaying the name of the currentlist above the listed tasks|NotStarted

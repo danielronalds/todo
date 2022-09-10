@@ -1,6 +1,7 @@
 pub mod config_management;
 pub mod file_management;
 pub mod task_management;
+pub mod tasklist_management;
 
 // Function to list all the commands
 pub fn show_help() {
