@@ -153,7 +153,11 @@ pub fn run(config: Config) {
         },
 
         // List the current tasks
-        "list" => task_management::list_tasks(&tasks, &users_config),
+        "list" => {
+            task_management::list_tasks(&tasks, &users_config).unwrap_or_else(|err| {
+                print_error(err);
+            });
+        },
 
         // Add a task
         "add" => {
@@ -212,12 +216,19 @@ pub fn run(config: Config) {
             let new_desc = config.second_arg.clone();
 
             let task_index = get_task_index(config, &tasks); 
-
-            tasks[task_index] = task_management::update_task(&tasks[task_index], new_desc)
-                .unwrap_or_else(|err| {
+            
+            let updated_task = match task_management::update_task(&tasks[task_index], new_desc) {
+                Ok(updated_task) => updated_task,
+                Err(err) => {
                     print_error(err);
                     exit(1);
-                });
+                }
+            };
+
+            // Updating the task
+            tasks[task_index] = updated_task.0;
+
+            print_success(updated_task.1.as_str());
         }
 
         // Sort the task list
@@ -226,7 +237,9 @@ pub fn run(config: Config) {
             tasks = task_management::sort_tasks(tasks);
 
             // Displaying the sorted list
-            task_management::list_tasks(&tasks, &users_config);
+            task_management::list_tasks(&tasks, &users_config).unwrap_or_else(|err| {
+                print_error(err);
+            });
         }
 
         // Remove completed tasks
@@ -237,7 +250,9 @@ pub fn run(config: Config) {
             println!("");
             
             // Displaying the cleaned up task list
-            task_management::list_tasks(&tasks, &users_config);
+            task_management::list_tasks(&tasks, &users_config).unwrap_or_else(|err| {
+                print_error(err);
+            });
         }
 
         // Manages the set command

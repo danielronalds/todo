@@ -3,8 +3,6 @@ use colored::Colorize;
 use crate::task::Task;
 use crate::task::TaskStatus;
 
-use crate::print_success;
-use crate::print_error;
 use crate::user_config::UserConfig;
 
 
@@ -77,7 +75,7 @@ pub fn remove_task(tasks: &mut Vec<Task>, task_index: usize) -> String {
 
 
 // Function that updates the given tasks description
-pub fn update_task(task: &Task, new_desc: String) -> Result<Task, &'static str> {
+pub fn update_task(task: &Task, new_desc: String) -> Result<(Task, String), &'static str> {
     // Creates a new task that the function returns, so that error checking of what a proper task
     // desciption should be doesn't have to be repeated twice, meaning that if the requirments 
     // changed, this code wouldn't have to be
@@ -86,9 +84,9 @@ pub fn update_task(task: &Task, new_desc: String) -> Result<Task, &'static str> 
         Err(err) => return Err(err),
     };
 
-    print_success(format!("Updated Task to '{}'", &new_task.desc).as_str());
+    let success_message = format!("Updated Task to '{}'", &new_task.desc);
 
-    Ok(new_task)
+    Ok((new_task, success_message))
 }
 
 
@@ -150,10 +148,10 @@ pub fn cleanup_list(tasks: &mut Vec<Task>) -> String {
 
 
 // Function to list task
-pub fn list_tasks(tasks: &[Task], users_config: &UserConfig) {
+pub fn list_tasks(tasks: &[Task], users_config: &UserConfig) -> Result<(), &'static str> {
     // Prints an output informing the user that there are no tasks if the tasklist is empty
     if tasks.is_empty() {
-        print_error("No tasks found, Add a task with the add command!");
+        return Err("No tasks found, Add a task with the add command!");
     }
 
     if users_config.display_list_name {
@@ -171,4 +169,6 @@ pub fn list_tasks(tasks: &[Task], users_config: &UserConfig) {
         }
         task_id += 1;
     }
+
+    Ok(())
 }
