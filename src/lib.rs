@@ -171,7 +171,7 @@ pub fn run(config: Config) {
         "delete" | "remove" => {
             let task_index = get_task_index(config, &tasks);
 
-            task_management::remove_task(&mut tasks, task_index);
+            print_success(task_management::remove_task(&mut tasks, task_index).as_str());
         },
 
         // Start a task
@@ -180,7 +180,10 @@ pub fn run(config: Config) {
             let task_index = get_task_index(config, &tasks);
             
             // Updating task status
-            task_management::start_task(&mut tasks[task_index]);
+            match task_management::start_task(&mut tasks[task_index]) {
+                Ok(message) => print_success(&message),
+                Err(err) => print_error(err),
+            };
         },
 
         // Finish a task
@@ -189,7 +192,10 @@ pub fn run(config: Config) {
             let task_index = get_task_index(config, &tasks);
             
             // Updating task status
-            task_management::finish_task(&mut tasks[task_index]);
+            match task_management::finish_task(&mut tasks[task_index]) {
+                Ok(message) => print_success(&message),
+                Err(err) => print_error(err),
+            };
         },
 
         // Restart a task
@@ -198,7 +204,7 @@ pub fn run(config: Config) {
             let task_index = get_task_index(config, &tasks);
             
             // Updating task status
-            task_management::restart_task(&mut tasks[task_index]);
+            print_success(task_management::restart_task(&mut tasks[task_index]).as_str());
         }
 
         // Update a tasks description 
@@ -226,7 +232,7 @@ pub fn run(config: Config) {
         // Remove completed tasks
         "cleanup" => {
             // Removing completed tasks
-            task_management::cleanup_list(&mut tasks);
+            print_success(task_management::cleanup_list(&mut tasks).as_str());
 
             println!("");
             

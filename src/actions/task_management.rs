@@ -9,38 +9,38 @@ use crate::user_config::UserConfig;
 
 
 // Function to update a task's status to inprogress
-pub fn start_task(t: &mut Task) {
+pub fn start_task(t: &mut Task)  -> Result<String, &'static str> {
     match t.status {
         // If the task is not started, start it 
         TaskStatus::NotStarted => {
             t.status = TaskStatus::InProgress;
-            print_success(format!("Started task '{}'", t.desc).as_str());
+            return Ok(format!("Started task '{}'", t.desc))
         },
         // Otherwise inform the user of the tasks' current status
-        _ => print_error("Task already in progress!"),
+        _ => return Err("Task already in progress!"),
     }
 }
 
 
 // Function to update a task's status to completed
-pub fn finish_task(t: &mut Task) {
+pub fn finish_task(t: &mut Task) -> Result<String, &'static str> {
     match t.status {
         // Inform the user if the task has already been completed
-        TaskStatus::Completed => print_error("Task already completed!"),
+        TaskStatus::Completed => return Err("Task already completed!"),
         // If the task is either not started or in progress, complete it
         _ => {
             t.status = TaskStatus::Completed;
-            print_success(format!("Completed '{}'!", t.desc).as_str());
+            return Ok(format!("Completed '{}'!", t.desc))
         },
     }
 }
 
 
 // Function to set the status of any task to NotStarted
-pub fn restart_task(t: &mut Task) {
+pub fn restart_task(t: &mut Task) -> String {
     t.status = TaskStatus::NotStarted;
 
-    print_success(format!("Restarted task '{}'!", t.desc).as_str());
+    format!("Restarted task '{}'!", t.desc)
 }
 
 
@@ -62,13 +62,17 @@ pub fn add_task(tasks: &mut Vec<Task>, desc: String, list: String)
 
 
 // Removes a task from a tasks vec
-pub fn remove_task(tasks: &mut Vec<Task>, task_index: usize) {
-    // Printing out the task description so the user knows what task was deleted
+pub fn remove_task(tasks: &mut Vec<Task>, task_index: usize) -> String {
+    // Creating the message to return to the run function to print out
     let task_desc = &tasks[task_index].desc;
-    print_success(format!("Removed task '{}'!", task_desc).as_str());
+
+    // Creating the return message
+    let message = format!("Removed task '{}'!", task_desc);
 
     // Remove the task from the tasklist
     tasks.remove(task_index);
+
+    message
 }
 
 
@@ -116,7 +120,7 @@ pub fn sort_tasks(tasks: Vec<Task>) -> Vec<Task> {
 
 
 // Function to delete completed tasks from the task list
-pub fn cleanup_list(tasks: &mut Vec<Task>) {
+pub fn cleanup_list(tasks: &mut Vec<Task>) -> String {
     let mut tasks_to_remove: Vec<usize> = Vec::new();
 
     // Collects the index's of completed tasks in reverse order so that when deleting tasks, the 
@@ -135,11 +139,13 @@ pub fn cleanup_list(tasks: &mut Vec<Task>) {
         }
     }
 
-    print_success(format!("Removed {} Completed tasks!", tasks_to_remove.len()).as_str());
+    let success_message = format!("Removed {} Completed tasks!", tasks_to_remove.len());
 
     for index in tasks_to_remove {
         tasks.remove(index);
     }
+
+    success_message
 }
 
 
