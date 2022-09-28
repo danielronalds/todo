@@ -86,7 +86,7 @@ fn get_task_index(config: Config, tasklist: &Vec<Task>) -> usize {
 
 // Function to print errors
 pub fn print_error(message: &str) {
-    let error_symbol = format!("[{}]", "!".red());
+    let error_symbol = format!("[{}]", "!".bright_red());
 
     eprint!("{} {}", error_symbol.bold(), message);
 }
@@ -94,7 +94,7 @@ pub fn print_error(message: &str) {
 
 // Function to print success messages
 fn print_success(message: &str) {
-    let success_symbol = format!("[{}]", "!".blue());
+    let success_symbol = format!("[{}]", "!".bright_blue());
 
     eprint!("{} {}\n", success_symbol.bold(), message);
 }

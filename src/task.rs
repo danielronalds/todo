@@ -51,9 +51,9 @@ impl Task {
     // Method to return Task as String 
     pub fn to_string(&self, _task_id: &u32) -> String {
         let task_status = format!("[{}]", match &self.status {
-            TaskStatus::NotStarted => format!("{}", "x".red()),
-            TaskStatus::InProgress => format!("{}", "~".yellow()),
-            TaskStatus::Completed  => format!("{}", "✔".green()),
+            TaskStatus::NotStarted => format!("{}", "x".bright_red()),
+            TaskStatus::InProgress => format!("{}", "~".bright_yellow()),
+            TaskStatus::Completed  => format!("{}", "✔".bright_green()),
         }).bold();
 
         // format!("{task_id}: {} {}", symbol, &self.desc)
