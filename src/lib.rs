@@ -336,7 +336,21 @@ fn tasklist_command_management(config: &Config, users_config: &mut UserConfig,
         // Help command
         "help" => actions::show_tasklist_help(true),
 
-        _ => print_error("Unrecognised command, try 'tasklist help'!"),
+        _ => {
+            // Checks if the user didn't type anything after the command, suggests the help command
+            if config.command_arg.is_empty() {
+                print_error("Unrecognised command, try 'tasklist help'!");
+                return;
+            }
+
+            // Otherwise the user might be trying to switch tasklists, so call the function with
+            // the command_arg as the new_list
+            let new_list = config.command_arg.clone();
+            match config_management::set_current_tasklist(users_config, new_list) {
+                Ok(message) => print_success(&message),
+                Err(err) => print_error(err),
+            }
+        },
     }
 }
 
