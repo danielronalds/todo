@@ -20,7 +20,9 @@ pub fn show_help() {
     println!("                                 directory ");
     println!("                                 WARNING: This action is permanent");
     println!("");
-    println!("  list                           Shows all the tasks on the tasks list");
+    println!("  list                           Shows all the tasks on the current tasklist");
+    println!("");
+    println!("  listall                        Shows all the tasks the user has added");
     println!("");
     println!("  sort                           Sorts the tasklist in order from");
     println!("                                 Completed to Not Started tasks");
