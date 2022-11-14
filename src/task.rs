@@ -8,12 +8,9 @@ pub struct Task {
     pub status: TaskStatus,
 }
 
+// Enum for the status of the task
 #[derive(Clone)]
-pub enum TaskStatus {
-    Completed,
-    InProgress,
-    NotStarted,
-}
+pub enum TaskStatus { Completed, InProgress, NotStarted }
 
 impl Task {
     // Constructor for task struct
