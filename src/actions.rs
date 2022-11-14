@@ -3,7 +3,7 @@ pub mod file_management;
 pub mod task_management;
 pub mod tasklist_management;
 
-// Function to list all the commands
+/// Function to list all the commands
 pub fn show_help() {
     show_version();
     println!("");
@@ -48,10 +48,12 @@ pub fn show_help() {
     show_config_help(false);
 }
 
-// The help meny for tasklist management
+/// The help menu for tasklist management
+/// 
+/// Parameters
+/// header: Whether or not to show the header before listing the help menu. The header contains the
+///         usage for the tasklist command.
 pub fn show_tasklist_help(header: bool) {
-    // The header is different depending on whether its called from the help command or the 
-    // tasklist help command
     if header {
         println!("usage: todo tasklist <OPTION> <VALUE>");
     } else {
@@ -72,9 +74,12 @@ pub fn show_tasklist_help(header: bool) {
     println!("                                 WARNING: This action is permanent");
 }
 
-// The help menu for config management
+/// The help menu for config management
+/// 
+/// Parameters
+/// header: Whether or not to show the header before listing the help menu. The header contains the
+///         usage for the set command.
 pub fn show_config_help(header: bool) {
-    // Same deal as the function above
     if header {
         println!("usage: todo set <CONFIG_OPTION> <VALUE>");
     } else {
@@ -99,7 +104,7 @@ pub fn show_config_help(header: bool) {
     println!("                                 Default is 5.");
 }
 
-// Function to show version
+/// Function to print the version to the console
 pub fn show_version() {
     println!("Todo v{}, developed by Daniel Ronalds", env!("CARGO_PKG_VERSION"));
 }
