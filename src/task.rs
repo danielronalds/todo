@@ -2,6 +2,7 @@
 use colored::Colorize;
 
 // Struct to store a Task
+#[derive(Clone)]
 pub struct Task {
     pub list: String,
     pub desc: String,
@@ -46,7 +47,7 @@ impl Task {
 
 
     // Method to return Task as String 
-    pub fn to_string(&self, _task_id: &u32) -> String {
+    pub fn to_string(&self) -> String {
         let task_status = format!("[{}]", match &self.status {
             TaskStatus::NotStarted => format!("{}", "x".bright_red()),
             TaskStatus::InProgress => format!("{}", "~".bright_yellow()),

@@ -147,6 +147,31 @@ pub fn cleanup_list(tasks: &mut Vec<Task>) -> String {
 }
 
 
+/// Function to list all tasks
+///
+/// Parameters:
+/// main_tasks: The tasks in the current tasklist
+/// other_tasks: The rest of the tasks
+pub fn list_all_tasks(mut main_tasks: Vec<Task>, mut other_tasks: Vec<Task>, config: &UserConfig) {
+    // Collecting all tasks into one vec
+    let mut tasks: Vec<Task> = Vec::new();
+    tasks.append(&mut main_tasks);
+    tasks.append(&mut other_tasks);
+    
+    for tasklist in &config.tasklists {
+        println!("{}", tasklist.bold());
+
+        for task in &tasks {
+            if &task.list == tasklist {
+                println!("{}", task.to_string());
+            }
+        }
+
+        println!("");
+    }
+}
+
+
 // Function to list task
 pub fn list_tasks(tasks: &[Task], users_config: &UserConfig) -> Result<(), &'static str> {
     // Prints an output informing the user that there are no tasks if the tasklist is empty
@@ -163,9 +188,9 @@ pub fn list_tasks(tasks: &[Task], users_config: &UserConfig) -> Result<(), &'sta
     for task in tasks {
         if users_config.always_show_id ||
            users_config.smart_id && tasks.len() >= users_config.smart_id_num.into() {
-            println!("{}: {}", &task_id.to_string().bold(), task.to_string(&task_id));
+            println!("{}: {}", &task_id.to_string().bold(), task.to_string());
         } else {
-            println!("{}", task.to_string(&task_id));
+            println!("{}", task.to_string());
         }
         task_id += 1;
     }

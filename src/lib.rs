@@ -142,6 +142,8 @@ pub fn run(config: Config) {
 
     let mut tasks = sorted_tasks.0; 
 
+    let other_tasks = sorted_tasks.1;
+
     match config.command.as_str() {
         // Deletes the tasklist in the directory
         "deletelist" => {
@@ -156,8 +158,12 @@ pub fn run(config: Config) {
         "list" => {
             task_management::list_tasks(&tasks, &users_config).unwrap_or_else(|err| {
                 print_error(err);
-            });
+            })
         },
+
+        "listall" => {
+            task_management::list_all_tasks(tasks.to_vec(), other_tasks.to_vec(), &users_config);
+        }
 
         // Add a task
         "add" => {
@@ -275,7 +281,7 @@ pub fn run(config: Config) {
     for task in tasks {
         all_tasks.push(task);
     }
-    for task in sorted_tasks.1 {
+    for task in other_tasks {
         all_tasks.push(task);
     }
 
