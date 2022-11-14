@@ -149,24 +149,29 @@ pub fn cleanup_list(tasks: &mut Vec<Task>) -> String {
 
 /// Function to list all tasks
 ///
-/// Parameters:
-/// main_tasks: The tasks in the current tasklist
-/// other_tasks: The rest of the tasks
+/// Parameters
+/// main_tasks:     The tasks in the current tasklist
+/// other_tasks:    The rest of the tasks
+/// config:         The user's config 
 pub fn list_all_tasks(mut main_tasks: Vec<Task>, mut other_tasks: Vec<Task>, config: &UserConfig) {
     // Collecting all tasks into one vec
     let mut tasks: Vec<Task> = Vec::new();
     tasks.append(&mut main_tasks);
     tasks.append(&mut other_tasks);
     
+    // Looping through every tasklist in the user's config
     for tasklist in &config.tasklists {
+        // Printing a title for the tasks to be listed under
         println!("{}", tasklist.bold());
 
         for task in &tasks {
+            // Loops through the task vec, printing tasks tagged with the current tasklist
             if &task.list == tasklist {
                 println!("{}", task.to_string());
             }
         }
 
+        // New line between lists!
         println!("");
     }
 }
