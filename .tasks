@@ -1,5 +1,8 @@
-false|true|4
-Refactor the code so that all methods that return (), return a &str so that the main run code handles both error messages and success messages. Just to keep the functionality contained and generally cleanup the code, making it more readable|Completed
-Add a listall command that shows all the tasks|NotStarted
-Add a command for transfering a task to another tasklist... maybe|NotStarted
-Consider adding a search command?|NotStarted
+true|true|5|Features|true
+Features|Bugs to Fix|General
+A list all command, so that the user can view all their tasks with headings for each tasklist|Completed|Features
+A config option to autoswitch to the new list when it is created... maybe just even make it default behaviour|InProgress|Features
+A tasklist remove command so that the user does not have to be in the tasklist they want to delete|NotStarted|Features
+A config feature for smart tasklist titles, so that when there is more than one tasklist a title is automatically shown|NotStarted|Features
+Search command for certain tasks|NotStarted|Features
+Update function headers so they use rustdoc formatting|NotStarted|General
