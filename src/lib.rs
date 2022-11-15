@@ -18,6 +18,7 @@ use task::Task;
 use user_config::UserConfig;
 
 
+/// Struct for storing what paramaters the user ran the program with
 pub struct Config {
     pub command: String,
     pub command_arg: String,
@@ -25,6 +26,10 @@ pub struct Config {
 }
 
 impl Config {
+    /// Builds a config struct with the parameters the user ran the program with
+    ///
+    /// Parameters
+    /// args:     The arguments the user ran the program with
     pub fn build(args: Vec<String>) -> Result<Config, &'static str> {
         // Checks to see if any command was supplied
         if args.len() < 2  {
@@ -52,6 +57,7 @@ impl Config {
         })
     }
 
+    /// Converts the command argument string to a usize
     pub fn argument_to_index(&self) -> usize {
         self.command_arg.parse().unwrap_or_else(|_| {
             print_error("That is not a valid Task ID!");
@@ -61,7 +67,11 @@ impl Config {
 }
 
 
-// Function to check if a task exists in the tasklist
+/// Checks if a task exists in the given tasklist
+///
+/// Parameters
+/// task_index: Index of the task
+/// tasklist: The tasklist the task is in
 fn task_exists(task_index: usize, tasklist: &Vec<Task>) {
     if task_index >= tasklist.len() {
         print_error("Task does not exist!");
@@ -70,7 +80,11 @@ fn task_exists(task_index: usize, tasklist: &Vec<Task>) {
 }
 
 
-// Function to get the task's id
+/// Gets the current index of the given task from the config, checking if it exists
+///
+/// Parameters
+/// config:     The config the user ran the program with
+/// tasklist:   The tasklist the task is in
 fn get_task_index(config: Config, tasklist: &Vec<Task>) -> usize {
     // Getting the task's index
     let mut task_index = config.argument_to_index();
@@ -84,7 +98,7 @@ fn get_task_index(config: Config, tasklist: &Vec<Task>) -> usize {
 }
 
 
-// Function to print errors
+/// Prints an error message using eprint! with pretty formatting
 pub fn print_error(message: &str) {
     let error_symbol = format!("[{}]", "!".bright_red());
 
@@ -92,7 +106,7 @@ pub fn print_error(message: &str) {
 }
 
 
-// Function to print success messages
+/// Prints a success message using eprint! with pretty formatting
 fn print_success(message: &str) {
     let success_symbol = format!("[{}]", "!".bright_blue());
 
@@ -100,7 +114,11 @@ fn print_success(message: &str) {
 }
 
 
-// Main run function
+/// The main logic of the program. Checks what commands the user ran the program with and calls the
+/// appropriate functions
+///
+/// Parameters:
+/// config: The parameteres the user passed when they ran the program
 pub fn run(config: Config) {
     // Runs the commands that do not require a taskslist 
     match config.command.as_str() {
@@ -291,7 +309,12 @@ pub fn run(config: Config) {
 }
 
 
-// Function to manage tasklist related commands
+/// Function that manages all the tasklist related commands
+///
+/// Parameters
+/// config:         The config the user ran the program with
+/// users_config:   The users settings
+/// tasks:          The tasks in the current tasklist
 fn tasklist_command_management(config: &Config, users_config: &mut UserConfig, 
                                tasks: &mut Vec<Task>) {
     // Lists all the current tasklists
@@ -361,7 +384,11 @@ fn tasklist_command_management(config: &Config, users_config: &mut UserConfig,
 }
 
 
-// Function to manage the set command
+/// Function that manages all the set command
+///
+/// Parameters
+/// config:         The config the user ran the program with
+/// users_config:   The users settings
 fn config_command_management(config: &Config, users_config: &mut UserConfig) {
     match config.command_arg.as_str() {
         "smart_id" => {
