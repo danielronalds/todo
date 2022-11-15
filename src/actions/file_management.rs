@@ -8,7 +8,7 @@ use crate::user_config::UserConfig;
 const FILENAME: &str = ".tasks.testing";
 
 
-// Function to create a .tasks file to store tasks in csv format
+/// Creates a new .task file in the current directory if one does not already exist
 pub fn init_list() -> Result<&'static str, &'static str>{
     // Checks to see if a .tasks file exists already
     if Path::new(FILENAME).exists() {
@@ -33,7 +33,7 @@ pub fn init_list() -> Result<&'static str, &'static str>{
 }
 
 
-// Function to delete the list in the current directory
+/// Deletes the .tasks in the current directory
 pub fn delete_list() -> Result<&'static str, &'static str> {
     print_error("This will delete the tasks list in this directory, are you sure? [y/N]\n");
 
@@ -55,7 +55,11 @@ pub fn delete_list() -> Result<&'static str, &'static str> {
 }
 
 
-// Function to write to the .tasks file to store tasks in csv 
+/// Writes the current state of the program to the .tasks file
+///
+/// Parameters
+/// tasks:          The vec containing all the tasks
+/// users_config:   The user's settings
 pub fn save_task_list(tasks: Vec<Task>, users_config: UserConfig) -> Result<(), &'static str>{
     // Creating a vec to store the data in csv format that will be written to the .tasks file
     let mut save_data: String = String::new();
@@ -78,7 +82,7 @@ pub fn save_task_list(tasks: Vec<Task>, users_config: UserConfig) -> Result<(), 
 }
 
 
-// Function to read the task file into a Vec of tasks
+/// Reads the list of tasks and the users config from the .tasks file in the current directory
 pub fn read_task_list() -> Result<(Vec<Task>, UserConfig), &'static str> {
     // Opening task file
     let lines: Vec<String> = match read_file(FILENAME) {
@@ -141,7 +145,10 @@ pub fn read_task_list() -> Result<(Vec<Task>, UserConfig), &'static str> {
 }
 
 
-// Function to open a file, returning a vec of all the lines
+/// Opens the file with the given file_name and returns its lines as a Vec<String>
+///
+/// Parameters
+/// file_name:  The name of the file to read
 fn read_file(file_name: &str) -> Result<Vec<String>, &'static str> {
     // Opening the tasks file, and check if the file was opened successfully, returning an Err() 
     // if it wasn't, so that the run function can handle it
@@ -165,7 +172,10 @@ fn read_file(file_name: &str) -> Result<Vec<String>, &'static str> {
 }
 
 
-// Function to read a string in csv formating
+/// Reads the given string, and returns the CSV data from that line 
+///
+/// Parameters
+/// line:  The line containg the CSV data
 fn read_csv_line(line: String) -> Vec<String> {
     let data_points: Vec<&str> = line.split("|").collect();
 
