@@ -1,7 +1,11 @@
 use crate::user_config::UserConfig;
 
 
-// Function to set the current tasklist
+/// Sets the current tasklist
+///
+/// Parameters
+/// users_config:   The users settings
+/// new_tasklist:   The new current tasklist
 pub fn set_current_tasklist(users_config: &mut UserConfig, new_tasklist: String) 
     -> Result<String, &'static str> {
     if new_tasklist.is_empty() {
@@ -23,7 +27,11 @@ pub fn set_current_tasklist(users_config: &mut UserConfig, new_tasklist: String)
 }
 
 
-// Function to update the smart Id option
+/// Updates the smart ID option
+///
+/// Parameters
+/// users_config:   The users settings
+/// value:          The value of the option
 pub fn set_smart_id(users_config: &mut UserConfig, value: &str) -> Result<String, &'static str> {
     match value {
         "true" => {
@@ -42,7 +50,11 @@ pub fn set_smart_id(users_config: &mut UserConfig, value: &str) -> Result<String
 }
 
 
-// Function to update the smart Id option
+/// Updates the Display List Name option
+///
+/// Parameters
+/// users_config:   The users settings
+/// value:          The value of the option
 pub fn set_display_list_name(users_config: &mut UserConfig, value: &str) 
     -> Result<&'static str, &'static str> {
     match value {
@@ -61,7 +73,11 @@ pub fn set_display_list_name(users_config: &mut UserConfig, value: &str)
 }
 
 
-// Function to set the number of tasks for smart id to trigger
+/// Sets the number of tasks for smart id to trigger
+///
+/// Parameters
+/// users_config:   The users settings
+/// value:          The value of the option
 pub fn set_num_of_tasks(users_config: &mut UserConfig, value: &str) 
     -> Result<String, &'static str> {
     // Parses the value given, returning an error if the parse failed
@@ -77,7 +93,11 @@ pub fn set_num_of_tasks(users_config: &mut UserConfig, value: &str)
 }
 
 
-// Function to update the always show id option
+/// Updates the Always Show ID option
+///
+/// Parameters
+/// users_config:   The users settings
+/// value:          The value of the option
 pub fn set_always_show_id(users_config: &mut UserConfig, value: &str) 
     -> Result<String, &'static str> {
     match value {
