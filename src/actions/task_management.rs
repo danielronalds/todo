@@ -6,13 +6,16 @@ use crate::task::TaskStatus;
 use crate::user_config::UserConfig;
 
 
-// Function to update a task's status to inprogress
-pub fn start_task(t: &mut Task)  -> Result<String, &'static str> {
-    match t.status {
+/// Updates the given task's status to InProgress
+///
+/// Parameters
+/// task:  The task to change the status of
+pub fn start_task(task: &mut Task)  -> Result<String, &'static str> {
+    match task.status {
         // If the task is not started, start it 
         TaskStatus::NotStarted => {
-            t.status = TaskStatus::InProgress;
-            return Ok(format!("Started task '{}'", t.desc))
+            task.status = TaskStatus::InProgress;
+            return Ok(format!("Started task '{}'", task.desc))
         },
         // Otherwise inform the user of the tasks' current status
         _ => return Err("Task already in progress!"),
@@ -20,29 +23,40 @@ pub fn start_task(t: &mut Task)  -> Result<String, &'static str> {
 }
 
 
-// Function to update a task's status to completed
-pub fn finish_task(t: &mut Task) -> Result<String, &'static str> {
-    match t.status {
+/// Updates the given task's status to Completed
+///
+/// Parameters
+/// task:  The task to change the status of
+pub fn finish_task(task: &mut Task) -> Result<String, &'static str> {
+    match task.status {
         // Inform the user if the task has already been completed
         TaskStatus::Completed => return Err("Task already completed!"),
         // If the task is either not started or in progress, complete it
         _ => {
-            t.status = TaskStatus::Completed;
-            return Ok(format!("Completed '{}'!", t.desc))
+            task.status = TaskStatus::Completed;
+            return Ok(format!("Completed '{}'!", task.desc))
         },
     }
 }
 
 
-// Function to set the status of any task to NotStarted
-pub fn restart_task(t: &mut Task) -> String {
-    t.status = TaskStatus::NotStarted;
+/// Updates the given task's status to NotStarted
+///
+/// Parameters
+/// task:  The task to change the status of
+pub fn restart_task(task: &mut Task) -> String {
+    task.status = TaskStatus::NotStarted;
 
-    format!("Restarted task '{}'!", t.desc)
+    format!("Restarted task '{}'!", task.desc)
 }
 
 
-// Adds a task to a tasks vec
+/// Creates a new Task and adds it the given vec
+///
+/// Parameters
+/// tasks:  The vec to add the new task to
+/// desc:   The description of the task
+/// list:   The tasklist to add the task to
 pub fn add_task(tasks: &mut Vec<Task>, desc: String, list: String) 
     -> Result<String, &'static str> {
     // Creates the task and checks if it was created succesfully, returning an error if not
@@ -59,7 +73,11 @@ pub fn add_task(tasks: &mut Vec<Task>, desc: String, list: String)
 }
 
 
-// Removes a task from a tasks vec
+/// Removes the task at the given index from the given vec
+///
+/// Parameters
+/// tasks:      The vec to add the new task to
+/// task_index: The index of the task to remove
 pub fn remove_task(tasks: &mut Vec<Task>, task_index: usize) -> String {
     // Creating the message to return to the run function to print out
     let task_desc = &tasks[task_index].desc;
@@ -74,7 +92,11 @@ pub fn remove_task(tasks: &mut Vec<Task>, task_index: usize) -> String {
 }
 
 
-// Function that updates the given tasks description
+/// Updates the description of the given task
+///
+/// Parameters
+/// task:       The task that will have its description updated
+/// new_desc:   The new description of the task
 pub fn update_task(task: &Task, new_desc: String) -> Result<(Task, String), &'static str> {
     // Creates a new task that the function returns, so that error checking of what a proper task
     // desciption should be doesn't have to be repeated twice, meaning that if the requirments 
@@ -90,7 +112,10 @@ pub fn update_task(task: &Task, new_desc: String) -> Result<(Task, String), &'st
 }
 
 
-// Function to sort tasks from completed to not started
+/// Sorts the given Task vec in descending order, with the completed tasks being at the top
+///
+/// Parameters
+/// tasks:  The vec to sort
 pub fn sort_tasks(tasks: Vec<Task>) -> Vec<Task> {
     // Declaring a vec to store sorted tasks, and an array of vecs for sorting
     let mut sorted_tasks: Vec<Task> = Vec::new();
@@ -117,7 +142,10 @@ pub fn sort_tasks(tasks: Vec<Task>) -> Vec<Task> {
 }
 
 
-// Function to delete completed tasks from the task list
+/// Deletes all completed tasks in the given Task vec
+///
+/// Parameters
+/// tasks:  The vec to delete completed tasks from
 pub fn cleanup_list(tasks: &mut Vec<Task>) -> String {
     let mut tasks_to_remove: Vec<usize> = Vec::new();
 
@@ -147,7 +175,7 @@ pub fn cleanup_list(tasks: &mut Vec<Task>) -> String {
 }
 
 
-/// Function to list all tasks
+/// Lists all tasks regardless of the current tasklist
 ///
 /// Parameters
 /// main_tasks:     The tasks in the current tasklist
@@ -177,7 +205,11 @@ pub fn list_all_tasks(mut main_tasks: Vec<Task>, mut other_tasks: Vec<Task>, con
 }
 
 
-// Function to list task
+/// Lists all the tasks in the current tasklist
+///
+/// Parameters
+/// tasks:          The tasks in the current tasklist
+/// users_config:   The user's settings, used to retrieve the current tasklist's name
 pub fn list_tasks(tasks: &[Task], users_config: &UserConfig) -> Result<(), &'static str> {
     // Prints an output informing the user that there are no tasks if the tasklist is empty
     if tasks.is_empty() {

@@ -118,7 +118,7 @@ fn print_success(message: &str) {
 /// appropriate functions
 ///
 /// Parameters:
-/// config: The parameteres the user passed when they ran the program
+/// config:    The parameteres the user passed when they ran the program
 pub fn run(config: Config) {
     // Runs the commands that do not require a taskslist 
     match config.command.as_str() {
