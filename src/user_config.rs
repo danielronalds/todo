@@ -1,3 +1,4 @@
+/// Struct for storing the user's settings
 pub struct UserConfig {
     pub always_show_id: bool,
     pub smart_id: bool,
@@ -8,7 +9,10 @@ pub struct UserConfig {
 }
 
 impl UserConfig {
-    // Function to build a user config
+    /// Builds a user config from already existing existing settings
+    ///
+    /// Parameters
+    /// args:   The vec containg the existing settings
     pub fn build(args: Vec<String>) -> UserConfig {
         // Check if the vec contains the right data, if not returns a default config
         if args.len() != 5 {
@@ -51,7 +55,7 @@ impl UserConfig {
         }
     }
 
-    // Function that returns a default user config
+    /// Retursn a default UserConfig
     pub fn default() -> UserConfig {
         let mut tasklists: Vec<String> = Vec::new();
 
@@ -67,6 +71,7 @@ impl UserConfig {
         }
     }
 
+    /// Outputs the settings in the UserConfig struct as a String with CSV formatting
     pub fn to_save_format(&self) -> String {
         format!("{}|{}|{}|{}|{}\n", 
                 &self.always_show_id, 
@@ -76,6 +81,7 @@ impl UserConfig {
                 &self.display_list_name)
     }
 
+    /// Outputs the tasklists in the UserConfig struct as a String with CSV formatting
     pub fn tasklists_to_save_format(&self) -> String {
         let mut saved_lists = String::new();
 
