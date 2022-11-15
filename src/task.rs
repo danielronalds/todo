@@ -1,7 +1,7 @@
 // For pretty formating
 use colored::Colorize;
 
-// Struct to store a Task
+/// Struct to represent a Task
 #[derive(Clone)]
 pub struct Task {
     pub list: String,
@@ -9,12 +9,17 @@ pub struct Task {
     pub status: TaskStatus,
 }
 
-// Enum for the status of the task
+/// enum to represent the status of a task
 #[derive(Clone)]
 pub enum TaskStatus { Completed, InProgress, NotStarted }
 
 impl Task {
-    // Constructor for task struct
+    /// Builds a task struct
+    ///
+    /// Parameters
+    /// list:       What tasklist the task is in
+    /// desc:       The description of the task
+    /// status:     The status of the task
     pub fn build(list: String, desc: String, status: TaskStatus) -> Result<Task, &'static str> {
         // Checking to see if the passed description is empty, returning an error result if it is
         if desc.is_empty() {
@@ -36,7 +41,7 @@ impl Task {
     }
 
 
-    // Method to output the task's status to a String
+    /// Output's the task's status as a String
     pub fn status_to_string(&self) -> String {
         match &self.status {
             TaskStatus::NotStarted => String::from("NotStarted"),
@@ -46,7 +51,7 @@ impl Task {
     }
 
 
-    // Method to return Task as String 
+    /// Returns the Task as a String
     pub fn to_string(&self) -> String {
         let task_status = format!("[{}]", match &self.status {
             TaskStatus::NotStarted => format!("{}", "x".bright_red()),
