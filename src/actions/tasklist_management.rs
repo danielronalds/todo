@@ -6,8 +6,12 @@ use crate::task::Task;
 use crate::print_error;
 
 
-// Function to sort a tasklist and return a vec containing the tasks tagged with the current list
-// as well as vec containing the rest
+/// Sorts a Task vec into a vec containing all the Tasks with the current tasklist tag, and a vec
+/// containing the rest of the tasks
+///
+/// Parameters
+/// current_list:   The current tasklist
+/// tasks:          The unsorted vec of tasks
 pub fn filter_list(current_list: String, tasks: Vec<Task>) -> (Vec<Task>, Vec<Task>) {
     let mut tagged_tasks: Vec<Task> = Vec::new();
 
@@ -25,7 +29,11 @@ pub fn filter_list(current_list: String, tasks: Vec<Task>) -> (Vec<Task>, Vec<Ta
 }
 
 
-// Function to add a tasklist
+/// Adds a tasklist to the users config
+///
+/// Parameters
+/// users_config:   The user's settings
+/// new_tasklist:   The name of the new tasklist
 pub fn add_tasklist(users_config: &mut UserConfig, new_tasklist: String) 
     -> Result<String, &'static str> {
     if new_tasklist.is_empty() {
@@ -51,7 +59,12 @@ pub fn add_tasklist(users_config: &mut UserConfig, new_tasklist: String)
 }
 
 
-// Function to update the current tasklists name
+/// Updates the current tasklist's name
+///
+/// Parameters
+/// users_config:   The users settings
+/// tasks:          The tasks in the current tasklist
+/// new_name:       The new name of the tasklist
 pub fn update_tasklist_name(users_config: &mut UserConfig, tasks: &mut Vec<Task>, new_name: String) 
     -> Result<&'static str, &'static str> {
     // Checking if the new name is empty, whether a tasklist wih it already exists or if contains 
@@ -89,7 +102,11 @@ pub fn update_tasklist_name(users_config: &mut UserConfig, tasks: &mut Vec<Task>
 }
 
 
-// Function to delete the current tasklist
+/// Deletes the current tasklist
+///
+/// Parameters
+/// users_config:   The users settings
+/// tasklist:       The tasks in the current tasklist
 pub fn delete_tasklist(users_config: &mut UserConfig, tasklist: &mut Vec<Task>) 
     -> Result<&'static str, &'static str> {
     // Checks to make sure that it is not the last checklist
@@ -125,7 +142,10 @@ pub fn delete_tasklist(users_config: &mut UserConfig, tasklist: &mut Vec<Task>)
 }
 
 
-// Function that lists all of the current tasklist
+/// Lists all of the current tasklists
+///
+/// Parameters
+/// users_config:   The users settings
 pub fn list_tasklists(user_config: &UserConfig) {
     for name in &user_config.tasklists {
         if name == &user_config.current_list {
