@@ -53,7 +53,9 @@ pub fn add_tasklist(users_config: &mut UserConfig, new_tasklist: String)
 
     let message = format!("Tasklist {} Added!", &new_tasklist);
 
-    users_config.tasklists.push(new_tasklist);
+    users_config.tasklists.push(new_tasklist.clone());
+
+    crate::actions::config_management::set_current_tasklist(users_config, new_tasklist)?;
 
     Ok(message)
 }
