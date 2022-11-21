@@ -7,10 +7,14 @@ pub enum TaskStatus {
 }
 
 /// Enum for storing possible errors
-#[derive(Debug)]
-pub enum Errors {}
+#[derive(Debug, PartialEq)]
+pub enum Errors {
+    EmptyDescription,
+    InvalidCharInDescription,
+}
 
 /// Struct to represent a task
+#[derive(Debug)]
 pub struct Task {
     description: String,
     status: TaskStatus,
@@ -24,8 +28,8 @@ impl Task {
     /// status:        The task's status
     pub fn new(description: String, status: TaskStatus) -> Result<Task, Errors> {
         Ok(Task {
-            description: String::new(),
-            status: TaskStatus::NotStarted,
+            description,
+            status,
         })
     }
 
@@ -40,6 +44,7 @@ impl Task {
     }
 }
 
+/// Unit tests
 mod tests {
     use super::*;
 
@@ -61,5 +66,25 @@ mod tests {
         let task = Task::new(description.clone(), TaskStatus::Completed).unwrap();
 
         assert_eq!(task.status(), TaskStatus::Completed)
+    }
+
+    #[test]
+    /// Checks if the constructor will provide the correct error when passed an empty desciption
+    fn constructor_fails_on_empty_description() {
+        let description = String::new();
+
+        let task_error = Task::new(description, TaskStatus::InProgress).unwrap_err();
+
+        assert_eq!(task_error, Errors::EmptyDescription)
+    }
+
+    #[test]
+    /// Checks if the constructor returns the right error when the desciption contains a '|' char
+    fn constructor_fails_on_invalid_char() {
+        let description = String::from("This invalid char | cannot be in the desciption");
+
+        let task_error = Task::new(description, TaskStatus::InProgress).unwrap_err();
+
+        assert_eq!(task_error, Errors::InvalidCharInDescription)
     }
 }
