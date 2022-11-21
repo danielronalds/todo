@@ -21,19 +21,29 @@ pub struct Task {
 }
 
 impl Task {
-    /// Returns a new Task struct with the desciption and status passed in
-    ///
+    /// Returns a new Task struct with the description and status passed in
+    /// 
     /// Parameters
-    /// description:   The task's desciption
+    /// description:   The task's description
     /// status:        The task's status
     pub fn new(description: String, status: TaskStatus) -> Result<Task, Errors> {
+        // Return an error if the description is empty
+        if description.is_empty() {
+            return Err(Errors::EmptyDescription);
+        }
+
+        // Return an error if the description contains a | char
+        if description.contains('|') {
+            return Err(Errors::InvalidCharInDescription);
+        }
+
         Ok(Task {
             description,
             status,
         })
     }
 
-    /// Returns a clone of the tasks desciption
+    /// Returns a clone of the tasks description
     pub fn description(&self) -> String {
         self.description.clone()
     }
@@ -63,13 +73,13 @@ mod tests {
     fn constructor_right_status() {
         let description = String::from("This is a simple task!");
 
-        let task = Task::new(description.clone(), TaskStatus::Completed).unwrap();
+        let task = Task::new(description, TaskStatus::Completed).unwrap();
 
         assert_eq!(task.status(), TaskStatus::Completed)
     }
 
     #[test]
-    /// Checks if the constructor will provide the correct error when passed an empty desciption
+    /// Checks if the constructor will provide the correct error when passed an empty description
     fn constructor_fails_on_empty_description() {
         let description = String::new();
 
@@ -79,9 +89,9 @@ mod tests {
     }
 
     #[test]
-    /// Checks if the constructor returns the right error when the desciption contains a '|' char
+    /// Checks if the constructor returns the right error when the description contains a '|' char
     fn constructor_fails_on_invalid_char() {
-        let description = String::from("This invalid char | cannot be in the desciption");
+        let description = String::from("This invalid char | cannot be in the description");
 
         let task_error = Task::new(description, TaskStatus::InProgress).unwrap_err();
 
