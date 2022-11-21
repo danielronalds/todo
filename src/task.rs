@@ -54,7 +54,22 @@ impl Task {
     }
 
     /// Updates the description of the task
-    pub fn update_description(&self, new_description: String) -> Result<(), Errors> {
+    ///
+    /// Parameters
+    /// new_description:   The new description of the task
+    pub fn update_description(&mut self, new_description: String) -> Result<(), Errors> {
+        // Return an error if the new description is empty
+        if new_description.is_empty() {
+            return Err(Errors::EmptyDescription);
+        }
+
+        // Return an error if the new description contains a | char
+        if new_description.contains('|') {
+            return Err(Errors::InvalidCharInDescription);
+        }
+
+        self.description = new_description;
+
         Ok(())
     }
 
@@ -128,7 +143,7 @@ mod tests {
     fn update_description_works() {
         let description = String::from("This is the first description");
 
-        let task = Task::new(description, TaskStatus::InProgress).unwrap();
+        let mut task = Task::new(description, TaskStatus::InProgress).unwrap();
 
         let new_description = String::from("The is the new description");
 
@@ -142,7 +157,7 @@ mod tests {
     fn update_description_fails_on_empty_description() {
         let description = String::from("This is the first description");
 
-        let task = Task::new(description, TaskStatus::InProgress).unwrap();
+        let mut task = Task::new(description, TaskStatus::InProgress).unwrap();
 
         let new_description = String::new();
 
@@ -156,7 +171,7 @@ mod tests {
     fn update_description_fails_on_invalid_char() {
         let description = String::from("This is the first description");
 
-        let task = Task::new(description, TaskStatus::InProgress).unwrap();
+        let mut task = Task::new(description, TaskStatus::InProgress).unwrap();
 
         let new_description = String::from("This invalid char | cannot be in the description");
 
