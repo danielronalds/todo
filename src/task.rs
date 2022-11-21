@@ -8,7 +8,7 @@ pub enum TaskStatus {
 
 /// Enum for storing possible errors
 #[derive(Debug, PartialEq)]
-pub enum Errors {
+pub enum TaskErrors {
     EmptyDescription,
     InvalidCharInDescription,
 }
@@ -26,15 +26,15 @@ impl Task {
     /// Parameters
     /// description:   The task's description
     /// status:        The task's status
-    pub fn new(description: String, status: TaskStatus) -> Result<Task, Errors> {
+    pub fn new(description: String, status: TaskStatus) -> Result<Task, TaskErrors> {
         // Return an error if the description is empty
         if description.is_empty() {
-            return Err(Errors::EmptyDescription);
+            return Err(TaskErrors::EmptyDescription);
         }
 
         // Return an error if the description contains a | char
         if description.contains('|') {
-            return Err(Errors::InvalidCharInDescription);
+            return Err(TaskErrors::InvalidCharInDescription);
         }
 
         Ok(Task {
@@ -57,15 +57,15 @@ impl Task {
     ///
     /// Parameters
     /// new_description:   The new description of the task
-    pub fn update_description(&mut self, new_description: String) -> Result<(), Errors> {
+    pub fn update_description(&mut self, new_description: String) -> Result<(), TaskErrors> {
         // Return an error if the new description is empty
         if new_description.is_empty() {
-            return Err(Errors::EmptyDescription);
+            return Err(TaskErrors::EmptyDescription);
         }
 
         // Return an error if the new description contains a | char
         if new_description.contains('|') {
-            return Err(Errors::InvalidCharInDescription);
+            return Err(TaskErrors::InvalidCharInDescription);
         }
 
         self.description = new_description;
@@ -118,7 +118,7 @@ mod tests {
 
         let task_error = Task::new(description, TaskStatus::InProgress).unwrap_err();
 
-        assert_eq!(task_error, Errors::EmptyDescription)
+        assert_eq!(task_error, TaskErrors::EmptyDescription)
     }
 
     #[test]
@@ -128,7 +128,7 @@ mod tests {
 
         let task_error = Task::new(description, TaskStatus::InProgress).unwrap_err();
 
-        assert_eq!(task_error, Errors::InvalidCharInDescription)
+        assert_eq!(task_error, TaskErrors::InvalidCharInDescription)
     }
 
     #[test]
@@ -170,7 +170,7 @@ mod tests {
             .update_description(new_description.clone())
             .unwrap_err();
 
-        assert_eq!(err, Errors::EmptyDescription)
+        assert_eq!(err, TaskErrors::EmptyDescription)
     }
 
     #[test]
@@ -186,7 +186,7 @@ mod tests {
             .update_description(new_description.clone())
             .unwrap_err();
 
-        assert_eq!(err, Errors::InvalidCharInDescription)
+        assert_eq!(err, TaskErrors::InvalidCharInDescription)
     }
 
     #[test]
