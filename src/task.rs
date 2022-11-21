@@ -81,8 +81,9 @@ impl Task {
         self.status = new_status;
     }
 
+    /// Returns the struct as a string that can be written to a file
     pub fn to_save_string(&self) -> String {
-        String::new()
+        format!("{}|{:?}", self.description(), self.status())
     }
 }
 
