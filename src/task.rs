@@ -22,7 +22,7 @@ pub struct Task {
 
 impl Task {
     /// Returns a new Task struct with the description and status passed in
-    /// 
+    ///
     /// Parameters
     /// description:   The task's description
     /// status:        The task's status
@@ -79,6 +79,10 @@ impl Task {
     /// new_status:   The new status of the task
     pub fn update_status(&mut self, new_status: TaskStatus) {
         self.status = new_status;
+    }
+
+    pub fn to_save_string(&self) -> String {
+        String::new()
     }
 }
 
@@ -148,7 +152,7 @@ mod tests {
         let new_description = String::from("The is the new description");
 
         task.update_description(new_description.clone()).unwrap();
-        
+
         assert_eq!(task.description(), new_description)
     }
 
@@ -161,8 +165,10 @@ mod tests {
 
         let new_description = String::new();
 
-        let err = task.update_description(new_description.clone()).unwrap_err();
-        
+        let err = task
+            .update_description(new_description.clone())
+            .unwrap_err();
+
         assert_eq!(err, Errors::EmptyDescription)
     }
 
@@ -175,8 +181,22 @@ mod tests {
 
         let new_description = String::from("This invalid char | cannot be in the description");
 
-        let err = task.update_description(new_description.clone()).unwrap_err();
-        
+        let err = task
+            .update_description(new_description.clone())
+            .unwrap_err();
+
         assert_eq!(err, Errors::InvalidCharInDescription)
+    }
+
+    #[test]
+    /// Checks if the to_save_string method works
+    fn to_save_string_works() {
+        let description = String::from("This is a saved task!");
+
+        let task = Task::new(description, TaskStatus::NotStarted).unwrap();
+        
+        let expected_output = String::from("This is a saved task!|NotStarted");
+
+        assert_eq!(expected_output, task.to_save_string())
     }
 }
