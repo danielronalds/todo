@@ -59,8 +59,11 @@ impl Task {
     }
 
     /// Updates the status of the task
-    pub fn update_status(&self, new_status: TaskStatus) -> Result<(), Errors> {
-        Ok(())
+    ///
+    /// Parameters
+    /// new_status:   The new status of the task
+    pub fn update_status(&mut self, new_status: TaskStatus) {
+        self.status = new_status;
     }
 }
 
@@ -113,9 +116,9 @@ mod tests {
     fn update_status_works() {
         let description = String::from("This is a basic task!");
 
-        let task = Task::new(description, TaskStatus::NotStarted).unwrap();
+        let mut task = Task::new(description, TaskStatus::NotStarted).unwrap();
 
-        task.update_status(TaskStatus::InProgress).unwrap();
+        task.update_status(TaskStatus::InProgress);
 
         assert_eq!(task.status(), TaskStatus::InProgress)
     }
