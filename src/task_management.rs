@@ -2,14 +2,17 @@ use crate::task::{Task, TaskStatus, TaskErrors};
 
 /// Sets the status of the given task to InProgress
 pub fn start_task(task: &mut Task) {
+    task.update_status(TaskStatus::InProgress);
 }
 
 /// Sets the status of the given task to Completed
 pub fn finish_task(task: &mut Task) {
+    task.update_status(TaskStatus::Completed);
 }
 
 /// Sets the status of the given task to NotStarted
 pub fn restart_task(task: &mut Task) {
+    task.update_status(TaskStatus::NotStarted);
 }
 
 /// Unit Tests
