@@ -7,6 +7,9 @@ pub enum TaskManagementErrors {
 }
 
 /// Sets the status of the given task to InProgress
+///
+/// Parameters
+/// task:   The task to update the status of
 pub fn start_task(task: &mut Task) -> Result<(), TaskManagementErrors> {
     if task.status() == TaskStatus::InProgress {
         return Err(TaskManagementErrors::TaskAlreadyGivenStatus);
@@ -17,6 +20,9 @@ pub fn start_task(task: &mut Task) -> Result<(), TaskManagementErrors> {
 }
 
 /// Sets the status of the given task to Completed
+///
+/// Parameters
+/// task:   The task to update the status of
 pub fn finish_task(task: &mut Task) -> Result<(), TaskManagementErrors> {
     if task.status() == TaskStatus::Completed {
         return Err(TaskManagementErrors::TaskAlreadyGivenStatus);
@@ -27,6 +33,9 @@ pub fn finish_task(task: &mut Task) -> Result<(), TaskManagementErrors> {
 }
 
 /// Sets the status of the given task to NotStarted
+///
+/// Parameters
+/// task:   The task to update the status of
 pub fn restart_task(task: &mut Task) -> Result<(), TaskManagementErrors> {
     if task.status() == TaskStatus::NotStarted {
         return Err(TaskManagementErrors::TaskAlreadyGivenStatus);
@@ -37,6 +46,10 @@ pub fn restart_task(task: &mut Task) -> Result<(), TaskManagementErrors> {
 }
 
 /// Changes the desciption of the given task
+///
+/// Parameters
+/// task:          The task to update the status of
+/// description:   The new description of the task
 pub fn update_task_description(task: &mut Task, description: String) -> Result<(), TaskErrors> {
     task.update_description(description)?;
     Ok(())
