@@ -8,18 +8,30 @@ pub enum TaskManagementErrors {
 
 /// Sets the status of the given task to InProgress
 pub fn start_task(task: &mut Task) -> Result<(), TaskManagementErrors> {
+    if task.status() == TaskStatus::InProgress {
+        return Err(TaskManagementErrors::TaskAlreadyGivenStatus);
+    }
+
     task.update_status(TaskStatus::InProgress);
     Ok(())
 }
 
 /// Sets the status of the given task to Completed
 pub fn finish_task(task: &mut Task) -> Result<(), TaskManagementErrors> {
+    if task.status() == TaskStatus::Completed {
+        return Err(TaskManagementErrors::TaskAlreadyGivenStatus);
+    }
+
     task.update_status(TaskStatus::Completed);
     Ok(())
 }
 
 /// Sets the status of the given task to NotStarted
 pub fn restart_task(task: &mut Task) -> Result<(), TaskManagementErrors> {
+    if task.status() == TaskStatus::NotStarted {
+        return Err(TaskManagementErrors::TaskAlreadyGivenStatus);
+    }
+
     task.update_status(TaskStatus::NotStarted);
     Ok(())
 }
@@ -72,9 +84,9 @@ mod tests {
     fn finish_task_fails_when_already_finished() {
         let description = String::from("This is a basic task");
 
-        let mut task = Task::new(description, TaskStatus::InProgress).unwrap();
+        let mut task = Task::new(description, TaskStatus::Completed).unwrap();
 
-        let error = start_task(&mut task).unwrap_err();
+        let error = finish_task(&mut task).unwrap_err();
 
         assert_eq!(error, TaskManagementErrors::TaskAlreadyGivenStatus)
     }
@@ -99,7 +111,7 @@ mod tests {
 
         let mut task = Task::new(description, TaskStatus::NotStarted).unwrap();
 
-        let error = start_task(&mut task).unwrap_err();
+        let error = restart_task(&mut task).unwrap_err();
 
         assert_eq!(error, TaskManagementErrors::TaskAlreadyGivenStatus)
     }
