@@ -36,6 +36,12 @@ pub fn restart_task(task: &mut Task) -> Result<(), TaskManagementErrors> {
     Ok(())
 }
 
+/// Changes the desciption of the given task
+pub fn update_task_description(task: &mut Task, description: String) -> Result<(), TaskErrors> {
+    task.update_description(description)?;
+    Ok(())
+}
+
 /// Unit Tests
 #[cfg(test)]
 mod tests {
@@ -114,5 +120,48 @@ mod tests {
         let error = restart_task(&mut task).unwrap_err();
 
         assert_eq!(error, TaskManagementErrors::TaskAlreadyGivenStatus)
+    }
+
+    #[test]
+    /// Tests if the update_task_description function works
+    fn update_task_description_works() {
+        let description = String::from("This is a basic task");
+
+        let mut task = Task::new(description, TaskStatus::NotStarted).unwrap();
+
+        let new_description = String::from("This is a new description");
+
+        update_task_description(&mut task, new_description.clone()).unwrap();
+
+        assert_eq!(task.description(), new_description)
+    }
+
+    #[test]
+    /// Checks if the update_task_description function fails when passed an empty description
+    fn update_description_fails_on_empty_description() {
+        let description = String::from("This is the first description");
+
+        let mut task = Task::new(description, TaskStatus::InProgress).unwrap();
+
+        let new_description = String::new();
+
+        let err = update_task_description(&mut task, new_description).unwrap_err();
+
+        assert_eq!(err, TaskErrors::EmptyDescription)
+    }
+
+    #[test]
+    /// Checks if the update_task_description function fails when passed a description with an 
+    /// invalid char
+    fn update_task_description_fails_on_invalid_char() {
+        let description = String::from("This is the first description");
+
+        let mut task = Task::new(description, TaskStatus::InProgress).unwrap();
+
+        let new_description = String::from("This invalid char | cannot be in the description");
+
+        let err = update_task_description(&mut task, new_description).unwrap_err();
+
+        assert_eq!(err, TaskErrors::InvalidCharInDescription)
     }
 }
