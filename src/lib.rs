@@ -1,31 +1,31 @@
 // Modules
 mod args;
 mod task;
+mod commands;
 mod task_management;
 
-use args::TodoArgs;
 use clap::Parser;
 
-use crate::task::Task;
-use crate::task::TaskErrors;
-use crate::task::TaskStatus;
+use args::TodoArgs;
 
+use task::Task;
+
+/// The main run function of the library
+///
+/// This code handles parsing of the arguments and the main code calling
 pub fn run() {
     let args = TodoArgs::parse();
 
-    match &args.command {
-        args::Commands::Add(input) => {
-            match Task::new(input.description.clone(), TaskStatus::NotStarted) {
-                Ok(task) => println!("{}", task.to_save_string()),
-                Err(err) => match err {
-                    TaskErrors::EmptyDescription => {
-                        println!("Tasks cannot have empty descriptions!")
-                    }
-                    TaskErrors::InvalidCharInDescription => {
-                        println!("Tasks cannot have the | char!")
-                    }
-                },
+    let mut tasks_vec: Vec<Task> = Vec::new();
+
+    match args.command {
+        args::Commands::Add(arguments) => {
+            match commands::new_task(arguments) {
+                Ok(task) => tasks_vec.push(task),
+                Err(err) => println!("{}", err),
             };
         }
     }
+
+    println!("{:?}", tasks_vec);
 }

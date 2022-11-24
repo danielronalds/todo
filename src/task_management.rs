@@ -1,4 +1,4 @@
-use crate::task::{Task, TaskStatus, TaskErrors};
+use crate::task::{Task, TaskErrors, TaskStatus};
 
 /// Enum for storing TaskManagementErrors
 #[derive(Debug, PartialEq)]
@@ -164,7 +164,7 @@ mod tests {
     }
 
     #[test]
-    /// Checks if the update_task_description function fails when passed a description with an 
+    /// Checks if the update_task_description function fails when passed a description with an
     /// invalid char
     fn update_task_description_fails_on_invalid_char() {
         let description = String::from("This is the first description");
