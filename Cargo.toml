@@ -8,3 +8,4 @@ edition = "2021"
 [dependencies]
 clap = { version = "4.0.26", features = ["derive"] }
 csv = "1.1.6"
+colored = "2.0.0"
