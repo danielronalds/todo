@@ -56,7 +56,18 @@ pub fn update_task_description(task: &mut Task, description: String) -> Result<(
     Ok(())
 }
 
+/// Deletes the task at the given index out of the given Vec<Task>
+///
+/// Parameters
+/// tasks:   The vec to remove the task from
+/// index:   The index of the task to remove (0 being the first task)
 pub fn delete_task(tasks: &mut Vec<Task>, index: usize) -> Result<(), TaskManagementErrors> {
+    if index >= tasks.len() {
+        return Err(TaskManagementErrors::TaskDoesntExist);
+    }
+
+    tasks.remove(index);
+
     Ok(())
 }
 
@@ -184,6 +195,7 @@ mod tests {
     }
 
     #[test]
+    /// Tests if the delete_task function works
     fn delete_task_works() {
         let mut tasks_vec: Vec<Task> = vec![
             Task::new(String::from("A basic task!"), TaskStatus::NotStarted).unwrap(),
@@ -199,13 +211,14 @@ mod tests {
     }
 
     #[test]
+    /// Tests if the delete_task function errors when the index passed to it is out of range
     fn delete_task_errors_on_invalid_index() {
         let mut tasks_vec: Vec<Task> = vec![
             Task::new(String::from("A basic task!"), TaskStatus::NotStarted).unwrap(),
             Task::new(String::from("Another basic task!"), TaskStatus::NotStarted).unwrap(),
         ];
 
-        let error = delete_task(&mut tasks_vec, 3).unwrap_err();
+        let error = delete_task(&mut tasks_vec, 2).unwrap_err();
 
         assert_eq!(error, TaskManagementErrors::TaskDoesntExist);
     }
