@@ -4,6 +4,7 @@ use crate::task::{Task, TaskErrors, TaskStatus};
 #[derive(Debug, PartialEq)]
 pub enum TaskManagementErrors {
     TaskAlreadyGivenStatus,
+    TaskDoesntExist,
 }
 
 /// Sets the status of the given task to InProgress
@@ -52,6 +53,10 @@ pub fn restart_task(task: &mut Task) -> Result<(), TaskManagementErrors> {
 /// description:   The new description of the task
 pub fn update_task_description(task: &mut Task, description: String) -> Result<(), TaskErrors> {
     task.update_description(description)?;
+    Ok(())
+}
+
+pub fn delete_task(tasks: &mut Vec<Task>, index: usize) -> Result<(), TaskManagementErrors> {
     Ok(())
 }
 
@@ -176,5 +181,32 @@ mod tests {
         let err = update_task_description(&mut task, new_description).unwrap_err();
 
         assert_eq!(err, TaskErrors::InvalidCharInDescription)
+    }
+
+    #[test]
+    fn delete_task_works() {
+        let mut tasks_vec: Vec<Task> = vec![
+            Task::new(String::from("A basic task!"), TaskStatus::NotStarted).unwrap(),
+            Task::new(String::from("Another basic task!"), TaskStatus::NotStarted).unwrap(),
+        ];
+
+        delete_task(&mut tasks_vec, 1).unwrap();
+
+        assert_eq!(
+            tasks_vec,
+            vec![Task::new(String::from("A basic task!"), TaskStatus::NotStarted).unwrap()]
+        )
+    }
+
+    #[test]
+    fn delete_task_errors_on_invalid_index() {
+        let mut tasks_vec: Vec<Task> = vec![
+            Task::new(String::from("A basic task!"), TaskStatus::NotStarted).unwrap(),
+            Task::new(String::from("Another basic task!"), TaskStatus::NotStarted).unwrap(),
+        ];
+
+        let error = delete_task(&mut tasks_vec, 3).unwrap_err();
+
+        assert_eq!(error, TaskManagementErrors::TaskDoesntExist);
     }
 }
