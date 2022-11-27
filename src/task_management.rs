@@ -4,7 +4,16 @@ use crate::task::{Task, TaskErrors, TaskStatus};
 #[derive(Debug, PartialEq)]
 pub enum TaskManagementErrors {
     TaskAlreadyGivenStatus,
+    EmptyTasklist,
     TaskDoesntExist,
+}
+
+/// Lists all of the tasks in the tasks vec
+///
+/// Parameters
+/// tasks:   The vec of tasks
+pub fn list_tasks(tasks: &Vec<Task>) -> Result<(), TaskManagementErrors> {
+    Ok(())
 }
 
 /// Sets the status of the given task to InProgress
@@ -220,6 +229,18 @@ mod tests {
 
         let error = delete_task(&mut tasks_vec, 2).unwrap_err();
 
-        assert_eq!(error, TaskManagementErrors::TaskDoesntExist);
+        assert_eq!(error, TaskManagementErrors::TaskDoesntExist)
+    }
+
+    #[test]
+    /// Tests if the list function errors on an empty vec. This is the only test written for the
+    /// list function as how it formats and will be constantly changed so no point really trying to
+    /// write a test for that part of the function
+    fn list_tasks_errors_on_empty_vec() {
+        let tasks_vec: Vec<Task> = Vec::new();
+
+        let error = list_tasks(&tasks_vec).unwrap_err();
+
+        assert_eq!(error, TaskManagementErrors::EmptyTasklist)
     }
 }
