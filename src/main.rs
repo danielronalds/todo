@@ -11,21 +11,33 @@ fn main() {
     let mut tasks_vec: Vec<Task> = vec![
         Task::new(
             String::from("A basic task!"),
-            todo::task::TaskStatus::NotStarted,
+            todo::task::TaskStatus::Completed,
         )
         .unwrap(),
         Task::new(
             String::from("Another basic task!"),
+            todo::task::TaskStatus::InProgress,
+        )
+        .unwrap(),
+        Task::new(
+            String::from("Yet another basic task!"),
             todo::task::TaskStatus::NotStarted,
         )
         .unwrap(),
     ];
 
     match args.command {
+        args::Commands::Tasks => {
+            match todo::list_tasks(&tasks_vec) {
+                Ok(_) => (),
+                Err(err) => eprintln!("{}", err),
+            }
+        }
+
         args::Commands::Add(arguments) => {
             match todo::new_task(arguments) {
                 Ok(task) => tasks_vec.push(task),
-                Err(err) => println!("{}", err),
+                Err(err) => eprintln!("{}", err),
             };
         }
 

@@ -6,7 +6,24 @@ pub mod task;
 mod task_management;
 
 use crate::task::{Task, TaskStatus, TaskErrors};
+use crate::task_management::TaskManagementErrors;
 use crate::args::{AddCommand, DeleteCommand};
+
+/// Lists the tasks in the given vec
+///
+/// Parameters
+/// tasks:   The task vec to list
+pub fn list_tasks(tasks: &Vec<Task>) -> Result<(), &'static str> {
+    match task_management::list_tasks(tasks) {
+        Ok(_) => Ok(()),
+        Err(err) => match err {
+            TaskManagementErrors::EmptyTasklist => return Err("There are no tasks in the list!"),
+            // Covering any other errors for now in case the function changes
+            _ => return Err("An unknown error has occured!"),
+        }
+    }
+    
+}
 
 /// Creates a new task. This handles any errors and returns an appropriate error message
 /// This approach will most likely change however, or this function moved

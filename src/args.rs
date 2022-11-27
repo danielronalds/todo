@@ -13,6 +13,8 @@ pub struct TodoArgs {
 
 #[derive(Debug, Subcommand)]
 pub enum Commands {
+    /// Lists the tasks in the current tasklist
+    Tasks,
     /// Add a task to the tasklist
     Add(AddCommand),
     /// Deletes a task from the tasklist
