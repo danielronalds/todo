@@ -4,8 +4,8 @@ use crate::task::{Task, TaskErrors, TaskStatus};
 #[derive(Debug, PartialEq)]
 pub enum TaskManagementErrors {
     TaskAlreadyGivenStatus,
-    EmptyTasklist,
     TaskDoesntExist,
+    EmptyTasklist,
 }
 
 /// Lists all of the tasks in the tasks vec
@@ -24,42 +24,17 @@ pub fn list_tasks(tasks: &Vec<Task>) -> Result<(), TaskManagementErrors> {
     Ok(())
 }
 
-/// Sets the status of the given task to InProgress
+/// Updates the task at the given index in the task vec to the given status
 ///
 /// Parameters
-/// task:   The task to update the status of
-pub fn start_task(task: &mut Task) -> Result<(), TaskManagementErrors> {
-    if task.status() == TaskStatus::InProgress {
-        return Err(TaskManagementErrors::TaskAlreadyGivenStatus);
-    }
-
-    task.update_status(TaskStatus::InProgress);
-    Ok(())
-}
-
-/// Sets the status of the given task to Completed
-///
-/// Parameters
-/// task:   The task to update the status of
-pub fn finish_task(task: &mut Task) -> Result<(), TaskManagementErrors> {
-    if task.status() == TaskStatus::Completed {
-        return Err(TaskManagementErrors::TaskAlreadyGivenStatus);
-    }
-
-    task.update_status(TaskStatus::Completed);
-    Ok(())
-}
-
-/// Sets the status of the given task to NotStarted
-///
-/// Parameters
-/// task:   The task to update the status of
-pub fn restart_task(task: &mut Task) -> Result<(), TaskManagementErrors> {
-    if task.status() == TaskStatus::NotStarted {
-        return Err(TaskManagementErrors::TaskAlreadyGivenStatus);
-    }
-
-    task.update_status(TaskStatus::NotStarted);
+/// tasks:        The vec of the task belongs to
+/// index:        The index of the task to update
+/// new_status:   The new status of the task
+pub fn update_task_status(
+    tasks: &mut Vec<Task>,
+    index: usize,
+    new_status: TaskStatus,
+) -> Result<(), TaskManagementErrors> {
     Ok(())
 }
 
@@ -94,78 +69,54 @@ mod tests {
     use super::*;
 
     #[test]
-    /// Tests if the start_task function works
-    fn start_task_works() {
-        let description = String::from("This is a basic task");
+    /// Tests if the update_task_status function works
+    fn update_task_status_works() {
+        let mut tasks_vec: Vec<Task> = vec![
+            Task::new(String::from("A basic task!"), TaskStatus::NotStarted).unwrap(),
+            Task::new(String::from("Another basic task!"), TaskStatus::InProgress).unwrap(),
+        ];
 
-        let mut task = Task::new(description, TaskStatus::NotStarted).unwrap();
+        update_task_status(&mut tasks_vec, 1, TaskStatus::Completed).unwrap();
 
-        start_task(&mut task).unwrap();
-
-        assert_eq!(task.status(), TaskStatus::InProgress)
+        assert_eq!(tasks_vec[1].status(), TaskStatus::Completed)
     }
 
     #[test]
-    /// Tests if the start_task function returns the appropriate error if the task is already
-    /// started
-    fn start_task_fails_when_already_started() {
-        let description = String::from("This is a basic task");
+    /// Tests if the update_task_status function returns the appropriate error if the task is the 
+    /// given status already
+    fn update_task_status_fails_when_already_at_given_status() {
+        let mut tasks_vec: Vec<Task> = vec![
+            Task::new(String::from("A basic task!"), TaskStatus::NotStarted).unwrap(),
+            Task::new(String::from("Another basic task!"), TaskStatus::InProgress).unwrap(),
+        ];
 
-        let mut task = Task::new(description, TaskStatus::InProgress).unwrap();
+        let err = update_task_status(&mut tasks_vec, 1, TaskStatus::InProgress).unwrap_err();
 
-        let error = start_task(&mut task).unwrap_err();
-
-        assert_eq!(error, TaskManagementErrors::TaskAlreadyGivenStatus)
+        assert_eq!(err, TaskManagementErrors::TaskAlreadyGivenStatus)
     }
 
     #[test]
-    /// Tests if the finish_task function works
-    fn finish_task_works() {
-        let description = String::from("This is a basic task");
+    /// Tests if the update_task_status function returns the appropriate error if the given index 
+    /// is out of range of the vec
+    fn update_task_status_fails_when_index_out_of_range() {
+        let mut tasks_vec: Vec<Task> = vec![
+            Task::new(String::from("A basic task!"), TaskStatus::NotStarted).unwrap(),
+            Task::new(String::from("Another basic task!"), TaskStatus::NotStarted).unwrap(),
+        ];
 
-        let mut task = Task::new(description, TaskStatus::NotStarted).unwrap();
+        let err = update_task_status(&mut tasks_vec, 3, TaskStatus::Completed).unwrap_err();
 
-        finish_task(&mut task).unwrap();
-
-        assert_eq!(task.status(), TaskStatus::Completed)
+        assert_eq!(err, TaskManagementErrors::TaskDoesntExist)
     }
 
     #[test]
-    /// Tests if the finish_task function returns the appropriate error if the task is already
-    /// finished
-    fn finish_task_fails_when_already_finished() {
-        let description = String::from("This is a basic task");
+    /// Test if the update_task_status function returns the appropriate error if the vec is empty
+    fn update_task_status_fails_on_empty_vec() {
+        let mut tasks_vec: Vec<Task> = Vec::new();
 
-        let mut task = Task::new(description, TaskStatus::Completed).unwrap();
+        let err = update_task_status(&mut tasks_vec, 1, TaskStatus::Completed).unwrap_err();
 
-        let error = finish_task(&mut task).unwrap_err();
-
-        assert_eq!(error, TaskManagementErrors::TaskAlreadyGivenStatus)
-    }
-
-    #[test]
-    /// Tests if the restart_task function works
-    fn restart_task_works() {
-        let description = String::from("This is a basic task");
-
-        let mut task = Task::new(description, TaskStatus::InProgress).unwrap();
-
-        restart_task(&mut task).unwrap();
-
-        assert_eq!(task.status(), TaskStatus::NotStarted)
-    }
-
-    #[test]
-    /// Tests if the restart_task function returns the appropriate error if the task is already
-    /// not started
-    fn restart_task_fails_when_already_not_started() {
-        let description = String::from("This is a basic task");
-
-        let mut task = Task::new(description, TaskStatus::NotStarted).unwrap();
-
-        let error = restart_task(&mut task).unwrap_err();
-
-        assert_eq!(error, TaskManagementErrors::TaskAlreadyGivenStatus)
+        assert_eq!(err, TaskManagementErrors::EmptyTasklist)
     }
 
     #[test]
