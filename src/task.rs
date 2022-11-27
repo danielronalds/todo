@@ -1,3 +1,6 @@
+// Pretty output
+use colored::Colorize;
+
 /// Enum for representing the status of a task
 #[derive(Clone, Debug, PartialEq)]
 pub enum TaskStatus {
@@ -83,11 +86,11 @@ impl Task {
 
     /// Returns the task as a 'pretty string'
     pub fn to_string(&self) -> String {
-        let status = match self.status {
-            TaskStatus::NotStarted => "[x]",
-            TaskStatus::InProgress => "[~]",
-            TaskStatus::Completed => "[✔]",
-        };
+        let status = format!("[{}]", match self.status {
+            TaskStatus::NotStarted => "x".bright_red(),
+            TaskStatus::InProgress => "~".bright_yellow(),
+            TaskStatus::Completed => "✔".bright_green(),
+        }).bold();
 
         format!("{} {}", status, self.description)
     }
