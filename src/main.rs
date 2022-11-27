@@ -9,8 +9,16 @@ fn main() {
     let args = TodoArgs::parse();
 
     let mut tasks_vec: Vec<Task> = vec![
-        Task::new(String::from("A basic task!"), todo::task::TaskStatus::NotStarted).unwrap(),
-        Task::new(String::from("Another basic task!"), todo::task::TaskStatus::NotStarted).unwrap()
+        Task::new(
+            String::from("A basic task!"),
+            todo::task::TaskStatus::NotStarted,
+        )
+        .unwrap(),
+        Task::new(
+            String::from("Another basic task!"),
+            todo::task::TaskStatus::NotStarted,
+        )
+        .unwrap(),
     ];
 
     match args.command {
@@ -19,6 +27,10 @@ fn main() {
                 Ok(task) => tasks_vec.push(task),
                 Err(err) => println!("{}", err),
             };
+        }
+
+        args::Commands::Delete(arguments) => {
+            println!("{}", todo::delete_task(&mut tasks_vec, arguments))
         }
     }
 

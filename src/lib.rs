@@ -6,7 +6,7 @@ pub mod task;
 mod task_management;
 
 use crate::task::{Task, TaskStatus, TaskErrors};
-use crate::args::AddCommand;
+use crate::args::{AddCommand, DeleteCommand};
 
 /// Creates a new task. This handles any errors and returns an appropriate error message
 /// This approach will most likely change however, or this function moved
@@ -27,6 +27,23 @@ pub fn new_task(arguments: AddCommand) -> Result<Task, &'static str> {
     };
 
     Ok(task)
+}
+
+/// Delets a task from the list. This function handles the errors and returns a str containing a
+/// messge to print
+///
+/// Parameters
+/// tasks:       The task vec to delete from
+/// arguments:   The arguments for the command from the cli
+pub fn delete_task(tasks: &mut Vec<Task>, arguments: DeleteCommand) -> &'static str {
+    // Taking one off of the index as Task ID's start at 1 not 0
+    let index = arguments.task_id - 1;
+
+    match task_management::delete_task(tasks, index) {
+        Ok(_) => "Task deleted!",
+        // There is only one possible error for this so no need to match them
+        Err(_) => "Task doesn't exist!",
+    }
 }
 
 #[cfg(test)]
