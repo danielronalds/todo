@@ -81,6 +81,17 @@ impl Task {
         self.status = new_status;
     }
 
+    /// Returns the task as a 'pretty string'
+    pub fn to_string(&self) -> String {
+        let status = match self.status {
+            TaskStatus::NotStarted => "[x]",
+            TaskStatus::InProgress => "[~]",
+            TaskStatus::Completed => "[✔]",
+        };
+
+        format!("{} {}", status, self.description)
+    }
+
     /// Returns the struct as a string that can be written to a file
     pub fn to_save_string(&self) -> String {
         format!("{}|{:?}", self.description(), self.status())
