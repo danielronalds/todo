@@ -5,7 +5,7 @@ pub mod task;
 // Private modules
 mod task_management;
 
-use crate::args::{AddCommand, DeleteCommand, StartCommand, FinishCommand};
+use crate::args::{AddCommand, DeleteCommand, StartCommand, FinishCommand, RestartCommand};
 use crate::task::{Task, TaskErrors, TaskStatus};
 use crate::task_management::TaskManagementErrors;
 
@@ -94,6 +94,25 @@ pub fn finish_task(tasks: &mut Vec<Task>, arguments: FinishCommand) -> &'static 
         Ok(_) => "Task has been completed!",
         Err(err) => match err {
             TaskManagementErrors::TaskAlreadyGivenStatus => "Task is already Completed",
+            TaskManagementErrors::TaskDoesntExist => "Task doesn't exist",
+            TaskManagementErrors::EmptyTasklist => "No tasks found!",
+        },
+    }
+}
+
+/// Restarts the task at the given id in the given tasks vec
+///
+/// Parameters
+/// tasks:       The task vec the tasks belongs to
+/// arguments:   The arguments for the command from the cli
+pub fn restart_task(tasks: &mut Vec<Task>, arguments: RestartCommand) -> &'static str {
+    // Taking one off of the index as Task ID's start at 1 not 0
+    let index = arguments.task_id - 1;
+
+    match task_management::update_task_status(tasks, index, TaskStatus::NotStarted) {
+        Ok(_) => "Task has been restarted!",
+        Err(err) => match err {
+            TaskManagementErrors::TaskAlreadyGivenStatus => "Task is already Not Started",
             TaskManagementErrors::TaskDoesntExist => "Task doesn't exist",
             TaskManagementErrors::EmptyTasklist => "No tasks found!",
         },

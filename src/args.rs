@@ -21,8 +21,10 @@ pub enum Commands {
     Delete(DeleteCommand),
     /// Sets the status of a task to In Progress
     Start(StartCommand),
-    /// Sets the status of a task to In Progress
-    Finish(FinishCommand)
+    /// Sets the status of a task to Completed
+    Finish(FinishCommand),
+    /// Sets the status of a task to Not Started
+    Restart(RestartCommand)
 }
 
 #[derive(Debug, Args)]
@@ -45,6 +47,12 @@ pub struct StartCommand {
 
 #[derive(Debug, Args)]
 pub struct FinishCommand {
+    /// The Task ID of the task to finish
+    pub task_id: usize
+}
+
+#[derive(Debug, Args)]
+pub struct RestartCommand {
     /// The Task ID of the task to finish
     pub task_id: usize
 }
