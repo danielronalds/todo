@@ -46,7 +46,7 @@ pub fn new_task(arguments: AddCommand) -> Result<Task, &'static str> {
     Ok(task)
 }
 
-/// Delets a task from the list. This function handles the errors and returns a str containing a
+/// Deletes a task from the list. This function handles the errors and returns a str containing a
 /// messge to print
 ///
 /// Parameters

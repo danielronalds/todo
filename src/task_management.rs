@@ -35,6 +35,19 @@ pub fn update_task_status(
     index: usize,
     new_status: TaskStatus,
 ) -> Result<(), TaskManagementErrors> {
+    if tasks.is_empty() {
+        return Err(TaskManagementErrors::EmptyTasklist);
+    }
+
+    if index >= tasks.len() {
+        return Err(TaskManagementErrors::TaskDoesntExist);
+    }
+
+    if tasks[index].status() == new_status {
+        return Err(TaskManagementErrors::TaskAlreadyGivenStatus);
+    }
+
+    tasks[index].update_status(new_status);
     Ok(())
 }
 
