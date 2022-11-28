@@ -48,6 +48,10 @@ fn main() {
         args::Commands::Start(arguments) => {
             println!("{}", todo::start_task(&mut tasks_vec, arguments));
         }
+
+        args::Commands::Finish(arguments) => {
+            println!("{}", todo::finish_task(&mut tasks_vec, arguments));
+        }
     }
 
     println!("{:?}", tasks_vec);

@@ -5,7 +5,7 @@ pub mod task;
 // Private modules
 mod task_management;
 
-use crate::args::{AddCommand, DeleteCommand, StartCommand};
+use crate::args::{AddCommand, DeleteCommand, StartCommand, FinishCommand};
 use crate::task::{Task, TaskErrors, TaskStatus};
 use crate::task_management::TaskManagementErrors;
 
@@ -62,7 +62,7 @@ pub fn delete_task(tasks: &mut Vec<Task>, arguments: DeleteCommand) -> &'static 
     }
 }
 
-/// Starts a task
+/// Starts the task at the given id in the given tasks vec
 ///
 /// Parameters
 /// tasks:       The task vec the tasks belongs to
@@ -75,6 +75,25 @@ pub fn start_task(tasks: &mut Vec<Task>, arguments: StartCommand) -> &'static st
         Ok(_) => "Task has been started!",
         Err(err) => match err {
             TaskManagementErrors::TaskAlreadyGivenStatus => "Task is already In Progress",
+            TaskManagementErrors::TaskDoesntExist => "Task doesn't exist",
+            TaskManagementErrors::EmptyTasklist => "No tasks found!",
+        },
+    }
+}
+
+/// Finishes the task at the given id in the given tasks vec
+///
+/// Parameters
+/// tasks:       The task vec the tasks belongs to
+/// arguments:   The arguments for the command from the cli
+pub fn finish_task(tasks: &mut Vec<Task>, arguments: FinishCommand) -> &'static str {
+    // Taking one off of the index as Task ID's start at 1 not 0
+    let index = arguments.task_id - 1;
+
+    match task_management::update_task_status(tasks, index, TaskStatus::Completed) {
+        Ok(_) => "Task has been completed!",
+        Err(err) => match err {
+            TaskManagementErrors::TaskAlreadyGivenStatus => "Task is already Completed",
             TaskManagementErrors::TaskDoesntExist => "Task doesn't exist",
             TaskManagementErrors::EmptyTasklist => "No tasks found!",
         },
