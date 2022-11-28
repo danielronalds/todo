@@ -42,7 +42,11 @@ fn main() {
         }
 
         args::Commands::Delete(arguments) => {
-            println!("{}", todo::delete_task(&mut tasks_vec, arguments))
+            println!("{}", todo::delete_task(&mut tasks_vec, arguments));
+        }
+
+        args::Commands::Start(arguments) => {
+            println!("{}", todo::start_task(&mut tasks_vec, arguments));
         }
     }
 

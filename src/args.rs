@@ -18,7 +18,9 @@ pub enum Commands {
     /// Add a task to the tasklist
     Add(AddCommand),
     /// Deletes a task from the tasklist
-    Delete(DeleteCommand)
+    Delete(DeleteCommand),
+    /// Sets the status of a task to In Progress
+    Start(StartCommand)
 }
 
 #[derive(Debug, Args)]
@@ -30,5 +32,11 @@ pub struct AddCommand {
 #[derive(Debug, Args)]
 pub struct DeleteCommand {
     /// The Task ID of the task to delete
+    pub task_id: usize
+}
+
+#[derive(Debug, Args)]
+pub struct StartCommand {
+    /// The Task ID of the task to start
     pub task_id: usize
 }

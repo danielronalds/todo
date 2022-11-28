@@ -5,9 +5,9 @@ pub mod task;
 // Private modules
 mod task_management;
 
-use crate::task::{Task, TaskStatus, TaskErrors};
+use crate::args::{AddCommand, DeleteCommand, StartCommand};
+use crate::task::{Task, TaskErrors, TaskStatus};
 use crate::task_management::TaskManagementErrors;
-use crate::args::{AddCommand, DeleteCommand};
 
 /// Lists the tasks in the given vec
 ///
@@ -20,9 +20,8 @@ pub fn list_tasks(tasks: &Vec<Task>) -> Result<(), &'static str> {
             TaskManagementErrors::EmptyTasklist => return Err("There are no tasks in the list!"),
             // Covering any other errors for now in case the function changes
             _ => return Err("An unknown error has occured!"),
-        }
+        },
     }
-    
 }
 
 /// Creates a new task. This handles any errors and returns an appropriate error message
@@ -63,6 +62,25 @@ pub fn delete_task(tasks: &mut Vec<Task>, arguments: DeleteCommand) -> &'static 
     }
 }
 
+/// Starts a task
+///
+/// Parameters
+/// tasks:       The task vec the tasks belongs to
+/// arguments:   The arguments for the command from the cli
+pub fn start_task(tasks: &mut Vec<Task>, arguments: StartCommand) -> &'static str {
+    // Taking one off of the index as Task ID's start at 1 not 0
+    let index = arguments.task_id - 1;
+
+    match task_management::update_task_status(tasks, index, TaskStatus::InProgress) {
+        Ok(_) => "Task has been started!",
+        Err(err) => match err {
+            TaskManagementErrors::TaskAlreadyGivenStatus => "Task is already In Progress",
+            TaskManagementErrors::TaskDoesntExist => "Task doesn't exist",
+            TaskManagementErrors::EmptyTasklist => "No tasks found!",
+        },
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
@@ -75,7 +93,7 @@ mod test {
 
         let expected_task = Task::new(description.clone(), TaskStatus::NotStarted).unwrap();
 
-        let arguments = AddCommand{ description };
+        let arguments = AddCommand { description };
 
         let genereated_task = new_task(arguments).unwrap();
 
