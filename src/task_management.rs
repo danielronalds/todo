@@ -1,7 +1,7 @@
 use crate::task::{Task, TaskErrors, TaskStatus};
 
 /// Enum for storing TaskManagementErrors
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq)]
 pub enum TaskManagementErrors {
     TaskAlreadyGivenStatus,
     TaskDoesntExist,
@@ -51,7 +51,7 @@ pub fn update_task_status(
     Ok(())
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq)]
 /// Enum for representing errors with the update_task_description method. This will probably have
 /// to be refactored/changed/scrapped later, however for now this should work?
 pub enum UpdateTaskErrors {
@@ -81,7 +81,7 @@ pub fn update_task_description(
     match tasks[index].update_description(new_description) {
         Ok(_) => Ok(()),
         // Returning any errors from the updating of the task, wrapped in the UpdateTaskErrors enum
-        Err(err) => return Err(UpdateTaskErrors::TaskErrors(err)),
+        Err(err) => Err(UpdateTaskErrors::TaskErrors(err)),
     }
 }
 

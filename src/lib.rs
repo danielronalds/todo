@@ -17,9 +17,9 @@ pub fn list_tasks(tasks: &Vec<Task>) -> Result<(), &'static str> {
     match task_management::list_tasks(tasks) {
         Ok(_) => Ok(()),
         Err(err) => match err {
-            TaskManagementErrors::EmptyTasklist => return Err("There are no tasks in the list!"),
+            TaskManagementErrors::EmptyTasklist => Err("There are no tasks in the list!"),
             // Covering any other errors for now in case the function changes
-            _ => return Err("An unknown error has occured!"),
+            _ => Err("An unknown error has occured!"),
         },
     }
 }

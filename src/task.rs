@@ -2,7 +2,7 @@
 use colored::Colorize;
 
 /// Enum for representing the status of a task
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub enum TaskStatus {
     Completed,
     InProgress,
@@ -10,14 +10,14 @@ pub enum TaskStatus {
 }
 
 /// Enum for storing possible errors
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq)]
 pub enum TaskErrors {
     EmptyDescription,
     InvalidCharInDescription,
 }
 
 /// Struct to represent a task
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct Task {
     description: String,
     status: TaskStatus,
