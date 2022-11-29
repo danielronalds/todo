@@ -51,13 +51,25 @@ pub fn update_task_status(
     Ok(())
 }
 
+#[derive(Debug, PartialEq)]
+/// Enum for representing errors with the update_task_description method. This will probably have
+/// to be refactored/changed/scrapped later, however for now this should work?
+pub enum UpdateTaskErrors {
+    ManagementErrors(TaskManagementErrors),
+    TaskErrors(TaskErrors),
+}
+
 /// Changes the desciption of the given task
 ///
 /// Parameters
-/// task:          The task to update the status of
-/// description:   The new description of the task
-pub fn update_task_description(task: &mut Task, description: String) -> Result<(), TaskErrors> {
-    task.update_description(description)?;
+/// tasks:             The vec of the task belongs to
+/// index:             The index of the task to update
+/// new_description:   The new description of the task
+pub fn update_task_description(
+    tasks: &mut Vec<Task>,
+    index: usize,
+    new_description: String,
+) -> Result<(), UpdateTaskErrors> {
     Ok(())
 }
 
@@ -82,6 +94,79 @@ mod tests {
     use super::*;
 
     #[test]
+    /// Tests if the update_task_description returns the right error on a description containing a
+    /// | char
+    fn update_task_description_fails_on_invalid_char() {
+        let mut tasks_vec: Vec<Task> = vec![
+            Task::new(String::from("A basic task!"), TaskStatus::NotStarted).unwrap(),
+            Task::new(String::from("Another basic task!"), TaskStatus::InProgress).unwrap(),
+        ];
+
+        let new_description = String::from("Strings cannot contain a |");
+
+        let error = update_task_description(&mut tasks_vec, 2, new_description).unwrap_err();
+
+        assert_eq!(
+            error,
+            UpdateTaskErrors::TaskErrors(TaskErrors::InvalidCharInDescription)
+        )
+    }
+
+    #[test]
+    /// Tests if the update_task_description returns the right error on an empty new_description
+    fn update_task_description_fails_on_empty_new_description() {
+        let mut tasks_vec: Vec<Task> = vec![
+            Task::new(String::from("A basic task!"), TaskStatus::NotStarted).unwrap(),
+            Task::new(String::from("Another basic task!"), TaskStatus::InProgress).unwrap(),
+        ];
+
+        let new_description = String::new();
+
+        let error = update_task_description(&mut tasks_vec, 2, new_description).unwrap_err();
+
+        assert_eq!(
+            error,
+            UpdateTaskErrors::TaskErrors(TaskErrors::EmptyDescription)
+        )
+    }
+
+    #[test]
+    /// Tests if the update_task_description returns the right error on an invalid index
+    fn update_task_description_fails_on_invalid_index() {
+        let mut tasks_vec: Vec<Task> = vec![
+            Task::new(String::from("A basic task!"), TaskStatus::NotStarted).unwrap(),
+            Task::new(String::from("Another basic task!"), TaskStatus::InProgress).unwrap(),
+        ];
+
+        let new_description = String::from("New description");
+
+        let error = update_task_description(&mut tasks_vec, 2, new_description).unwrap_err();
+
+        assert_eq!(
+            error,
+            UpdateTaskErrors::ManagementErrors(TaskManagementErrors::TaskDoesntExist)
+        )
+    }
+
+    #[test]
+    /// Tests if the update_task_description returns the right error on an empty vec
+    fn update_task_description_fails_on_empty_vec() {
+        let mut tasks_vec: Vec<Task> = vec![
+            Task::new(String::from("A basic task!"), TaskStatus::NotStarted).unwrap(),
+            Task::new(String::from("Another basic task!"), TaskStatus::InProgress).unwrap(),
+        ];
+
+        let new_description = String::from("New description");
+
+        let error = update_task_description(&mut tasks_vec, 1, new_description).unwrap_err();
+
+        assert_eq!(
+            error,
+            UpdateTaskErrors::ManagementErrors(TaskManagementErrors::EmptyTasklist)
+        )
+    }
+
+    #[test]
     /// Tests if the update_task_status function works
     fn update_task_status_works() {
         let mut tasks_vec: Vec<Task> = vec![
@@ -95,7 +180,7 @@ mod tests {
     }
 
     #[test]
-    /// Tests if the update_task_status function returns the appropriate error if the task is the 
+    /// Tests if the update_task_status function returns the appropriate error if the task is the
     /// given status already
     fn update_task_status_fails_when_already_at_given_status() {
         let mut tasks_vec: Vec<Task> = vec![
@@ -109,7 +194,7 @@ mod tests {
     }
 
     #[test]
-    /// Tests if the update_task_status function returns the appropriate error if the given index 
+    /// Tests if the update_task_status function returns the appropriate error if the given index
     /// is out of range of the vec
     fn update_task_status_fails_when_index_out_of_range() {
         let mut tasks_vec: Vec<Task> = vec![
@@ -130,49 +215,6 @@ mod tests {
         let err = update_task_status(&mut tasks_vec, 1, TaskStatus::Completed).unwrap_err();
 
         assert_eq!(err, TaskManagementErrors::EmptyTasklist)
-    }
-
-    #[test]
-    /// Tests if the update_task_description function works
-    fn update_task_description_works() {
-        let description = String::from("This is a basic task");
-
-        let mut task = Task::new(description, TaskStatus::NotStarted).unwrap();
-
-        let new_description = String::from("This is a new description");
-
-        update_task_description(&mut task, new_description.clone()).unwrap();
-
-        assert_eq!(task.description(), new_description)
-    }
-
-    #[test]
-    /// Checks if the update_task_description function fails when passed an empty description
-    fn update_description_fails_on_empty_description() {
-        let description = String::from("This is the first description");
-
-        let mut task = Task::new(description, TaskStatus::InProgress).unwrap();
-
-        let new_description = String::new();
-
-        let err = update_task_description(&mut task, new_description).unwrap_err();
-
-        assert_eq!(err, TaskErrors::EmptyDescription)
-    }
-
-    #[test]
-    /// Checks if the update_task_description function fails when passed a description with an
-    /// invalid char
-    fn update_task_description_fails_on_invalid_char() {
-        let description = String::from("This is the first description");
-
-        let mut task = Task::new(description, TaskStatus::InProgress).unwrap();
-
-        let new_description = String::from("This invalid char | cannot be in the description");
-
-        let err = update_task_description(&mut task, new_description).unwrap_err();
-
-        assert_eq!(err, TaskErrors::InvalidCharInDescription)
     }
 
     #[test]
