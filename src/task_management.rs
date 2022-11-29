@@ -106,6 +106,21 @@ mod tests {
     use super::*;
 
     #[test]
+    /// Tests if the update_task_description works
+    fn update_task_description_works() {
+        let mut tasks_vec: Vec<Task> = vec![
+            Task::new(String::from("A basic task!"), TaskStatus::NotStarted).unwrap(),
+            Task::new(String::from("Another basic task!"), TaskStatus::InProgress).unwrap(),
+        ];
+
+        let new_description = String::from("New description");
+
+        update_task_description(&mut tasks_vec, 1, new_description.clone()).unwrap();
+
+        assert_eq!(new_description, tasks_vec[1].description());
+    }
+
+    #[test]
     /// Tests if the update_task_description returns the right error on a description containing a
     /// | char
     fn update_task_description_fails_on_invalid_char() {
