@@ -59,7 +59,7 @@ pub enum UpdateTaskErrors {
     TaskErrors(TaskErrors),
 }
 
-/// Changes the desciption of the given task
+/// Updates the desciption of the given task
 ///
 /// Parameters
 /// tasks:             The vec of the task belongs to
@@ -70,7 +70,19 @@ pub fn update_task_description(
     index: usize,
     new_description: String,
 ) -> Result<(), UpdateTaskErrors> {
-    Ok(())
+    if tasks.is_empty() {
+        return Err(UpdateTaskErrors::ManagementErrors(TaskManagementErrors::EmptyTasklist));
+    }
+
+    if index >= tasks.len() {
+        return Err(UpdateTaskErrors::ManagementErrors(TaskManagementErrors::TaskDoesntExist));
+    }
+
+    match tasks[index].update_description(new_description) {
+        Ok(_) => Ok(()),
+        // Returning any errors from the updating of the task, wrapped in the UpdateTaskErrors enum
+        Err(err) => return Err(UpdateTaskErrors::TaskErrors(err)),
+    }
 }
 
 /// Deletes the task at the given index out of the given Vec<Task>
@@ -104,7 +116,7 @@ mod tests {
 
         let new_description = String::from("Strings cannot contain a |");
 
-        let error = update_task_description(&mut tasks_vec, 2, new_description).unwrap_err();
+        let error = update_task_description(&mut tasks_vec, 1, new_description).unwrap_err();
 
         assert_eq!(
             error,
@@ -122,7 +134,7 @@ mod tests {
 
         let new_description = String::new();
 
-        let error = update_task_description(&mut tasks_vec, 2, new_description).unwrap_err();
+        let error = update_task_description(&mut tasks_vec, 1, new_description).unwrap_err();
 
         assert_eq!(
             error,
@@ -151,14 +163,11 @@ mod tests {
     #[test]
     /// Tests if the update_task_description returns the right error on an empty vec
     fn update_task_description_fails_on_empty_vec() {
-        let mut tasks_vec: Vec<Task> = vec![
-            Task::new(String::from("A basic task!"), TaskStatus::NotStarted).unwrap(),
-            Task::new(String::from("Another basic task!"), TaskStatus::InProgress).unwrap(),
-        ];
+        let mut tasks_vec: Vec<Task> = Vec::new();
 
         let new_description = String::from("New description");
 
-        let error = update_task_description(&mut tasks_vec, 1, new_description).unwrap_err();
+        let error = update_task_description(&mut tasks_vec, 1, new_description ).unwrap_err();
 
         assert_eq!(
             error,
