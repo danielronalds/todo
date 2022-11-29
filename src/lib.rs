@@ -5,9 +5,9 @@ pub mod task;
 // Private modules
 mod task_management;
 
-use crate::args::{AddCommand, DeleteCommand, StartCommand, FinishCommand, RestartCommand};
+use crate::args::{AddCommand, UpdateCommand, DeleteCommand, StartCommand, FinishCommand, RestartCommand};
 use crate::task::{Task, TaskErrors, TaskStatus};
-use crate::task_management::TaskManagementErrors;
+use crate::task_management::{TaskManagementErrors, UpdateTaskErrors};
 
 /// Lists the tasks in the given vec
 ///
@@ -43,6 +43,31 @@ pub fn new_task(arguments: AddCommand) -> Result<Task, &'static str> {
     };
 
     Ok(task)
+}
+
+/// Updates the description of the task at the given task_id in the given task vec
+///
+/// Parameters
+/// tasks:       The task vec to delete from
+/// arguments:   The arguments for the command from the cli
+pub fn update_task(tasks: &mut Vec<Task>, arguments: UpdateCommand) -> &'static str {
+    // Taking one off of the index as Task ID's start at 1 not 0
+    let index = arguments.task_id - 1;
+
+    match task_management::update_task_description(tasks, index, arguments.new_description) {
+        Ok(_) => "Task updated successfully!",
+        Err(err) => match err {
+            UpdateTaskErrors::ManagementErrors(error) => match error {
+                TaskManagementErrors::EmptyTasklist => "No tasks found!",
+                TaskManagementErrors::TaskDoesntExist => "Task not found!",
+                _ => "Unknown error!"
+            },
+            UpdateTaskErrors::TaskErrors(error) => match error {
+                TaskErrors::InvalidCharInDescription => "Tasks cannot have the | char!",
+                TaskErrors::EmptyDescription => "Tasks cannot have empty descriptions!",
+            }
+        }
+    }
 }
 
 /// Deletes a task from the list. This function handles the errors and returns a str containing a

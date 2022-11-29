@@ -17,6 +17,8 @@ pub enum Commands {
     Tasks,
     /// Add a task to the tasklist
     Add(AddCommand),
+    /// Update an existing tasks description
+    Update(UpdateCommand),
     /// Deletes a task from the tasklist
     Delete(DeleteCommand),
     /// Sets the status of a task to In Progress
@@ -55,4 +57,12 @@ pub struct FinishCommand {
 pub struct RestartCommand {
     /// The Task ID of the task to finish
     pub task_id: usize
+}
+
+#[derive(Debug, Args)]
+pub struct UpdateCommand {
+    /// The Task ID of the task to update
+    pub task_id: usize,
+    /// The new desciption of the task
+    pub new_description: String
 }
