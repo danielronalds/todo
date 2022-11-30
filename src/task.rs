@@ -1,3 +1,5 @@
+use std::fmt;
+
 // Pretty output
 use colored::Colorize;
 
@@ -84,20 +86,23 @@ impl Task {
         self.status = new_status;
     }
 
+    /// Returns the struct as a string that can be written to a file
+    pub fn to_save_string(&self) -> String {
+        format!("{}|{:?}", self.description(), self.status())
+    }
+}
+
+impl fmt::Display for Task {
     /// Returns the task as a 'pretty string'
-    pub fn to_string(&self) -> String {
-        let status = format!("[{}]", match self.status {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let status = format!("[{}]", match self.status() {
             TaskStatus::NotStarted => "x".bright_red(),
             TaskStatus::InProgress => "~".bright_yellow(),
             TaskStatus::Completed => "✔".bright_green(),
         }).bold();
 
-        format!("{} {}", status, self.description)
-    }
+        write!(f, "{} {}", status, self.description())
 
-    /// Returns the struct as a string that can be written to a file
-    pub fn to_save_string(&self) -> String {
-        format!("{}|{:?}", self.description(), self.status())
     }
 }
 

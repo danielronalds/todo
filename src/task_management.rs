@@ -18,7 +18,7 @@ pub fn list_tasks(tasks: &Vec<Task>) -> Result<(), TaskManagementErrors> {
     }
 
     for task in tasks {
-        println!("{}", task.to_string());
+        println!("{}", task);
     }
 
     Ok(())
