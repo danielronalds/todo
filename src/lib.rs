@@ -1,4 +1,5 @@
 // Public facing modules
+pub mod serialization;
 pub mod args;
 pub mod task;
 

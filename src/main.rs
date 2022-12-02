@@ -4,6 +4,7 @@ use todo::args;
 use todo::args::TodoArgs;
 
 use todo::task::Task;
+use todo::serialization::SerializationErrors;
 
 fn main() {
     let args = TodoArgs::parse();
@@ -62,5 +63,13 @@ fn main() {
         }
     }
 
-    println!("{:?}", tasks_vec);
+    match todo::serialization::writer(tasks_vec) {
+        Ok(_) => (),
+        Err(err) => match err {
+            SerializationErrors::FailedToCreateWriter => println!("Failed to create the writer!"),
+            SerializationErrors::FailedToSerialize => println!("Failed to serialiaze the data!"),
+            SerializationErrors::FailedToFlush => println!("Could not flush!")
+        }
+    }
+
 }

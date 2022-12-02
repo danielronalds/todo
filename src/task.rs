@@ -1,10 +1,12 @@
 use std::fmt;
 
+use serde::Serialize;
+
 // Pretty output
 use colored::Colorize;
 
 /// Enum for representing the status of a task
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 pub enum TaskStatus {
     Completed,
     InProgress,
@@ -19,7 +21,7 @@ pub enum TaskErrors {
 }
 
 /// Struct to represent a task
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Serialize)]
 pub struct Task {
     description: String,
     status: TaskStatus,
