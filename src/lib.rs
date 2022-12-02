@@ -1,14 +1,45 @@
 // Public facing modules
-pub mod serialization;
 pub mod args;
 pub mod task;
 
 // Private modules
 mod task_management;
+mod program_state;
 
 use crate::args::{AddCommand, UpdateCommand, DeleteCommand, StartCommand, FinishCommand, RestartCommand};
+
 use crate::task::{Task, TaskErrors, TaskStatus};
+
 use crate::task_management::{TaskManagementErrors, UpdateTaskErrors};
+
+use crate::program_state::{SerializationErrors, DeserializationErrors};
+
+/// Reads the tasks file and returns a Vec<Task>
+pub fn read_tasks_file() -> Result<Vec<Task>, &'static str> {
+    match program_state::deserialize_tasks() {
+        Ok(tasks_vec) => Ok(tasks_vec),
+        Err(err) => match err {
+                DeserializationErrors::FailedToCreateReader => Err("Failed to create reader!"),
+                DeserializationErrors::FailedToDeserializeTask => Err("Couldn't read task!"),
+            }
+        
+    }
+}
+
+/// Write the given Vec<Task> to the tasks file
+///
+/// Parameters
+/// tasks:   The vec of tasks to write to the tasks file
+pub fn write_tasks_file(tasks: Vec<Task>) -> Result<(), &'static str> {
+    match program_state::serialize_tasks(tasks) {
+        Ok(_) => Ok(()),
+        Err(err) => match err {
+            SerializationErrors::FailedToCreateWriter => Err("Failed to create the writer!"),
+            SerializationErrors::FailedToSerialize => Err("Failed to serialiaze the data!"),
+            SerializationErrors::FailedToFlush => Err("Could not flush!"),
+        },
+    }
+}
 
 /// Lists the tasks in the given vec
 ///

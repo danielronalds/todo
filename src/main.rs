@@ -5,22 +5,17 @@ use clap::Parser;
 use todo::args;
 use todo::args::TodoArgs;
 
-use todo::serialization::DeserializationErrors;
-use todo::serialization::SerializationErrors;
 use todo::task::Task;
 
 fn main() {
     let args = TodoArgs::parse();
 
-    let mut tasks_vec: Vec<Task> = match todo::serialization::reader() {
+    let mut tasks_vec: Vec<Task> = match todo::read_tasks_file() {
         Ok(tasks_vec) => tasks_vec,
         Err(err) => {
-            match err {
-                DeserializationErrors::FailedToCreateReader => println!("Failed to create reader!"),
-                DeserializationErrors::FailedToDeserializeTask => println!("Couldn't read task!"),
-            }
+            eprintln!("{}", err);
             process::exit(1);
-        }
+        },
     };
 
     match args.command {
@@ -57,12 +52,7 @@ fn main() {
         }
     }
 
-    match todo::serialization::writer(tasks_vec) {
-        Ok(_) => (),
-        Err(err) => match err {
-            SerializationErrors::FailedToCreateWriter => println!("Failed to create the writer!"),
-            SerializationErrors::FailedToSerialize => println!("Failed to serialiaze the data!"),
-            SerializationErrors::FailedToFlush => println!("Could not flush!"),
-        },
+    if let Err(err) = todo::write_tasks_file(tasks_vec) {
+        println!("{}", err);
     }
 }

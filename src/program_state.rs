@@ -3,18 +3,19 @@ use crate::task::Task;
 /// Const for storing the file name to write to
 const FILE_NAME: &str = ".tasks.testing";
 
-/// Enum for storing possible errros
+
+/// Enum for storing possible serialization errros
 pub enum SerializationErrors {
     FailedToCreateWriter,
     FailedToSerialize,
     FailedToFlush,
 }
 
-/// Writes tasks from .tasks file
+/// Seralializes the tasks from the given Vec<Task> to the .tasks file
 ///
 /// Parameters
 /// tasks:   The tasks list to write to the file
-pub fn writer(tasks: Vec<Task>) -> Result<(), SerializationErrors> {
+pub fn serialize_tasks(tasks: Vec<Task>) -> Result<(), SerializationErrors> {
     let mut writer = match csv::Writer::from_path(FILE_NAME) {
         Ok(writer) => writer,
         Err(_) => return Err(SerializationErrors::FailedToCreateWriter),
@@ -33,14 +34,15 @@ pub fn writer(tasks: Vec<Task>) -> Result<(), SerializationErrors> {
     }
 }
 
-/// Enum for storing possible errors for deserializing the .tasks file
+
+/// Enum for storing possible deserialization errros
 pub enum DeserializationErrors {
     FailedToCreateReader,
     FailedToDeserializeTask
 }
 
-/// Reads the saved tasks in the .tasks file
-pub fn reader() -> Result<Vec<Task>, DeserializationErrors> {
+/// Deserializes the serializes data in the .tasks file to a Vec<Task>
+pub fn deserialize_tasks() -> Result<Vec<Task>, DeserializationErrors> {
     let mut tasks: Vec<Task> = Vec::new();
 
     let mut reader = match csv::Reader::from_path(FILE_NAME) {
