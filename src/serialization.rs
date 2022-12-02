@@ -1,5 +1,4 @@
 use crate::task::Task;
-use serde::Serialize;
 
 /// Const for storing the file name to write to
 const FILE_NAME: &str = ".tasks.testing";
@@ -32,4 +31,31 @@ pub fn writer(tasks: Vec<Task>) -> Result<(), SerializationErrors> {
         Err(_) => Err(SerializationErrors::FailedToFlush),
         Ok(_) => Ok(()),
     }
+}
+
+/// Enum for storing possible errors for deserializing the .tasks file
+pub enum DeserializationErrors {
+    FailedToCreateReader,
+    FailedToDeserializeTask
+}
+
+/// Reads the saved tasks in the .tasks file
+pub fn reader() -> Result<Vec<Task>, DeserializationErrors> {
+    let mut tasks: Vec<Task> = Vec::new();
+
+    let mut reader = match csv::Reader::from_path(FILE_NAME) {
+        Ok(writer) => writer,
+        Err(_) => return Err(DeserializationErrors::FailedToCreateReader),
+    };
+
+    for result in reader.deserialize() {
+        let task: Task = match result {
+            Ok(task) => task,
+            Err(_) => return Err(DeserializationErrors::FailedToDeserializeTask),
+        };
+
+        tasks.push(task)
+    }
+
+    Ok(tasks)
 }

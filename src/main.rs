@@ -1,39 +1,33 @@
+use std::process;
+
 use clap::Parser;
 
 use todo::args;
 use todo::args::TodoArgs;
 
-use todo::task::Task;
+use todo::serialization::DeserializationErrors;
 use todo::serialization::SerializationErrors;
+use todo::task::Task;
 
 fn main() {
     let args = TodoArgs::parse();
 
-    let mut tasks_vec: Vec<Task> = vec![
-        Task::new(
-            String::from("A basic task!"),
-            todo::task::TaskStatus::Completed,
-        )
-        .unwrap(),
-        Task::new(
-            String::from("Another basic task!"),
-            todo::task::TaskStatus::InProgress,
-        )
-        .unwrap(),
-        Task::new(
-            String::from("Yet another basic task!"),
-            todo::task::TaskStatus::NotStarted,
-        )
-        .unwrap(),
-    ];
+    let mut tasks_vec: Vec<Task> = match todo::serialization::reader() {
+        Ok(tasks_vec) => tasks_vec,
+        Err(err) => {
+            match err {
+                DeserializationErrors::FailedToCreateReader => println!("Failed to create reader!"),
+                DeserializationErrors::FailedToDeserializeTask => println!("Couldn't read task!"),
+            }
+            process::exit(1);
+        }
+    };
 
     match args.command {
-        args::Commands::Tasks => {
-            match todo::list_tasks(&tasks_vec) {
-                Ok(_) => (),
-                Err(err) => eprintln!("{}", err),
-            }
-        }
+        args::Commands::Tasks => match todo::list_tasks(&tasks_vec) {
+            Ok(_) => (),
+            Err(err) => eprintln!("{}", err),
+        },
 
         args::Commands::Add(arguments) => {
             match todo::new_task(arguments) {
@@ -68,8 +62,7 @@ fn main() {
         Err(err) => match err {
             SerializationErrors::FailedToCreateWriter => println!("Failed to create the writer!"),
             SerializationErrors::FailedToSerialize => println!("Failed to serialiaze the data!"),
-            SerializationErrors::FailedToFlush => println!("Could not flush!")
-        }
+            SerializationErrors::FailedToFlush => println!("Could not flush!"),
+        },
     }
-
 }
