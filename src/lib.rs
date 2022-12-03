@@ -83,8 +83,8 @@ pub fn new_task(arguments: AddCommand) -> Result<Task, &'static str> {
 /// tasks:       The task vec to delete from
 /// arguments:   The arguments for the command from the cli
 pub fn update_task(tasks: &mut Vec<Task>, arguments: UpdateCommand) -> &'static str {
-    // Taking one off of the index as Task ID's start at 1 not 0
-    let index = arguments.task_id - 1;
+    // Converting the task_id to an index
+    let index = task_id_to_index(arguments.task_id);
 
     match task_management::update_task_description(tasks, index, arguments.new_description) {
         Ok(_) => "Task updated successfully!",
@@ -125,8 +125,8 @@ pub fn delete_task(tasks: &mut Vec<Task>, arguments: DeleteCommand) -> &'static 
 /// tasks:       The task vec the tasks belongs to
 /// arguments:   The arguments for the command from the cli
 pub fn start_task(tasks: &mut Vec<Task>, arguments: StartCommand) -> &'static str {
-    // Taking one off of the index as Task ID's start at 1 not 0
-    let index = arguments.task_id - 1;
+    // Converting the task_id to an index
+    let index = task_id_to_index(arguments.task_id);
 
     match task_management::update_task_status(tasks, index, TaskStatus::InProgress) {
         Ok(_) => "Task has been started!",
@@ -144,8 +144,8 @@ pub fn start_task(tasks: &mut Vec<Task>, arguments: StartCommand) -> &'static st
 /// tasks:       The task vec the tasks belongs to
 /// arguments:   The arguments for the command from the cli
 pub fn finish_task(tasks: &mut Vec<Task>, arguments: FinishCommand) -> &'static str {
-    // Taking one off of the index as Task ID's start at 1 not 0
-    let index = arguments.task_id - 1;
+    // Converting the task_id to an index
+    let index = task_id_to_index(arguments.task_id);
 
     match task_management::update_task_status(tasks, index, TaskStatus::Completed) {
         Ok(_) => "Task has been completed!",
@@ -163,8 +163,8 @@ pub fn finish_task(tasks: &mut Vec<Task>, arguments: FinishCommand) -> &'static 
 /// tasks:       The task vec the tasks belongs to
 /// arguments:   The arguments for the command from the cli
 pub fn restart_task(tasks: &mut Vec<Task>, arguments: RestartCommand) -> &'static str {
-    // Taking one off of the index as Task ID's start at 1 not 0
-    let index = arguments.task_id - 1;
+    // Converting the task_id to an index
+    let index = task_id_to_index(arguments.task_id);
 
     match task_management::update_task_status(tasks, index, TaskStatus::NotStarted) {
         Ok(_) => "Task has been restarted!",
@@ -174,6 +174,23 @@ pub fn restart_task(tasks: &mut Vec<Task>, arguments: RestartCommand) -> &'stati
             TaskManagementErrors::EmptyTasklist => "No tasks found!",
         },
     }
+}
+
+/// Converts a task_id to an index, preventing a runtime panic from attempting to subtract with
+/// overflow
+///
+/// Parameters
+/// task_id:   The task_id to convert to an index
+fn task_id_to_index(task_id: usize) -> usize {
+    let mut index = task_id;
+
+    // Take one off of the index if not already zero (to prevent runtime panic) as Task ID's start
+    // at 1 not 0
+    if index != 0 {
+        index -= 1;
+    }
+
+    index
 }
 
 #[cfg(test)]
@@ -193,5 +210,26 @@ mod test {
         let genereated_task = new_task(arguments).unwrap();
 
         assert_eq!(expected_task, genereated_task)
+    }
+
+    #[test]
+    /// Tests if the task_id_to_index function works
+    fn task_id_to_index_works() {
+        let task_id: usize = 1;
+
+        let index = task_id_to_index(task_id);
+
+        assert_eq!(index, 0)
+    }
+
+    #[test]
+    /// Tests if the task_id_to_index function can handle task_id being 0 and not create a panic
+    /// from attempting to subtract with overflow
+    fn task_id_to_index_handles_zero_as_input() {
+        let task_id: usize = 0;
+
+        let index = task_id_to_index(task_id);
+
+        assert_eq!(index, 0)
     }
 }
