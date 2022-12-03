@@ -121,25 +121,6 @@ mod tests {
     }
 
     #[test]
-    /// Tests if the update_task_description returns the right error on a description containing a
-    /// | char
-    fn update_task_description_fails_on_invalid_char() {
-        let mut tasks_vec: Vec<Task> = vec![
-            Task::new(String::from("A basic task!"), TaskStatus::NotStarted).unwrap(),
-            Task::new(String::from("Another basic task!"), TaskStatus::InProgress).unwrap(),
-        ];
-
-        let new_description = String::from("Strings cannot contain a |");
-
-        let error = update_task_description(&mut tasks_vec, 1, new_description).unwrap_err();
-
-        assert_eq!(
-            error,
-            UpdateTaskErrors::TaskErrors(TaskErrors::InvalidCharInDescription)
-        )
-    }
-
-    #[test]
     /// Tests if the update_task_description returns the right error on an empty new_description
     fn update_task_description_fails_on_empty_new_description() {
         let mut tasks_vec: Vec<Task> = vec![

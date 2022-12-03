@@ -68,9 +68,6 @@ pub fn new_task(arguments: AddCommand) -> Result<Task, &'static str> {
             TaskErrors::EmptyDescription => {
                 return Err("Tasks cannot have empty descriptions!");
             }
-            TaskErrors::InvalidCharInDescription => {
-                return Err("Tasks cannot have the | char!");
-            }
         },
     };
 
@@ -95,7 +92,6 @@ pub fn update_task(tasks: &mut Vec<Task>, arguments: UpdateCommand) -> &'static 
                 _ => "Unknown error!"
             },
             UpdateTaskErrors::TaskErrors(error) => match error {
-                TaskErrors::InvalidCharInDescription => "Tasks cannot have the | char!",
                 TaskErrors::EmptyDescription => "Tasks cannot have empty descriptions!",
             }
         }

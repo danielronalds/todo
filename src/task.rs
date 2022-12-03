@@ -17,7 +17,6 @@ pub enum TaskStatus {
 #[derive(Debug, PartialEq, Eq)]
 pub enum TaskErrors {
     EmptyDescription,
-    InvalidCharInDescription,
 }
 
 /// Struct to represent a task
@@ -37,11 +36,6 @@ impl Task {
         // Return an error if the description is empty
         if description.is_empty() {
             return Err(TaskErrors::EmptyDescription);
-        }
-
-        // Return an error if the description contains a | char
-        if description.contains('|') {
-            return Err(TaskErrors::InvalidCharInDescription);
         }
 
         Ok(Task {
@@ -68,11 +62,6 @@ impl Task {
         // Return an error if the new description is empty
         if new_description.is_empty() {
             return Err(TaskErrors::EmptyDescription);
-        }
-
-        // Return an error if the new description contains a | char
-        if new_description.contains('|') {
-            return Err(TaskErrors::InvalidCharInDescription);
         }
 
         self.description = new_description;
@@ -141,17 +130,6 @@ mod tests {
 
         assert_eq!(task_error, TaskErrors::EmptyDescription)
     }
-
-    #[test]
-    /// Checks if the constructor returns the right error when the description contains a '|' char
-    fn constructor_fails_on_invalid_char() {
-        let description = String::from("This invalid char | cannot be in the description");
-
-        let task_error = Task::new(description, TaskStatus::InProgress).unwrap_err();
-
-        assert_eq!(task_error, TaskErrors::InvalidCharInDescription)
-    }
-
     #[test]
     /// Checks if the update_status method works
     fn update_status_works() {
@@ -192,22 +170,6 @@ mod tests {
             .unwrap_err();
 
         assert_eq!(err, TaskErrors::EmptyDescription)
-    }
-
-    #[test]
-    /// Checks if the update_description fails when passed a description with an invalid char
-    fn update_description_fails_on_invalid_char() {
-        let description = String::from("This is the first description");
-
-        let mut task = Task::new(description, TaskStatus::InProgress).unwrap();
-
-        let new_description = String::from("This invalid char | cannot be in the description");
-
-        let err = task
-            .update_description(new_description.clone())
-            .unwrap_err();
-
-        assert_eq!(err, TaskErrors::InvalidCharInDescription)
     }
 
     #[test]
