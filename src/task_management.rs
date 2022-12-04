@@ -24,6 +24,14 @@ pub fn list_tasks(tasks: &Vec<Task>) -> Result<(), TaskManagementErrors> {
     Ok(())
 }
 
+/// Sorts the given task vec in the order Completed, InProgress, NotStarted
+///
+/// Parameters:
+/// tasks:   The tasks vec to sort
+pub fn sort_tasks(tasks: &Vec<Task>) {
+    todo!()
+}
+
 /// Updates the task at the given index in the task vec to the given status
 ///
 /// Parameters
@@ -71,11 +79,15 @@ pub fn update_task_description(
     new_description: String,
 ) -> Result<(), UpdateTaskErrors> {
     if tasks.is_empty() {
-        return Err(UpdateTaskErrors::ManagementErrors(TaskManagementErrors::EmptyTasklist));
+        return Err(UpdateTaskErrors::ManagementErrors(
+            TaskManagementErrors::EmptyTasklist,
+        ));
     }
 
     if index >= tasks.len() {
-        return Err(UpdateTaskErrors::ManagementErrors(TaskManagementErrors::TaskDoesntExist));
+        return Err(UpdateTaskErrors::ManagementErrors(
+            TaskManagementErrors::TaskDoesntExist,
+        ));
     }
 
     match tasks[index].update_description(new_description) {
@@ -163,7 +175,7 @@ mod tests {
 
         let new_description = String::from("New description");
 
-        let error = update_task_description(&mut tasks_vec, 1, new_description ).unwrap_err();
+        let error = update_task_description(&mut tasks_vec, 1, new_description).unwrap_err();
 
         assert_eq!(
             error,
@@ -261,5 +273,24 @@ mod tests {
         let error = list_tasks(&tasks_vec).unwrap_err();
 
         assert_eq!(error, TaskManagementErrors::EmptyTasklist)
+    }
+
+    #[test]
+    fn sort_tasks_works() {
+        let tasks = vec![
+            Task::new(String::from("A Completed task!"), TaskStatus::Completed).unwrap(),
+            Task::new(String::from("A NotStarted task!"), TaskStatus::NotStarted).unwrap(),
+            Task::new(String::from("An InProgress task!"), TaskStatus::InProgress).unwrap(),
+            Task::new(String::from("Another Completed task!"), TaskStatus::Completed).unwrap(),
+        ];
+
+        sort_tasks(&tasks);
+
+        assert_eq!(tasks, vec![
+            Task::new(String::from("A Completed task!"), TaskStatus::Completed).unwrap(),
+            Task::new(String::from("Another Completed task!"), TaskStatus::Completed).unwrap(),
+            Task::new(String::from("An InProgress task!"), TaskStatus::InProgress).unwrap(),
+            Task::new(String::from("A NotStarted task!"), TaskStatus::NotStarted).unwrap(),
+        ]);
     }
 }
