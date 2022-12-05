@@ -32,7 +32,7 @@ pub fn sort_tasks(tasks: &mut Vec<Task>) {
     // Declaring an array of vecs for sorting
     let mut sorting_vecs: [Vec<Task>; 3] = Default::default();
 
-    for task in tasks.to_owned() {
+    for task in tasks.iter_mut() {
         match task.status() {
             TaskStatus::Completed => sorting_vecs[0].push(task.clone()),
             TaskStatus::InProgress => sorting_vecs[1].push(task.clone()),
@@ -40,23 +40,13 @@ pub fn sort_tasks(tasks: &mut Vec<Task>) {
         }
     }
 
-    // Clearing the tasks vec
+    // Clearing the tasks vec 
     tasks.clear();
 
-    // Adding the Completed tasks to the given tasks vec
-    for task in sorting_vecs[0].to_owned() {
-        tasks.push(task);
-    }
-
-    // Adding the InProgress tasks to the given tasks vec
-    for task in sorting_vecs[1].to_owned() {
-        tasks.push(task);
-    }
-
-    // Adding the NotStarted tasks to the given tasks vec
-    for task in sorting_vecs[2].to_owned() {
-        tasks.push(task);
-    }
+    // Adding the tasks back into the given tasks vec in the sorted order
+    tasks.extend(sorting_vecs[0].iter().cloned());
+    tasks.extend(sorting_vecs[1].iter().cloned());
+    tasks.extend(sorting_vecs[2].iter().cloned());
 }
 
 /// Updates the task at the given index in the task vec to the given status
