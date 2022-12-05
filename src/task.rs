@@ -20,7 +20,7 @@ pub enum TaskErrors {
 }
 
 /// Struct to represent a task
-#[derive(Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Eq, Serialize, Deserialize, Clone)]
 pub struct Task {
     description: String,
     status: TaskStatus,

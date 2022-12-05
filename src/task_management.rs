@@ -28,8 +28,35 @@ pub fn list_tasks(tasks: &Vec<Task>) -> Result<(), TaskManagementErrors> {
 ///
 /// Parameters:
 /// tasks:   The tasks vec to sort
-pub fn sort_tasks(tasks: &Vec<Task>) {
-    todo!()
+pub fn sort_tasks(tasks: &mut Vec<Task>) {
+    // Declaring an array of vecs for sorting
+    let mut sorting_vecs: [Vec<Task>; 3] = Default::default();
+
+    for task in tasks.to_owned() {
+        match task.status() {
+            TaskStatus::Completed => sorting_vecs[0].push(task.clone()),
+            TaskStatus::InProgress => sorting_vecs[1].push(task.clone()),
+            TaskStatus::NotStarted => sorting_vecs[2].push(task.clone()),
+        }
+    }
+
+    // Clearing the tasks vec
+    tasks.clear();
+
+    // Adding the Completed tasks to the given tasks vec
+    for task in sorting_vecs[0].to_owned() {
+        tasks.push(task);
+    }
+
+    // Adding the InProgress tasks to the given tasks vec
+    for task in sorting_vecs[1].to_owned() {
+        tasks.push(task);
+    }
+
+    // Adding the NotStarted tasks to the given tasks vec
+    for task in sorting_vecs[2].to_owned() {
+        tasks.push(task);
+    }
 }
 
 /// Updates the task at the given index in the task vec to the given status
@@ -277,14 +304,14 @@ mod tests {
 
     #[test]
     fn sort_tasks_works() {
-        let tasks = vec![
+        let mut tasks = vec![
             Task::new(String::from("A Completed task!"), TaskStatus::Completed).unwrap(),
             Task::new(String::from("A NotStarted task!"), TaskStatus::NotStarted).unwrap(),
             Task::new(String::from("An InProgress task!"), TaskStatus::InProgress).unwrap(),
             Task::new(String::from("Another Completed task!"), TaskStatus::Completed).unwrap(),
         ];
 
-        sort_tasks(&tasks);
+        sort_tasks(&mut tasks);
 
         assert_eq!(tasks, vec![
             Task::new(String::from("A Completed task!"), TaskStatus::Completed).unwrap(),
