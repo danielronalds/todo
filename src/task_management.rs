@@ -28,7 +28,12 @@ pub fn list_tasks(tasks: &Vec<Task>) -> Result<(), TaskManagementErrors> {
 ///
 /// Parameters:
 /// tasks:   The tasks vec to sort
-pub fn sort_tasks(tasks: &mut Vec<Task>) {
+pub fn sort_tasks(tasks: &mut Vec<Task>) -> Result<(), TaskManagementErrors> {
+    // Returning an error if the given vec is empty
+    if tasks.is_empty() {
+        return Err(TaskManagementErrors::EmptyTasklist);
+    }
+
     // Declaring an array of vecs for sorting
     let mut sorting_vecs: [Vec<Task>; 3] = Default::default();
 
@@ -47,6 +52,8 @@ pub fn sort_tasks(tasks: &mut Vec<Task>) {
     tasks.extend(sorting_vecs[0].iter().cloned());
     tasks.extend(sorting_vecs[1].iter().cloned());
     tasks.extend(sorting_vecs[2].iter().cloned());
+
+    Ok(())
 }
 
 /// Updates the task at the given index in the task vec to the given status
@@ -293,6 +300,7 @@ mod tests {
     }
 
     #[test]
+    /// Tests if the sort_tasks function works
     fn sort_tasks_works() {
         let mut tasks = vec![
             Task::new(String::from("A Completed task!"), TaskStatus::Completed).unwrap(),
@@ -301,7 +309,7 @@ mod tests {
             Task::new(String::from("Another Completed task!"), TaskStatus::Completed).unwrap(),
         ];
 
-        sort_tasks(&mut tasks);
+        sort_tasks(&mut tasks).unwrap();
 
         assert_eq!(tasks, vec![
             Task::new(String::from("A Completed task!"), TaskStatus::Completed).unwrap(),
@@ -309,5 +317,15 @@ mod tests {
             Task::new(String::from("An InProgress task!"), TaskStatus::InProgress).unwrap(),
             Task::new(String::from("A NotStarted task!"), TaskStatus::NotStarted).unwrap(),
         ]);
+    }
+
+    #[test]
+    /// Tests if the sort_tasks function returns the correct error when it is passed an empty vec
+    fn sort_tasks_fails_on_empty_vec() {
+        let mut tasks = Vec::new();
+
+        let error = sort_tasks(&mut tasks).unwrap_err();
+
+        assert_eq!(error, TaskManagementErrors::EmptyTasklist)
     }
 }
