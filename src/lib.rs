@@ -56,6 +56,20 @@ pub fn list_tasks(tasks: &Vec<Task>) -> Result<(), &'static str> {
     }
 }
 
+/// Sorts the tasks in the given vec
+///
+/// Parameters
+/// tasks:   The task vec to sort
+pub fn sort_list(tasks: &mut Vec<Task>) -> Result<(), &'static str> {
+    match task_management::sort_tasks(tasks) {
+        Ok(_) => Ok(()),
+        Err(err) => match err {
+            TaskManagementErrors::EmptyTasklist => Err("There are no tasks in the list!"),
+            _ => Err("An unknown error has occured!")
+        }
+    }
+}
+
 /// Creates a new task. This handles any errors and returns an appropriate error message
 /// This approach will most likely change however, or this function moved
 ///

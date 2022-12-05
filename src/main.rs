@@ -24,6 +24,11 @@ fn main() {
             Err(err) => eprintln!("{}", err),
         },
 
+        args::Commands::Sort => match todo::sort_list(&mut tasks_vec) {
+            Ok(_) => (),
+            Err(err) => eprintln!("{}", err),
+        },
+
         args::Commands::Add(arguments) => {
             match todo::new_task(arguments) {
                 Ok(task) => tasks_vec.push(task),

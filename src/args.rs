@@ -15,6 +15,8 @@ pub struct TodoArgs {
 pub enum Commands {
     /// Lists the tasks in the current tasklist
     Tasks,
+    /// Sorts the tasks in the current tasklist 
+    Sort,
     /// Add a task to the tasklist
     Add(AddCommand),
     /// Update an existing tasks description
