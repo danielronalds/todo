@@ -3,26 +3,43 @@ pub mod args;
 pub mod task;
 
 // Private modules
-mod task_management;
 mod program_state;
+mod task_management;
 
-use crate::args::{AddCommand, UpdateCommand, DeleteCommand, StartCommand, FinishCommand, RestartCommand};
+use crate::args::{
+    AddCommand, DeleteCommand, FinishCommand, RestartCommand, StartCommand, UpdateCommand,
+};
 
 use crate::task::{Task, TaskErrors, TaskStatus};
 
 use crate::task_management::{TaskManagementErrors, UpdateTaskErrors};
 
-use crate::program_state::{SerializationErrors, DeserializationErrors};
+use crate::program_state::{DeserializationErrors, SerializationErrors};
 
 /// Reads the tasks file and returns a Vec<Task>
 pub fn read_tasks_file() -> Result<Vec<Task>, &'static str> {
     match program_state::deserialize_tasks() {
         Ok(tasks_vec) => Ok(tasks_vec),
         Err(err) => match err {
-                DeserializationErrors::FailedToCreateReader => Err("Failed to create reader!"),
-                DeserializationErrors::FailedToDeserializeTask => Err("Couldn't read task!"),
+            DeserializationErrors::FailedToCreateReader => {
+                // TODO refactor this
+                // Asking the user if they'd like to create a tasks file in the directory
+                println!("No task file found, would you like to create one? [Y/n]");
+
+                let mut answer = String::new();
+
+                std::io::stdin().read_line(&mut answer).unwrap();
+
+                let answer = answer.trim().to_lowercase();
+
+                if answer == "n" || answer == "no" {
+                    return Err("Task file not created");
+                }
+
+                Ok(Vec::new())
             }
-        
+            DeserializationErrors::FailedToDeserializeTask => Err("Couldn't read task!"),
+        },
     }
 }
 
@@ -65,8 +82,8 @@ pub fn sort_list(tasks: &mut Vec<Task>) -> Result<(), &'static str> {
         Ok(_) => Ok(()),
         Err(err) => match err {
             TaskManagementErrors::EmptyTasklist => Err("There are no tasks in the list!"),
-            _ => Err("An unknown error has occured!")
-        }
+            _ => Err("An unknown error has occured!"),
+        },
     }
 }
 
@@ -103,12 +120,12 @@ pub fn update_task(tasks: &mut Vec<Task>, arguments: UpdateCommand) -> &'static 
             UpdateTaskErrors::ManagementErrors(error) => match error {
                 TaskManagementErrors::EmptyTasklist => "No tasks found!",
                 TaskManagementErrors::TaskDoesntExist => "Task not found!",
-                _ => "Unknown error!"
+                _ => "Unknown error!",
             },
             UpdateTaskErrors::TaskErrors(error) => match error {
                 TaskErrors::EmptyDescription => "Tasks cannot have empty descriptions!",
-            }
-        }
+            },
+        },
     }
 }
 
