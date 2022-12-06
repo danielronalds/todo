@@ -93,11 +93,17 @@ pub fn sort_list(tasks: &mut Vec<Task>) -> Result<(), &'static str> {
 /// Parameters
 /// arguments:   The arguments for the command from the cli
 pub fn new_task(arguments: AddCommand) -> Result<Task, &'static str> {
-    let task = match Task::new(arguments.description, TaskStatus::NotStarted) {
+    // TODO work on this
+    let list = String::from("main");
+
+    let task = match Task::new(arguments.description, TaskStatus::NotStarted, list) {
         Ok(task) => task,
         Err(err) => match err {
             TaskErrors::EmptyDescription => {
                 return Err("Tasks cannot have empty descriptions!");
+            }
+            TaskErrors::EmptyList => {
+                return Err("A task must have a list!")
             }
         },
     };
@@ -124,6 +130,7 @@ pub fn update_task(tasks: &mut Vec<Task>, arguments: UpdateCommand) -> &'static 
             },
             UpdateTaskErrors::TaskErrors(error) => match error {
                 TaskErrors::EmptyDescription => "Tasks cannot have empty descriptions!",
+                _ => "Unknown error!"
             },
         },
     }
@@ -230,7 +237,9 @@ mod test {
     fn new_task_works() {
         let description = String::from("This is a basic task");
 
-        let expected_task = Task::new(description.clone(), TaskStatus::NotStarted).unwrap();
+        let list = String::from("main");
+
+        let expected_task = Task::new(description.clone(), TaskStatus::NotStarted, list).unwrap();
 
         let arguments = AddCommand { description };
 

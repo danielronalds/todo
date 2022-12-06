@@ -17,6 +17,7 @@ pub enum TaskStatus {
 #[derive(Debug, PartialEq, Eq)]
 pub enum TaskErrors {
     EmptyDescription,
+    EmptyList
 }
 
 /// Struct to represent a task
@@ -24,6 +25,7 @@ pub enum TaskErrors {
 pub struct Task {
     description: String,
     status: TaskStatus,
+    list: String
 }
 
 impl Task {
@@ -32,15 +34,20 @@ impl Task {
     /// Parameters
     /// description:   The task's description
     /// status:        The task's status
-    pub fn new(description: String, status: TaskStatus) -> Result<Task, TaskErrors> {
+    pub fn new(description: String, status: TaskStatus, list: String) -> Result<Task, TaskErrors> {
         // Return an error if the description is empty
         if description.is_empty() {
             return Err(TaskErrors::EmptyDescription);
         }
 
+        if list.is_empty() {
+            return Err(TaskErrors::EmptyList);
+        }
+
         Ok(Task {
             description,
             status,
+            list
         })
     }
 
@@ -52,6 +59,11 @@ impl Task {
     /// Returns the tasks status as a clone
     pub fn status(&self) -> TaskStatus {
         self.status.clone()
+    }
+
+    /// Returns the tasks list as a clone
+    pub fn list(&self) -> String {
+        self.list.clone()
     }
 
     /// Updates the description of the task
@@ -77,6 +89,7 @@ impl Task {
         self.status = new_status;
     }
 
+    /// TODO: REMOVE THIS 
     /// Returns the struct as a string that can be written to a file
     pub fn to_save_string(&self) -> String {
         format!("{}|{:?}", self.description(), self.status())
@@ -103,10 +116,12 @@ mod tests {
 
     #[test]
     /// Checks if the constructor works with the expected input
-    fn constructor_works() {
+    fn constructor_right_description() {
         let description = String::from("This is a simple task!");
 
-        let task = Task::new(description.clone(), TaskStatus::NotStarted).unwrap();
+        let list = String::from("main");
+
+        let task = Task::new(description.clone(), TaskStatus::NotStarted, list).unwrap();
 
         assert_eq!(task.description(), description);
     }
@@ -116,9 +131,22 @@ mod tests {
     fn constructor_right_status() {
         let description = String::from("This is a simple task!");
 
-        let task = Task::new(description, TaskStatus::Completed).unwrap();
+        let list = String::from("main");
+
+        let task = Task::new(description, TaskStatus::Completed, list).unwrap();
 
         assert_eq!(task.status(), TaskStatus::Completed)
+    }
+
+    #[test]
+    fn constructor_right_list() {
+        let description = String::from("This is a simple task!");
+
+        let list = String::from("main");
+
+        let task = Task::new(description, TaskStatus::NotStarted, list.clone()).unwrap();
+
+        assert_eq!(task.list(), list);
     }
 
     #[test]
@@ -126,16 +154,32 @@ mod tests {
     fn constructor_fails_on_empty_description() {
         let description = String::new();
 
-        let task_error = Task::new(description, TaskStatus::InProgress).unwrap_err();
+        let list = String::from("main");
+
+        let task_error = Task::new(description, TaskStatus::InProgress, list).unwrap_err();
 
         assert_eq!(task_error, TaskErrors::EmptyDescription)
     }
+
+    #[test]
+    fn constructor_fails_on_empty_list() {
+        let description = String::from("This is a simple task!");
+
+        let list = String::new();
+
+        let error = Task::new(description, TaskStatus::NotStarted, list).unwrap_err();
+
+        assert_eq!(error, TaskErrors::EmptyList);
+    }
+
     #[test]
     /// Checks if the update_status method works
     fn update_status_works() {
         let description = String::from("This is a basic task!");
 
-        let mut task = Task::new(description, TaskStatus::NotStarted).unwrap();
+        let list = String::from("main");
+
+        let mut task = Task::new(description, TaskStatus::NotStarted, list).unwrap();
 
         task.update_status(TaskStatus::InProgress);
 
@@ -147,7 +191,9 @@ mod tests {
     fn update_description_works() {
         let description = String::from("This is the first description");
 
-        let mut task = Task::new(description, TaskStatus::InProgress).unwrap();
+        let list = String::from("main");
+
+        let mut task = Task::new(description, TaskStatus::InProgress, list).unwrap();
 
         let new_description = String::from("The is the new description");
 
@@ -161,7 +207,9 @@ mod tests {
     fn update_description_fails_on_empty_description() {
         let description = String::from("This is the first description");
 
-        let mut task = Task::new(description, TaskStatus::InProgress).unwrap();
+        let list = String::from("main");
+
+        let mut task = Task::new(description, TaskStatus::InProgress, list).unwrap();
 
         let new_description = String::new();
 
@@ -177,7 +225,9 @@ mod tests {
     fn to_save_string_works() {
         let description = String::from("This is a saved task!");
 
-        let task = Task::new(description, TaskStatus::NotStarted).unwrap();
+        let list = String::from("main");
+
+        let task = Task::new(description, TaskStatus::NotStarted, list).unwrap();
         
         let expected_output = String::from("This is a saved task!|NotStarted");
 

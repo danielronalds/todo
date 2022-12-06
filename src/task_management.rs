@@ -145,8 +145,8 @@ mod tests {
     /// Tests if the update_task_description works
     fn update_task_description_works() {
         let mut tasks_vec: Vec<Task> = vec![
-            Task::new(String::from("A basic task!"), TaskStatus::NotStarted).unwrap(),
-            Task::new(String::from("Another basic task!"), TaskStatus::InProgress).unwrap(),
+            Task::new(String::from("A basic task!"), TaskStatus::NotStarted, String::from("main")).unwrap(),
+            Task::new(String::from("Another basic task!"), TaskStatus::InProgress, String::from("main")).unwrap(),
         ];
 
         let new_description = String::from("New description");
@@ -160,8 +160,8 @@ mod tests {
     /// Tests if the update_task_description returns the right error on an empty new_description
     fn update_task_description_fails_on_empty_new_description() {
         let mut tasks_vec: Vec<Task> = vec![
-            Task::new(String::from("A basic task!"), TaskStatus::NotStarted).unwrap(),
-            Task::new(String::from("Another basic task!"), TaskStatus::InProgress).unwrap(),
+            Task::new(String::from("A basic task!"), TaskStatus::NotStarted, String::from("main")).unwrap(),
+            Task::new(String::from("Another basic task!"), TaskStatus::InProgress, String::from("main")).unwrap(),
         ];
 
         let new_description = String::new();
@@ -178,8 +178,8 @@ mod tests {
     /// Tests if the update_task_description returns the right error on an invalid index
     fn update_task_description_fails_on_invalid_index() {
         let mut tasks_vec: Vec<Task> = vec![
-            Task::new(String::from("A basic task!"), TaskStatus::NotStarted).unwrap(),
-            Task::new(String::from("Another basic task!"), TaskStatus::InProgress).unwrap(),
+            Task::new(String::from("A basic task!"), TaskStatus::NotStarted, String::from("main")).unwrap(),
+            Task::new(String::from("Another basic task!"), TaskStatus::InProgress, String::from("main")).unwrap(),
         ];
 
         let new_description = String::from("New description");
@@ -211,8 +211,8 @@ mod tests {
     /// Tests if the update_task_status function works
     fn update_task_status_works() {
         let mut tasks_vec: Vec<Task> = vec![
-            Task::new(String::from("A basic task!"), TaskStatus::NotStarted).unwrap(),
-            Task::new(String::from("Another basic task!"), TaskStatus::InProgress).unwrap(),
+            Task::new(String::from("A basic task!"), TaskStatus::NotStarted, String::from("main")).unwrap(),
+            Task::new(String::from("Another basic task!"), TaskStatus::InProgress, String::from("main")).unwrap(),
         ];
 
         update_task_status(&mut tasks_vec, 1, TaskStatus::Completed).unwrap();
@@ -225,8 +225,8 @@ mod tests {
     /// given status already
     fn update_task_status_fails_when_already_at_given_status() {
         let mut tasks_vec: Vec<Task> = vec![
-            Task::new(String::from("A basic task!"), TaskStatus::NotStarted).unwrap(),
-            Task::new(String::from("Another basic task!"), TaskStatus::InProgress).unwrap(),
+            Task::new(String::from("A basic task!"), TaskStatus::NotStarted, String::from("main")).unwrap(),
+            Task::new(String::from("Another basic task!"), TaskStatus::InProgress, String::from("main")).unwrap(),
         ];
 
         let err = update_task_status(&mut tasks_vec, 1, TaskStatus::InProgress).unwrap_err();
@@ -239,8 +239,8 @@ mod tests {
     /// is out of range of the vec
     fn update_task_status_fails_when_index_out_of_range() {
         let mut tasks_vec: Vec<Task> = vec![
-            Task::new(String::from("A basic task!"), TaskStatus::NotStarted).unwrap(),
-            Task::new(String::from("Another basic task!"), TaskStatus::NotStarted).unwrap(),
+            Task::new(String::from("A basic task!"), TaskStatus::NotStarted, String::from("main")).unwrap(),
+            Task::new(String::from("Another basic task!"), TaskStatus::NotStarted, String::from("main")).unwrap(),
         ];
 
         let err = update_task_status(&mut tasks_vec, 3, TaskStatus::Completed).unwrap_err();
@@ -262,15 +262,15 @@ mod tests {
     /// Tests if the delete_task function works
     fn delete_task_works() {
         let mut tasks_vec: Vec<Task> = vec![
-            Task::new(String::from("A basic task!"), TaskStatus::NotStarted).unwrap(),
-            Task::new(String::from("Another basic task!"), TaskStatus::NotStarted).unwrap(),
+            Task::new(String::from("A basic task!"), TaskStatus::NotStarted, String::from("main")).unwrap(),
+            Task::new(String::from("Another basic task!"), TaskStatus::NotStarted, String::from("main")).unwrap(),
         ];
 
         delete_task(&mut tasks_vec, 1).unwrap();
 
         assert_eq!(
             tasks_vec,
-            vec![Task::new(String::from("A basic task!"), TaskStatus::NotStarted).unwrap()]
+            vec![Task::new(String::from("A basic task!"), TaskStatus::NotStarted, String::from("main")).unwrap()]
         )
     }
 
@@ -278,8 +278,8 @@ mod tests {
     /// Tests if the delete_task function errors when the index passed to it is out of range
     fn delete_task_errors_on_invalid_index() {
         let mut tasks_vec: Vec<Task> = vec![
-            Task::new(String::from("A basic task!"), TaskStatus::NotStarted).unwrap(),
-            Task::new(String::from("Another basic task!"), TaskStatus::NotStarted).unwrap(),
+            Task::new(String::from("A basic task!"), TaskStatus::NotStarted, String::from("main")).unwrap(),
+            Task::new(String::from("Another basic task!"), TaskStatus::NotStarted, String::from("main")).unwrap(),
         ];
 
         let error = delete_task(&mut tasks_vec, 2).unwrap_err();
@@ -303,19 +303,19 @@ mod tests {
     /// Tests if the sort_tasks function works
     fn sort_tasks_works() {
         let mut tasks = vec![
-            Task::new(String::from("A Completed task!"), TaskStatus::Completed).unwrap(),
-            Task::new(String::from("A NotStarted task!"), TaskStatus::NotStarted).unwrap(),
-            Task::new(String::from("An InProgress task!"), TaskStatus::InProgress).unwrap(),
-            Task::new(String::from("Another Completed task!"), TaskStatus::Completed).unwrap(),
+            Task::new(String::from("A Completed task!"), TaskStatus::Completed, String::from("main")).unwrap(),
+            Task::new(String::from("A NotStarted task!"), TaskStatus::NotStarted, String::from("main")).unwrap(),
+            Task::new(String::from("An InProgress task!"), TaskStatus::InProgress, String::from("main")).unwrap(),
+            Task::new(String::from("Another Completed task!"), TaskStatus::Completed, String::from("main")).unwrap(),
         ];
 
         sort_tasks(&mut tasks).unwrap();
 
         assert_eq!(tasks, vec![
-            Task::new(String::from("A Completed task!"), TaskStatus::Completed).unwrap(),
-            Task::new(String::from("Another Completed task!"), TaskStatus::Completed).unwrap(),
-            Task::new(String::from("An InProgress task!"), TaskStatus::InProgress).unwrap(),
-            Task::new(String::from("A NotStarted task!"), TaskStatus::NotStarted).unwrap(),
+            Task::new(String::from("A Completed task!"), TaskStatus::Completed, String::from("main")).unwrap(),
+            Task::new(String::from("Another Completed task!"), TaskStatus::Completed, String::from("main")).unwrap(),
+            Task::new(String::from("An InProgress task!"), TaskStatus::InProgress, String::from("main")).unwrap(),
+            Task::new(String::from("A NotStarted task!"), TaskStatus::NotStarted, String::from("main")).unwrap(),
         ]);
     }
 
