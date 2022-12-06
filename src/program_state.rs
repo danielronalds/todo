@@ -1,7 +1,7 @@
 use crate::task::Task;
 
 /// Const for storing the file name to write to
-const FILE_NAME: &str = ".tasks.testing";
+const FILE_NAME: &str = ".todo/tasks.testing";
 
 
 /// Enum for storing possible serialization errros

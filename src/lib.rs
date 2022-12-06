@@ -1,5 +1,6 @@
 // Public facing modules
 pub mod args;
+pub mod config;
 pub mod task;
 
 // Private modules
@@ -9,6 +10,8 @@ mod task_management;
 use crate::args::{
     AddCommand, DeleteCommand, FinishCommand, RestartCommand, StartCommand, UpdateCommand,
 };
+
+use std::fs;
 
 use crate::task::{Task, TaskErrors, TaskStatus};
 
@@ -35,6 +38,12 @@ pub fn read_tasks_file() -> Result<Vec<Task>, &'static str> {
                 if answer == "n" || answer == "no" {
                     return Err("Task file not created");
                 }
+
+                // Here we just ignore any errors created, as if an error is created it is most
+                // likely due to the folder already existing. Otherwise if the program has no read
+                // or write privilages then the whole program wont work and therefore will fail to
+                // serialiaze, producing a valid message there.
+                fs::create_dir(".todo").unwrap_or_else(|_| ());
 
                 Ok(Vec::new())
             }
@@ -102,9 +111,7 @@ pub fn new_task(arguments: AddCommand) -> Result<Task, &'static str> {
             TaskErrors::EmptyDescription => {
                 return Err("Tasks cannot have empty descriptions!");
             }
-            TaskErrors::EmptyList => {
-                return Err("A task must have a list!")
-            }
+            TaskErrors::EmptyList => return Err("A task must have a list!"),
         },
     };
 
@@ -130,7 +137,7 @@ pub fn update_task(tasks: &mut Vec<Task>, arguments: UpdateCommand) -> &'static 
             },
             UpdateTaskErrors::TaskErrors(error) => match error {
                 TaskErrors::EmptyDescription => "Tasks cannot have empty descriptions!",
-                _ => "Unknown error!"
+                _ => "Unknown error!",
             },
         },
     }
