@@ -18,6 +18,8 @@ fn main() {
         },
     };
 
+    let config = todo::read_config_file();
+
     match args.command {
         args::Commands::Tasks => match todo::list_tasks(&tasks_vec) {
             Ok(_) => (),
@@ -57,7 +59,13 @@ fn main() {
         }
     }
 
+    // Writing to the tasks file
     if let Err(err) = todo::write_tasks_file(tasks_vec) {
+        println!("{}", err);
+    }
+
+    // Writing to the config file
+    if let Err(err) = todo::write_config_file(config) {
         println!("{}", err);
     }
 }

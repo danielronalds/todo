@@ -15,6 +15,8 @@ use std::fs;
 
 use crate::task::{Task, TaskErrors, TaskStatus};
 
+use crate::config::Config;
+
 use crate::task_management::{TaskManagementErrors, UpdateTaskErrors};
 
 use crate::program_state::{DeserializationErrors, SerializationErrors};
@@ -61,7 +63,31 @@ pub fn write_tasks_file(tasks: Vec<Task>) -> Result<(), &'static str> {
         Ok(_) => Ok(()),
         Err(err) => match err {
             SerializationErrors::FailedToCreateWriter => Err("Failed to create the writer!"),
-            SerializationErrors::FailedToSerialize => Err("Failed to serialiaze the data!"),
+            SerializationErrors::FailedToSerialize => Err("Failed to serialize the tasks!"),
+            SerializationErrors::FailedToFlush => Err("Could not flush!"),
+        },
+    }
+}
+
+/// Reads the config file and returns a Config regardless of any errors
+pub fn read_config_file() -> Config {
+    match program_state::deserialize_config() {
+        Ok(config) => config,
+        // Currently any errors will just return a default Config, this might change later though
+        Err(_) => Config::new(),
+    }
+}
+
+/// Write the given Config to the config file
+///
+/// Parameters
+/// config:   The Config to write to the config file
+pub fn write_config_file(config: Config) -> Result<(), &'static str> {
+    match program_state::serialize_config(config) {
+        Ok(_) => Ok(()),
+        Err(err) => match err {
+            SerializationErrors::FailedToCreateWriter => Err("Failed to create the writer!"),
+            SerializationErrors::FailedToSerialize => Err("Failed to serialize the config!"),
             SerializationErrors::FailedToFlush => Err("Could not flush!"),
         },
     }

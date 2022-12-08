@@ -43,7 +43,7 @@ pub fn serialize_tasks(tasks: Vec<Task>) -> Result<(), SerializationErrors> {
 /// Parameters
 /// config:   The config to serialize
 pub fn serialize_config(config: Config) -> Result<(), SerializationErrors> {
-    let mut writer = match csv::Writer::from_path(CONFIG_FILE_NAME) {
+    let mut writer = match csv::WriterBuilder::new().flexible(true).from_path(CONFIG_FILE_NAME) {
         Ok(writer) => writer,
         Err(_) => return Err(SerializationErrors::FailedToCreateWriter),
     };
