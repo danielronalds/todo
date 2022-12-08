@@ -88,7 +88,8 @@ pub fn write_config_file(config: Config) -> Result<(), &'static str> {
         Err(err) => match err {
             SerializationErrors::FailedToCreateWriter => Err("Failed to create the writer!"),
             SerializationErrors::FailedToSerialize => Err("Failed to serialize the config!"),
-            SerializationErrors::FailedToFlush => Err("Could not flush!"),
+            // serialize_config only produces the errors above
+            _ => Err("Unknown error"),
         },
     }
 }
