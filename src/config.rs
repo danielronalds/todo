@@ -72,6 +72,18 @@ impl Config {
     /// Parameters
     /// list:   The list to delete
     pub fn delete_list(&mut self, list: String) -> Result<(), ListErrors> {
+        if self.is_valid_list(&list) == false {
+            return Err(ListErrors::ListDoesntExist);
+        }
+
+        if self.lists.len() == 1 {
+            return Err(ListErrors::ListCannotBeDeleted);
+        }
+
+        let index = self.lists.iter().position(|l| l == &list).unwrap();
+
+        self.lists.remove(index);
+
         Ok(())
     }
 }
@@ -174,7 +186,7 @@ mod tests {
 
         config.delete_list(listname.clone()).unwrap();
 
-        assert_eq!(config.is_valid_list(&listname), false)
+        assert_eq!(config.lists, vec![String::from("Main")])
     }
 
     #[test]
