@@ -279,6 +279,18 @@ pub fn manage_lists(config: &mut Config, arguments: ListCommand) -> &'static str
         None => (),
     }
 
+    // Checking if the user wants to switch to a list
+    match arguments.switch {
+        Some(list_name) => match config.set_current_list(list_name) {
+            Ok(_) => return "List addded!",
+            Err(err) => match err {
+                ListErrors::ListDoesntExist => return "That list doesn't exist!",
+                _ => return "This error cannot occur"
+            },
+        }
+        None => (),
+    }
+
     ""
 }
 
