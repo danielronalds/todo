@@ -325,15 +325,17 @@ mod test {
     #[test]
     /// Tests if the new_task command works as expected
     fn new_task_works() {
+        let config = Config::new();
+
         let description = String::from("This is a basic task");
 
-        let list = String::from("main");
+        let list = config.current_list();
 
         let expected_task = Task::new(description.clone(), TaskStatus::NotStarted, list).unwrap();
 
         let arguments = AddCommand { description };
 
-        let genereated_task = new_task(arguments).unwrap();
+        let genereated_task = new_task(arguments, &config).unwrap();
 
         assert_eq!(expected_task, genereated_task)
     }
