@@ -79,5 +79,9 @@ pub struct ListCommand {
 
     #[arg(short, long)]
     /// Switch to a list
-    pub switch: Option<String>
+    pub switch: Option<String>,
+
+    #[arg(short, long)]
+    /// delete a list
+    pub delete: Option<String>
 }

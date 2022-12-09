@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 /// Enum of all possible errors concerning the Config type
 #[derive(Debug, PartialEq, Eq)]
 pub enum ListErrors {
+    ListCannotBeDeleted,
     ListDoesntExist,
     ListAlreadyExists
 }
@@ -63,6 +64,14 @@ impl Config {
 
         self.lists.push(list);
 
+        Ok(())
+    }
+
+    /// Removes the given list if it is valid
+    ///
+    /// Parameters
+    /// list:   The list to delete
+    pub fn delete_list(&mut self, list: String) -> Result<(), ListErrors> {
         Ok(())
     }
 }
@@ -152,5 +161,40 @@ mod tests {
         let error = config.add_list(listname.clone()).unwrap_err();
 
         assert_eq!(error, ListErrors::ListAlreadyExists)
+    }
+
+    #[test]
+    /// Checks if delete_list works
+    fn delete_list_works() {
+        let mut config = Config::new();
+
+        let listname = String::from("Backend");
+
+        config.add_list(listname.clone()).unwrap();
+
+        config.delete_list(listname.clone()).unwrap();
+
+        assert_eq!(config.is_valid_list(&listname), false)
+    }
+
+    #[test]
+    /// Checks if delete_list returns the expected error if the list doesn't exist
+    fn delete_list_fails_if_the_list_doesnt_exist() {
+        let mut config = Config::new();
+
+        let error = config.delete_list(String::from("Backend")).unwrap_err();
+
+        assert_eq!(error, ListErrors::ListDoesntExist)
+    }
+
+    #[test]
+    /// Checks if delete_list returns the expected error if the user attempts to delete the last
+    /// list
+    fn delete_list_fails_if_there_is_only_one_list() {
+        let mut config = Config::new();
+
+        let error = config.delete_list(String::from("Main")).unwrap_err();
+
+        assert_eq!(error, ListErrors::ListCannotBeDeleted)
     }
 }
