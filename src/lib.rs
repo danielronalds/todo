@@ -101,7 +101,7 @@ pub fn write_config_file(config: Config) -> Result<(), &'static str> {
 /// Parameters
 /// task_vec:   The unfiltered Vec<Task>
 /// config:     The user's config
-pub fn filter_tasks(task_vec: Vec<Task>, config: &Config) -> (Vec<Task>, Vec<Task>) {
+pub fn filter_task_vec(task_vec: Vec<Task>, config: &Config) -> (Vec<Task>, Vec<Task>) {
     let mut tagged_tasks: Vec<Task> = Vec::new();
 
     let mut other_tasks: Vec<Task> = Vec::new();
@@ -151,9 +151,9 @@ pub fn sort_list(tasks: &mut Vec<Task>) -> Result<(), &'static str> {
 ///
 /// Parameters
 /// arguments:   The arguments for the command from the cli
-pub fn new_task(arguments: AddCommand) -> Result<Task, &'static str> {
-    // TODO work on this
-    let list = String::from("main");
+/// config:      The user's config
+pub fn new_task(arguments: AddCommand, config: &Config) -> Result<Task, &'static str> {
+    let list = config.current_list();
 
     let task = match Task::new(arguments.description, TaskStatus::NotStarted, list) {
         Ok(task) => task,
@@ -305,7 +305,7 @@ pub fn manage_lists(config: &mut Config, arguments: ListCommand) -> &'static str
     // Checking if the user wants to switch to a list
     match arguments.switch {
         Some(list_name) => match config.set_current_list(list_name) {
-            Ok(_) => return "List addded!",
+            Ok(_) => return "Switched Lists!",
             Err(err) => match err {
                 ListErrors::ListDoesntExist => return "That list doesn't exist!",
                 _ => return "This error cannot occur",
@@ -370,7 +370,7 @@ mod test {
             .unwrap(),
         ];
 
-        let filtered_vecs = filter_tasks(tasks_vec, &config);
+        let filtered_vecs = filter_task_vec(tasks_vec, &config);
 
         assert_eq!(
             filtered_vecs.0,

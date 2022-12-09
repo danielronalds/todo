@@ -10,7 +10,7 @@ use todo::task::Task;
 fn main() {
     let args = TodoArgs::parse();
 
-    let mut tasks_vec: Vec<Task> = match todo::read_tasks_file() {
+    let unfiltered_tasks_vec: Vec<Task> = match todo::read_tasks_file() {
         Ok(tasks_vec) => tasks_vec,
         Err(err) => {
             eprintln!("{}", err);
@@ -19,6 +19,11 @@ fn main() {
     };
 
     let mut config = todo::read_config_file();
+
+    // Filtering the tasks vec so that only the current list is worked on
+    let filtered_vecs = todo::filter_task_vec(unfiltered_tasks_vec, &config);
+
+    let mut tasks_vec = filtered_vecs.0;
 
     match args.command {
         args::Commands::Tasks => match todo::list_tasks(&tasks_vec) {
@@ -32,7 +37,7 @@ fn main() {
         },
 
         args::Commands::Add(arguments) => {
-            match todo::new_task(arguments) {
+            match todo::new_task(arguments, &config) {
                 Ok(task) => tasks_vec.push(task),
                 Err(err) => eprintln!("{}", err),
             };
@@ -62,6 +67,9 @@ fn main() {
             println!("{}", todo::manage_lists(&mut config, arguments))
         }
     }
+
+    // Adding the other tasks back into the tasks_vec
+    tasks_vec.extend(filtered_vecs.1);
 
     // Writing to the tasks file
     if let Err(err) = todo::write_tasks_file(tasks_vec) {
