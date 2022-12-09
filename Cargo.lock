@@ -295,7 +295,7 @@ dependencies = [
 
 [[package]]
 name = "todo"
-version = "1.8.1"
+version = "1.10.0"
 dependencies = [
  "clap",
  "colored",
