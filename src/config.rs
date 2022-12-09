@@ -67,7 +67,8 @@ impl Config {
         Ok(())
     }
 
-    /// Removes the given list if it is valid
+    /// Removes the given list if it is valid. If the list being deleted is the current_list then
+    /// the current_list will be set to the first list
     ///
     /// Parameters
     /// list:   The list to delete
@@ -83,6 +84,10 @@ impl Config {
         let index = self.lists.iter().position(|l| l == &list).unwrap();
 
         self.lists.remove(index);
+
+        if list == self.current_list {
+            self.current_list = self.lists[0].clone();
+        }
 
         Ok(())
     }
@@ -187,6 +192,19 @@ mod tests {
         config.delete_list(listname.clone()).unwrap();
 
         assert_eq!(config.lists, vec![String::from("Main")])
+    }
+
+    #[test]
+    /// Checks that if the list being deleted is the current_list then the current_list will be set 
+    /// to the first list
+    fn delete_list_changes_current_list_if_current_list_deleted() {
+        let mut config = Config::new();
+
+        config.add_list(String::from("Backend")).unwrap();
+
+        config.delete_list(config.current_list()).unwrap();
+
+        assert_eq!(config.current_list(), String::from("Backend"))
     }
 
     #[test]
