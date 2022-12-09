@@ -320,7 +320,7 @@ pub fn manage_lists(config: &mut Config, arguments: ListCommand) -> &'static str
             Ok(_) => return "Deleted List!",
             Err(err) => match err {
                 ListErrors::ListDoesntExist => return "That list doesn't exist!",
-                ListErrors::ListCannotBeDeleted => return "You must have at list one list!",
+                ListErrors::ListCannotBeDeleted => return "You must have at least one list!",
                 _ => return "This error cannot occur",
             },
         },
