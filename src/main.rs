@@ -71,6 +71,11 @@ fn main() {
     // Adding the other tasks back into the tasks_vec
     tasks_vec.extend(filtered_vecs.1);
 
+    // Ensuring all tasks belong to a valid list
+    tasks_vec.retain(|task| {
+        config.is_valid_list(&task.list())
+    });
+
     // Writing to the tasks file
     if let Err(err) = todo::write_tasks_file(tasks_vec) {
         println!("{}", err);
