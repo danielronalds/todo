@@ -34,6 +34,7 @@ impl Task {
     /// Parameters
     /// description:   The task's description
     /// status:        The task's status
+    /// list:          The list the task belongs to
     pub fn new(description: String, status: TaskStatus, list: String) -> Result<Task, TaskErrors> {
         // Return an error if the description is empty
         if description.is_empty() {

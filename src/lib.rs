@@ -8,7 +8,8 @@ mod program_state;
 mod task_management;
 
 use crate::args::{
-    AddCommand, DeleteCommand, FinishCommand, RestartCommand, StartCommand, UpdateCommand, ListCommand
+    AddCommand, DeleteCommand, FinishCommand, ListCommand, RestartCommand, StartCommand,
+    UpdateCommand,
 };
 
 use std::fs;
@@ -92,6 +93,28 @@ pub fn write_config_file(config: Config) -> Result<(), &'static str> {
             _ => Err("Unknown error"),
         },
     }
+}
+
+/// Consumes the given vec and returns two vecs of tasks, with the first one containing all the
+/// tasks in the current list, and the second containg the rest of the tasks
+///
+/// Parameters
+/// task_vec:   The unfiltered Vec<Task>
+/// config:     The user's config
+pub fn filter_tasks(task_vec: Vec<Task>, config: &Config) -> (Vec<Task>, Vec<Task>) {
+    let mut tagged_tasks: Vec<Task> = Vec::new();
+
+    let mut other_tasks: Vec<Task> = Vec::new();
+
+    for task in task_vec {
+        if task.list() == config.current_list() {
+            tagged_tasks.push(task);
+            continue;
+        }
+        other_tasks.push(task);
+    }
+
+    (tagged_tasks, other_tasks)
 }
 
 /// Lists the tasks in the given vec
@@ -263,19 +286,19 @@ fn task_id_to_index(task_id: usize) -> usize {
 
 /// Manages the list command
 ///
-/// Parameters 
+/// Parameters
 /// config:   The config to manage the list from
 /// arguments:   The arguments form the cli
-pub fn manage_lists(config: &mut Config, arguments: ListCommand) -> &'static str{
+pub fn manage_lists(config: &mut Config, arguments: ListCommand) -> &'static str {
     // Checking if the user wants to create a list
     match arguments.create {
         Some(list_name) => match config.add_list(list_name) {
             Ok(_) => return "List addded!",
             Err(err) => match err {
                 ListErrors::ListAlreadyExists => return "That list already exists!",
-                _ => return "This error cannot occur"
+                _ => return "This error cannot occur",
             },
-        }
+        },
         None => (),
     }
 
@@ -285,9 +308,9 @@ pub fn manage_lists(config: &mut Config, arguments: ListCommand) -> &'static str
             Ok(_) => return "List addded!",
             Err(err) => match err {
                 ListErrors::ListDoesntExist => return "That list doesn't exist!",
-                _ => return "This error cannot occur"
+                _ => return "This error cannot occur",
             },
-        }
+        },
         None => (),
     }
 
@@ -313,6 +336,77 @@ mod test {
         let genereated_task = new_task(arguments).unwrap();
 
         assert_eq!(expected_task, genereated_task)
+    }
+
+    #[test]
+    /// Tests if the filters_tasks function works as expected
+    fn filter_tasks_works() {
+        let config = Config::new();
+
+        let tasks_vec = vec![
+            Task::new(
+                String::from("A basic task"),
+                TaskStatus::Completed,
+                String::from("Main"),
+            )
+            .unwrap(),
+            Task::new(
+                String::from("Another basic task"),
+                TaskStatus::Completed,
+                String::from("Main"),
+            )
+            .unwrap(),
+            Task::new(
+                String::from("A basic task"),
+                TaskStatus::Completed,
+                String::from("Other"),
+            )
+            .unwrap(),
+            Task::new(
+                String::from("A basic task"),
+                TaskStatus::Completed,
+                String::from("Another"),
+            )
+            .unwrap(),
+        ];
+
+        let filtered_vecs = filter_tasks(tasks_vec, &config);
+
+        assert_eq!(
+            filtered_vecs.0,
+            vec![
+                Task::new(
+                    String::from("A basic task"),
+                    TaskStatus::Completed,
+                    String::from("Main"),
+                )
+                .unwrap(),
+                Task::new(
+                    String::from("Another basic task"),
+                    TaskStatus::Completed,
+                    String::from("Main"),
+                )
+                .unwrap(),
+            ]
+        );
+
+        assert_eq!(
+            filtered_vecs.1,
+            vec![
+                Task::new(
+                    String::from("A basic task"),
+                    TaskStatus::Completed,
+                    String::from("Other"),
+                )
+                .unwrap(),
+                Task::new(
+                    String::from("A basic task"),
+                    TaskStatus::Completed,
+                    String::from("Another"),
+                )
+                .unwrap(),
+            ]
+        );
     }
 
     #[test]
