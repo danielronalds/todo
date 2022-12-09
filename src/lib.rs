@@ -8,14 +8,14 @@ mod program_state;
 mod task_management;
 
 use crate::args::{
-    AddCommand, DeleteCommand, FinishCommand, RestartCommand, StartCommand, UpdateCommand,
+    AddCommand, DeleteCommand, FinishCommand, RestartCommand, StartCommand, UpdateCommand, ListCommand
 };
 
 use std::fs;
 
 use crate::task::{Task, TaskErrors, TaskStatus};
 
-use crate::config::Config;
+use crate::config::{Config, ListErrors};
 
 use crate::task_management::{TaskManagementErrors, UpdateTaskErrors};
 
@@ -259,6 +259,27 @@ fn task_id_to_index(task_id: usize) -> usize {
     }
 
     index
+}
+
+/// Manages the list command
+///
+/// Parameters 
+/// config:   The config to manage the list from
+/// arguments:   The arguments form the cli
+pub fn manage_lists(config: &mut Config, arguments: ListCommand) -> &'static str{
+    // Checking if the user wants to create a list
+    match arguments.create {
+        Some(list_name) => match config.add_list(list_name) {
+            Ok(_) => return "List addded!",
+            Err(err) => match err {
+                ListErrors::ListAlreadyExists => return "That list already exists!",
+                _ => return "This error cannot occur"
+            },
+        }
+        None => (),
+    }
+
+    ""
 }
 
 #[cfg(test)]

@@ -15,10 +15,10 @@ fn main() {
         Err(err) => {
             eprintln!("{}", err);
             process::exit(1);
-        },
+        }
     };
 
-    let config = todo::read_config_file();
+    let mut config = todo::read_config_file();
 
     match args.command {
         args::Commands::Tasks => match todo::list_tasks(&tasks_vec) {
@@ -56,6 +56,10 @@ fn main() {
 
         args::Commands::Update(arguments) => {
             println!("{}", todo::update_task(&mut tasks_vec, arguments));
+        }
+
+        args::Commands::List(arguments) => {
+            println!("{}", todo::manage_lists(&mut config, arguments))
         }
     }
 

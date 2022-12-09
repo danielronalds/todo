@@ -28,7 +28,9 @@ pub enum Commands {
     /// Sets the status of a task to Completed
     Finish(FinishCommand),
     /// Sets the status of a task to Not Started
-    Restart(RestartCommand)
+    Restart(RestartCommand),
+    /// For viewing, creating, and deleting lists
+    List(ListCommand)
 }
 
 #[derive(Debug, Args)]
@@ -67,4 +69,11 @@ pub struct UpdateCommand {
     pub task_id: usize,
     /// The new desciption of the task
     pub new_description: String
+}
+
+#[derive(Debug, Args)]
+pub struct ListCommand {
+    #[arg(short, long)]
+    /// Create a new list
+    pub create: Option<String>
 }
