@@ -120,7 +120,8 @@ pub fn filter_task_vec(task_vec: Vec<Task>, config: &Config) -> (Vec<Task>, Vec<
 /// Lists the tasks in the given vec
 ///
 /// Parameters
-/// tasks:   The task vec to list
+/// tasks:    The task vec to list
+/// config:   The user's config
 pub fn list_tasks(tasks: &Vec<Task>, config: &Config) -> Result<(), &'static str> {
     match task_management::list_tasks(tasks, config) {
         Ok(_) => Ok(()),

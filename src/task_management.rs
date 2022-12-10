@@ -15,7 +15,8 @@ pub enum TaskManagementErrors {
 /// Lists all of the tasks in the tasks vec
 ///
 /// Parameters
-/// tasks:   The vec of tasks to list
+/// tasks:    The vec of tasks to list
+/// config:   The user's config
 pub fn list_tasks(tasks: &Vec<Task>, config: &Config) -> Result<(), TaskManagementErrors> {
     if tasks.is_empty() {
         return Err(TaskManagementErrors::EmptyTasklist);
