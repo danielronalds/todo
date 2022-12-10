@@ -15,6 +15,7 @@ pub enum ListErrors {
 pub struct Config {
     always_show_list_names: bool,
     always_show_task_ids: bool,
+    smart_list_names: bool,
     current_list: String,
     lists: Vec<String>,
 }
@@ -25,9 +26,15 @@ impl Config {
         Config {
             always_show_list_names: false,
             always_show_task_ids: false,
+            smart_list_names: true,
             current_list: String::from("Main"),
             lists: vec![String::from("Main")],
         }
+    }
+
+    /// Gets the length of the lists vec
+    pub fn lists_len(&self) -> usize {
+        self.lists.len()
     }
 
     /// Gets a clone of the current_list
@@ -53,6 +60,16 @@ impl Config {
     /// Sets the value of always_show_list_names
     pub fn set_always_show_list_names(&mut self, value: bool) {
         self.always_show_list_names = value;
+    }
+
+    /// Gets the value of smart_list_names
+    pub fn smart_list_names(&self) -> bool {
+        self.smart_list_names
+    }
+
+    /// Sets the value of smart_list_names
+    pub fn set_smart_list_names(&mut self, value: bool) {
+        self.smart_list_names = value;
     }
 
     /// Sets the current list
@@ -156,6 +173,7 @@ mod tests {
             Config {
                 always_show_list_names: false,
                 always_show_task_ids: false,
+                smart_list_names: true,
                 current_list: String::from("Main"),
                 lists: vec![String::from("Main")]
             }
@@ -171,7 +189,7 @@ mod tests {
     }
 
     #[test]
-    /// Tests if always_show_task_ids works
+    /// Tests if set_always_show_task_ids works
     fn set_always_show_task_ids_works() {
         let mut config = Config::new();
 
@@ -189,13 +207,31 @@ mod tests {
     }
 
     #[test]
-    /// Tests if always_show_list_names works
+    /// Tests if set_always_show_list_names works
     fn set_always_show_list_names_works() {
         let mut config = Config::new();
 
         config.set_always_show_list_names(true);
         
         assert!(config.always_show_list_names())
+    }
+
+    #[test]
+    /// Tests if smart_list_names works
+    fn smart_list_names_works() {
+        let config = Config::new();
+
+        assert!(config.smart_list_names())
+    }
+
+    #[test]
+    /// Tests if set_smart_list_names works
+    fn set_smart_list_names_works() {
+        let mut config = Config::new();
+
+        config.set_smart_list_names(false);
+        
+        assert!(!config.always_show_list_names())
     }
 
     #[test]

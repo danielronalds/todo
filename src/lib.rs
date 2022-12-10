@@ -356,6 +356,12 @@ pub fn manage_config(config: &mut Config, arguments: ConfigCommand) -> String {
         return format!("Set always_show_list_name to {value}");
     }
 
+    // Checks if the user wants to change smart_list_names
+    if let Some(value) = arguments.smart_list_names {
+        config.set_smart_list_names(value);
+        return format!("Set smart_list_names to {value}");
+    }
+
     "No options given, Try -h to see configurable options!".to_owned()
 }
 

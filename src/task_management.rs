@@ -23,7 +23,7 @@ pub fn list_tasks(tasks: &Vec<Task>, config: &Config) -> Result<(), TaskManageme
     }
 
     // Checking if the listname should be printed
-    if config.always_show_list_names() {
+    if config.always_show_list_names() || (config.smart_list_names() && config.lists_len() > 1) {
         println!("{}", config.current_list().bold());
     }
 

@@ -95,6 +95,10 @@ pub struct ConfigCommand {
     pub always_show_task_ids: Option<bool>,
 
     #[arg(long)]
-    /// Whether the list name should be shown in the tasks command
-    pub always_show_list_name: Option<bool>
+    /// Whether the list name should be shown in the tasks command, override smart_list_names
+    pub always_show_list_name: Option<bool>,
+
+    #[arg(long)]
+    /// Only shows list names when there is more than one list
+    pub smart_list_names: Option<bool>
 }
