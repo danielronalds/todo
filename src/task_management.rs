@@ -2,6 +2,8 @@ use crate::task::{Task, TaskErrors, TaskStatus};
 
 use crate::config::Config;
 
+use colored::Colorize;
+
 /// Enum for storing TaskManagementErrors
 #[derive(Debug, PartialEq, Eq)]
 pub enum TaskManagementErrors {
@@ -17,6 +19,11 @@ pub enum TaskManagementErrors {
 pub fn list_tasks(tasks: &Vec<Task>, config: &Config) -> Result<(), TaskManagementErrors> {
     if tasks.is_empty() {
         return Err(TaskManagementErrors::EmptyTasklist);
+    }
+
+    // Checking if the listname should be printed
+    if config.always_show_list_names() {
+        println!("{}", config.current_list().bold());
     }
 
     let mut task_id = 1;

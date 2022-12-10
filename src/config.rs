@@ -13,6 +13,7 @@ pub enum ListErrors {
 /// Struct for storing a users config options
 #[derive(Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Config {
+    always_show_list_names: bool,
     always_show_task_ids: bool,
     current_list: String,
     lists: Vec<String>,
@@ -22,6 +23,7 @@ impl Config {
     /// Creates a new Config with a default list of Main
     pub fn new() -> Config {
         Config {
+            always_show_list_names: false,
             always_show_task_ids: false,
             current_list: String::from("Main"),
             lists: vec![String::from("Main")],
@@ -38,8 +40,19 @@ impl Config {
         self.always_show_task_ids
     }
 
+    /// Sets the value of always_show_task_ids
     pub fn set_always_show_task_ids(&mut self, value: bool) {
         self.always_show_task_ids = value;
+    }
+
+    /// Gets the value of always_show_list_names
+    pub fn always_show_list_names(&self) -> bool {
+        self.always_show_list_names
+    }
+
+    /// Sets the value of always_show_list_names
+    pub fn set_always_show_list_names(&mut self, value: bool) {
+        self.always_show_list_names = value;
     }
 
     /// Sets the current list
@@ -141,6 +154,7 @@ mod tests {
         assert_eq!(
             new_config,
             Config {
+                always_show_list_names: false,
                 always_show_task_ids: false,
                 current_list: String::from("Main"),
                 lists: vec![String::from("Main")]
@@ -164,6 +178,24 @@ mod tests {
         config.set_always_show_task_ids(true);
         
         assert!(config.always_show_task_ids())
+    }
+
+    #[test]
+    /// Tests if always_show_list_names works
+    fn always_show_list_names_works() {
+        let config = Config::new();
+
+        assert!(!config.always_show_list_names())
+    }
+
+    #[test]
+    /// Tests if always_show_list_names works
+    fn set_always_show_list_names_works() {
+        let mut config = Config::new();
+
+        config.set_always_show_list_names(true);
+        
+        assert!(config.always_show_list_names())
     }
 
     #[test]

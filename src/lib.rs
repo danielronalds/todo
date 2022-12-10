@@ -339,6 +339,7 @@ pub fn manage_lists(config: &mut Config, arguments: ListCommand) -> String {
 /// config:      The user's config
 /// arguments:   The arguments form the cli
 pub fn manage_config(config: &mut Config, arguments: ConfigCommand) -> String {
+    // Checks if the user wants to change always_show_task_ids
     match arguments.always_show_task_ids {
         Some(value) => {
             config.set_always_show_task_ids(value);
@@ -348,7 +349,13 @@ pub fn manage_config(config: &mut Config, arguments: ConfigCommand) -> String {
         None => (),
     }
 
-    "No options given!".to_owned()
+    // Checks if the user wants to change always_show_list_name
+    if let Some(value) = arguments.always_show_list_name {
+        config.set_always_show_list_names(value);
+        return format!("Set always_show_list_name to {value}");
+    }
+
+    "No options given, Try -h to see configurable options!".to_owned()
 }
 
 #[cfg(test)]

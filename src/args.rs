@@ -91,5 +91,10 @@ pub struct ListCommand {
 #[derive(Debug, Args)]
 pub struct ConfigCommand {
     #[arg(long)]
-    pub always_show_task_ids: Option<bool>
+    /// Whether task ids should always be shown in the tasks command
+    pub always_show_task_ids: Option<bool>,
+
+    #[arg(long)]
+    /// Whether the list name should be shown in the tasks command
+    pub always_show_list_name: Option<bool>
 }
