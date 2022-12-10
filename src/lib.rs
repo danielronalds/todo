@@ -289,14 +289,14 @@ fn task_id_to_index(task_id: usize) -> usize {
 /// Parameters
 /// config:   The config to manage the list from
 /// arguments:   The arguments form the cli
-pub fn manage_lists(config: &mut Config, arguments: ListCommand) -> &'static str {
+pub fn manage_lists(config: &mut Config, arguments: ListCommand) -> String {
     // Checking if the user wants to create a list
     match arguments.create {
         Some(list_name) => match config.add_list(list_name) {
-            Ok(_) => return "List addded!",
+            Ok(_) => return "List addded!".to_owned(),
             Err(err) => match err {
-                ListErrors::ListAlreadyExists => return "That list already exists!",
-                _ => return "This error cannot occur",
+                ListErrors::ListAlreadyExists => return "That list already exists!".to_owned(),
+                _ => return "This error cannot occur".to_owned(),
             },
         },
         None => (),
@@ -305,10 +305,10 @@ pub fn manage_lists(config: &mut Config, arguments: ListCommand) -> &'static str
     // Checking if the user wants to switch to a list
     match arguments.switch {
         Some(list_name) => match config.set_current_list(list_name) {
-            Ok(_) => return "Switched Lists!",
+            Ok(_) => return "Switched Lists!".to_owned(),
             Err(err) => match err {
-                ListErrors::ListDoesntExist => return "That list doesn't exist!",
-                _ => return "This error cannot occur",
+                ListErrors::ListDoesntExist => return "That list doesn't exist!".to_owned(),
+                _ => return "This error cannot occur".to_owned(),
             },
         },
         None => (),
@@ -317,18 +317,20 @@ pub fn manage_lists(config: &mut Config, arguments: ListCommand) -> &'static str
     // Checking if the user wants to delete a list
     match arguments.delete {
         Some(list_name) => match config.delete_list(list_name) {
-            Ok(_) => return "Deleted List!",
+            Ok(_) => return "Deleted List!".to_owned(),
             Err(err) => match err {
-                ListErrors::ListDoesntExist => return "That list doesn't exist!",
-                ListErrors::ListCannotBeDeleted => return "You must have at least one list!",
-                _ => return "This error cannot occur",
+                ListErrors::ListDoesntExist => return "That list doesn't exist!".to_owned(),
+                ListErrors::ListCannotBeDeleted => {
+                    return "You must have at least one list!".to_owned()
+                }
+                _ => return "This error cannot occur".to_owned(),
             },
         },
         None => (),
     }
 
-
-    ""
+    // Default behaviour is listing the lists
+    config.lists_to_string()
 }
 
 #[cfg(test)]

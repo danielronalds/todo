@@ -1,5 +1,7 @@
 use serde::{Deserialize, Serialize};
 
+use colored::Colorize;
+
 /// Enum of all possible errors concerning the Config type
 #[derive(Debug, PartialEq, Eq)]
 pub enum ListErrors {
@@ -90,6 +92,23 @@ impl Config {
         }
 
         Ok(())
+    }
+
+    /// Returns a string listing all of the lists in the config
+    pub fn lists_to_string(&self) -> String {
+        let mut lists_string = String::new();
+
+        for list in &self.lists {
+            let mut formated_string = format!("{}\n", list.clone());
+
+            if list == &self.current_list() {
+                formated_string = format!("{} {}\n", list.clone(), "✔".bright_green());
+            } 
+            
+            lists_string.push_str(&formated_string);
+        }
+
+        lists_string
     }
 }
 
