@@ -75,7 +75,7 @@ impl Config {
     /// Parameters
     /// list:   The list to delete
     pub fn delete_list(&mut self, list: String) -> Result<(), ListErrors> {
-        if self.is_valid_list(&list) == false {
+        if !self.is_valid_list(&list) {
             return Err(ListErrors::ListDoesntExist);
         }
 
@@ -109,6 +109,12 @@ impl Config {
         }
 
         lists_string
+    }
+}
+
+impl Default for Config {
+    fn default() -> Self {
+        Self::new()
     }
 }
 

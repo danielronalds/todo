@@ -46,7 +46,7 @@ pub fn read_tasks_file() -> Result<Vec<Task>, &'static str> {
                 // likely due to the folder already existing. Otherwise if the program has no read
                 // or write privilages then the whole program wont work and therefore will fail to
                 // serialiaze, producing a valid message there.
-                fs::create_dir(".todo").unwrap_or_else(|_| ());
+                fs::create_dir(".todo").unwrap_or(());
 
                 Ok(Vec::new())
             }
@@ -63,9 +63,9 @@ pub fn write_tasks_file(tasks: Vec<Task>) -> Result<(), &'static str> {
     match program_state::serialize_tasks(tasks) {
         Ok(_) => Ok(()),
         Err(err) => match err {
-            SerializationErrors::FailedToCreateWriter => Err("Failed to create the writer!"),
+            SerializationErrors::UnableToCreateWriter => Err("Failed to create the writer!"),
             SerializationErrors::FailedToSerialize => Err("Failed to serialize the tasks!"),
-            SerializationErrors::FailedToFlush => Err("Could not flush!"),
+            SerializationErrors::CouldntFlush => Err("Could not flush!"),
         },
     }
 }
@@ -87,7 +87,7 @@ pub fn write_config_file(config: Config) -> Result<(), &'static str> {
     match program_state::serialize_config(config) {
         Ok(_) => Ok(()),
         Err(err) => match err {
-            SerializationErrors::FailedToCreateWriter => Err("Failed to create the writer!"),
+            SerializationErrors::UnableToCreateWriter => Err("Failed to create the writer!"),
             SerializationErrors::FailedToSerialize => Err("Failed to serialize the config!"),
             // serialize_config only produces the errors above
             _ => Err("Unknown error"),
@@ -334,8 +334,9 @@ pub fn manage_lists(config: &mut Config, arguments: ListCommand) -> String {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use super::*;
+
     use crate::args::AddCommand;
 
     #[test]

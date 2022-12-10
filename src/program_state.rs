@@ -12,9 +12,9 @@ const CONFIG_FILE_NAME: &str = ".todo/config.testing";
 
 /// Enum for storing possible serialization errros
 pub enum SerializationErrors {
-    FailedToCreateWriter,
+    UnableToCreateWriter,
     FailedToSerialize,
-    FailedToFlush,
+    CouldntFlush,
 }
 
 /// Seralializes the tasks from the given Vec<Task> to the task file
@@ -24,7 +24,7 @@ pub enum SerializationErrors {
 pub fn serialize_tasks(tasks: Vec<Task>) -> Result<(), SerializationErrors> {
     let mut writer = match csv::Writer::from_path(TASK_FILE_NAME) {
         Ok(writer) => writer,
-        Err(_) => return Err(SerializationErrors::FailedToCreateWriter),
+        Err(_) => return Err(SerializationErrors::UnableToCreateWriter),
     };
 
     for task in tasks {
@@ -35,7 +35,7 @@ pub fn serialize_tasks(tasks: Vec<Task>) -> Result<(), SerializationErrors> {
     }
 
     match writer.flush() {
-        Err(_) => Err(SerializationErrors::FailedToFlush),
+        Err(_) => Err(SerializationErrors::CouldntFlush),
         Ok(_) => Ok(()),
     }
 }
@@ -52,7 +52,7 @@ pub fn serialize_config(config: Config) -> Result<(), SerializationErrors> {
 
     match fs::write(CONFIG_FILE_NAME, yaml) {
         Ok(_) => Ok(()),
-        Err(_) => Err(SerializationErrors::FailedToCreateWriter),
+        Err(_) => Err(SerializationErrors::UnableToCreateWriter),
     }
 } 
 

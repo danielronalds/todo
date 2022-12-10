@@ -113,6 +113,9 @@ impl fmt::Display for Task {
 
 /// Unit tests
 mod tests {
+    #![allow(unused_imports)]
+    // For some reason, clippy says this isn't needed, howeveer deleting it breaks everything so
+    // I've attached the allow unused_imports atribute
     use super::*;
 
     #[test]
