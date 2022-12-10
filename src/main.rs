@@ -26,7 +26,7 @@ fn main() {
     let mut tasks_vec = filtered_vecs.0;
 
     match args.command {
-        args::Commands::Tasks => match todo::list_tasks(&tasks_vec) {
+        args::Commands::Tasks => match todo::list_tasks(&tasks_vec, &config) {
             Ok(_) => (),
             Err(err) => eprintln!("{}", err),
         },
@@ -64,7 +64,11 @@ fn main() {
         }
 
         args::Commands::List(arguments) => {
-            println!("{}", todo::manage_lists(&mut config, arguments))
+            println!("{}", todo::manage_lists(&mut config, arguments));
+        }
+
+        args::Commands::Configure(arguments) => {
+            println!("{}", todo::manage_config(&mut config, arguments));
         }
     }
 
@@ -72,9 +76,7 @@ fn main() {
     tasks_vec.extend(filtered_vecs.1);
 
     // Ensuring all tasks belong to a valid list
-    tasks_vec.retain(|task| {
-        config.is_valid_list(&task.list())
-    });
+    tasks_vec.retain(|task| config.is_valid_list(&task.list()));
 
     // Writing to the tasks file
     if let Err(err) = todo::write_tasks_file(tasks_vec) {

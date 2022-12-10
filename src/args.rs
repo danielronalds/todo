@@ -30,7 +30,9 @@ pub enum Commands {
     /// Sets the status of a task to Not Started
     Restart(RestartCommand),
     /// For viewing, creating, and deleting lists
-    List(ListCommand)
+    List(ListCommand),
+    /// For configuring todo in this project
+    Configure(ConfigCommand)
 }
 
 #[derive(Debug, Args)]
@@ -84,4 +86,10 @@ pub struct ListCommand {
     #[arg(short, long)]
     /// Delete a list
     pub delete: Option<String>
+}
+
+#[derive(Debug, Args)]
+pub struct ConfigCommand {
+    #[arg(long)]
+    pub always_show_task_ids: Option<bool>
 }

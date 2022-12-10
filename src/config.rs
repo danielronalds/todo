@@ -13,6 +13,7 @@ pub enum ListErrors {
 /// Struct for storing a users config options
 #[derive(Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Config {
+    always_show_task_ids: bool,
     current_list: String,
     lists: Vec<String>,
 }
@@ -21,6 +22,7 @@ impl Config {
     /// Creates a new Config with a default list of Main
     pub fn new() -> Config {
         Config {
+            always_show_task_ids: false,
             current_list: String::from("Main"),
             lists: vec![String::from("Main")],
         }
@@ -29,6 +31,15 @@ impl Config {
     /// Gets a clone of the current_list
     pub fn current_list(&self) -> String {
         self.current_list.clone()
+    }
+
+    /// Gets the value of always_show_task_ids
+    pub fn always_show_task_ids(&self) -> bool {
+        self.always_show_task_ids
+    }
+
+    pub fn set_always_show_task_ids(&mut self, value: bool) {
+        self.always_show_task_ids = value;
     }
 
     /// Sets the current list
@@ -130,10 +141,29 @@ mod tests {
         assert_eq!(
             new_config,
             Config {
+                always_show_task_ids: false,
                 current_list: String::from("Main"),
                 lists: vec![String::from("Main")]
             }
         )
+    }
+
+    #[test]
+    /// Tests if always_show_task_ids works
+    fn always_show_task_ids_works() {
+        let config = Config::new();
+
+        assert!(!config.always_show_task_ids())
+    }
+
+    #[test]
+    /// Tests if always_show_task_ids works
+    fn set_always_show_task_ids_works() {
+        let mut config = Config::new();
+
+        config.set_always_show_task_ids(true);
+        
+        assert!(config.always_show_task_ids())
     }
 
     #[test]

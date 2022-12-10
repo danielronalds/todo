@@ -9,7 +9,7 @@ mod task_management;
 
 use crate::args::{
     AddCommand, DeleteCommand, FinishCommand, ListCommand, RestartCommand, StartCommand,
-    UpdateCommand,
+    UpdateCommand, ConfigCommand
 };
 
 use std::fs;
@@ -121,8 +121,8 @@ pub fn filter_task_vec(task_vec: Vec<Task>, config: &Config) -> (Vec<Task>, Vec<
 ///
 /// Parameters
 /// tasks:   The task vec to list
-pub fn list_tasks(tasks: &Vec<Task>) -> Result<(), &'static str> {
-    match task_management::list_tasks(tasks) {
+pub fn list_tasks(tasks: &Vec<Task>, config: &Config) -> Result<(), &'static str> {
+    match task_management::list_tasks(tasks, config) {
         Ok(_) => Ok(()),
         Err(err) => match err {
             TaskManagementErrors::EmptyTasklist => Err("There are no tasks in the list!"),
@@ -331,6 +331,24 @@ pub fn manage_lists(config: &mut Config, arguments: ListCommand) -> String {
 
     // Default behaviour is listing the lists
     config.lists_to_string()
+}
+
+/// Manages the configure command, which allows the user to change behaviour about the program
+///
+/// Parameters
+/// config:      The user's config
+/// arguments:   The arguments form the cli
+pub fn manage_config(config: &mut Config, arguments: ConfigCommand) -> String {
+    match arguments.always_show_task_ids {
+        Some(value) => {
+            config.set_always_show_task_ids(value);
+            return format!("Set always_show_task_ids to {}", value);
+        }
+        
+        None => (),
+    }
+
+    "No options given!".to_owned()
 }
 
 #[cfg(test)]
