@@ -8,8 +8,8 @@ mod program_state;
 mod task_management;
 
 use crate::args::{
-    AddCommand, DeleteCommand, FinishCommand, ListCommand, RestartCommand, StartCommand,
-    UpdateCommand, ConfigCommand
+    AddCommand, ConfigCommand, DeleteCommand, FinishCommand, ListCommand, RestartCommand,
+    StartCommand, UpdateCommand,
 };
 
 use std::fs;
@@ -341,13 +341,9 @@ pub fn manage_lists(config: &mut Config, arguments: ListCommand) -> String {
 /// arguments:   The arguments form the cli
 pub fn manage_config(config: &mut Config, arguments: ConfigCommand) -> String {
     // Checks if the user wants to change always_show_task_ids
-    match arguments.always_show_task_ids {
-        Some(value) => {
-            config.set_always_show_task_ids(value);
-            return format!("Set always_show_task_ids to {}", value);
-        }
-        
-        None => (),
+    if let Some(value) = arguments.always_show_task_ids {
+        config.set_always_show_task_ids(value);
+        return format!("Set always_show_task_ids to {}", value);
     }
 
     // Checks if the user wants to change always_show_list_name
