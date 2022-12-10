@@ -32,7 +32,7 @@ pub enum Commands {
     /// For viewing, creating, and deleting lists
     List(ListCommand),
     /// For configuring todo in this project
-    Configure(ConfigCommand)
+    Config(ConfigCommand)
 }
 
 #[derive(Debug, Args)]

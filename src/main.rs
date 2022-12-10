@@ -67,7 +67,7 @@ fn main() {
             println!("{}", todo::manage_lists(&mut config, arguments));
         }
 
-        args::Commands::Configure(arguments) => {
+        args::Commands::Config(arguments) => {
             println!("{}", todo::manage_config(&mut config, arguments));
         }
     }

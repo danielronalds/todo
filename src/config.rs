@@ -178,6 +178,33 @@ impl Config {
 
         lists_string
     }
+
+    pub fn config_options_to_string(&self) -> String {
+        let mut options_string = String::new();
+
+        options_string.push_str(&format!(
+            "always_show_task_ids     {}\n",
+            self.always_show_task_ids()
+        ));
+        options_string.push_str(&format!(
+            "smart_task_ids           {}\n",
+            self.smart_task_ids()
+        ));
+        options_string.push_str(&format!(
+            "num_of_tasks             {}\n",
+            self.num_of_tasks()
+        ));
+        options_string.push_str(&format!(
+            "always_show_list_names   {}\n",
+            self.always_show_list_names()
+        ));
+        options_string.push_str(&format!(
+            "smart_list_names         {}\n",
+            self.smart_list_names()
+        ));
+
+        options_string
+    }
 }
 
 impl Default for Config {

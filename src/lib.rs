@@ -14,6 +14,8 @@ use crate::args::{
 
 use std::fs;
 
+use colored::Colorize;
+
 use crate::task::{Task, TaskErrors, TaskStatus};
 
 use crate::config::{Config, ListErrors};
@@ -370,7 +372,11 @@ pub fn manage_config(config: &mut Config, arguments: ConfigCommand) -> String {
         return format!("Set num_of_tasks to {value}");
     }
 
-    "No options given, Try -h to see configurable options!".to_owned()
+    format!(
+        "{}\n{}",
+        format!("{}                   {}", "Option".underline(), "Value".underline()),
+        config.config_options_to_string()
+    )
 }
 
 #[cfg(test)]
