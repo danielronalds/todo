@@ -95,6 +95,14 @@ pub struct ConfigCommand {
     pub always_show_task_ids: Option<bool>,
 
     #[arg(long)]
+    /// Task IDs are only shown when there are more than the set amount of tasks
+    pub smart_task_ids: Option<bool>,
+
+    #[arg(long)]
+    /// The number of tasks for task ids to be shown when smart_task_id is on
+    pub num_of_tasks: Option<usize>,
+
+    #[arg(long)]
     /// Whether the list name should be shown in the tasks command, override smart_list_names
     pub always_show_list_name: Option<bool>,
 

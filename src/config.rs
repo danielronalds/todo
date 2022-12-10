@@ -2,12 +2,15 @@ use serde::{Deserialize, Serialize};
 
 use colored::Colorize;
 
+/// Const for representing the default value for num_of_tasks
+const DEFAULT_NUM_OF_TASKS: usize = 4;
+
 /// Enum of all possible errors concerning the Config type
 #[derive(Debug, PartialEq, Eq)]
 pub enum ListErrors {
     ListCannotBeDeleted,
     ListDoesntExist,
-    ListAlreadyExists
+    ListAlreadyExists,
 }
 
 /// Struct for storing a users config options
@@ -15,6 +18,8 @@ pub enum ListErrors {
 pub struct Config {
     always_show_list_names: bool,
     always_show_task_ids: bool,
+    smart_task_ids: bool,
+    num_of_tasks: usize,
     smart_list_names: bool,
     current_list: String,
     lists: Vec<String>,
@@ -26,6 +31,8 @@ impl Config {
         Config {
             always_show_list_names: false,
             always_show_task_ids: false,
+            smart_task_ids: true,
+            num_of_tasks: DEFAULT_NUM_OF_TASKS,
             smart_list_names: true,
             current_list: String::from("Main"),
             lists: vec![String::from("Main")],
@@ -70,6 +77,26 @@ impl Config {
     /// Sets the value of smart_list_names
     pub fn set_smart_list_names(&mut self, value: bool) {
         self.smart_list_names = value;
+    }
+
+    /// Gets the value of smart_task_ids
+    pub fn smart_task_ids(&self) -> bool {
+        self.smart_task_ids
+    }
+
+    /// Sets the value of smart_task_ids
+    pub fn set_smart_task_ids(&mut self, value: bool) {
+        self.smart_task_ids = value;
+    }
+
+    /// Gets the value of num_of_tasks
+    pub fn num_of_tasks(&self) -> usize {
+        self.num_of_tasks
+    }
+
+    /// Sets the value of num_of_tasks
+    pub fn set_num_of_tasks(&mut self, value: usize) {
+        self.num_of_tasks = value;
     }
 
     /// Sets the current list
@@ -144,8 +171,8 @@ impl Config {
 
             if list == &self.current_list() {
                 formated_string = format!("{} {}\n", list.clone(), "✔".bright_green());
-            } 
-            
+            }
+
             lists_string.push_str(&formated_string);
         }
 
@@ -173,6 +200,8 @@ mod tests {
             Config {
                 always_show_list_names: false,
                 always_show_task_ids: false,
+                smart_task_ids: true,
+                num_of_tasks: DEFAULT_NUM_OF_TASKS,
                 smart_list_names: true,
                 current_list: String::from("Main"),
                 lists: vec![String::from("Main")]
@@ -194,7 +223,7 @@ mod tests {
         let mut config = Config::new();
 
         config.set_always_show_task_ids(true);
-        
+
         assert!(config.always_show_task_ids())
     }
 
@@ -212,7 +241,7 @@ mod tests {
         let mut config = Config::new();
 
         config.set_always_show_list_names(true);
-        
+
         assert!(config.always_show_list_names())
     }
 
@@ -230,8 +259,44 @@ mod tests {
         let mut config = Config::new();
 
         config.set_smart_list_names(false);
-        
+
         assert!(!config.always_show_list_names())
+    }
+
+    #[test]
+    /// Tests if smart_task_ids works
+    fn smart_task_ids_works() {
+        let config = Config::new();
+
+        assert!(config.smart_task_ids())
+    }
+
+    #[test]
+    /// Tests if set_smart_task_ids works
+    fn set_smart_task_ids_works() {
+        let mut config = Config::new();
+
+        config.set_smart_task_ids(false);
+
+        assert!(!config.always_show_list_names())
+    }
+
+    #[test]
+    /// Tests if num_of_tasks works
+    fn num_of_tasks_works() {
+        let config = Config::new();
+
+        assert_eq!(config.num_of_tasks(), DEFAULT_NUM_OF_TASKS);
+    }
+
+    #[test]
+    /// Tests if set_num_of_tasks works
+    fn set_num_of_tasks_works() {
+        let mut config = Config::new();
+
+        config.set_num_of_tasks(3);
+
+        assert_eq!(config.num_of_tasks(), 3);
     }
 
     #[test]
@@ -281,7 +346,7 @@ mod tests {
     /// Tests if add_list works as expected
     fn add_list_works() {
         let mut config = Config::new();
-        
+
         let listname = String::from("Dev");
 
         config.add_list(listname.clone()).unwrap();
@@ -293,7 +358,7 @@ mod tests {
     /// Tests if add_list fails if the list already exists
     fn add_list_fails_if_list_already_exists() {
         let mut config = Config::new();
-        
+
         let listname = String::from("Dev");
 
         config.add_list(listname.clone()).unwrap();
@@ -318,7 +383,7 @@ mod tests {
     }
 
     #[test]
-    /// Checks that if the list being deleted is the current_list then the current_list will be set 
+    /// Checks that if the list being deleted is the current_list then the current_list will be set
     /// to the first list
     fn delete_list_changes_current_list_if_current_list_deleted() {
         let mut config = Config::new();

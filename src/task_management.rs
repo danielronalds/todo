@@ -30,7 +30,9 @@ pub fn list_tasks(tasks: &Vec<Task>, config: &Config) -> Result<(), TaskManageme
     let mut task_id = 1;
 
     for task in tasks {
-        if config.always_show_task_ids() {
+        if config.always_show_task_ids()
+            || (config.smart_task_ids() && tasks.len() >= config.num_of_tasks())
+        {
             println!("{}. {}", task_id, task);
         } else {
             println!("{}", task);

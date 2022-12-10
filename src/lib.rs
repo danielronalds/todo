@@ -358,6 +358,18 @@ pub fn manage_config(config: &mut Config, arguments: ConfigCommand) -> String {
         return format!("Set smart_list_names to {value}");
     }
 
+    // Checks if the user wants to change smart_task_ids
+    if let Some(value) = arguments.smart_task_ids {
+        config.set_smart_list_names(value);
+        return format!("Set smart_task_ids to {value}");
+    }
+
+    // Checks if the user wants to change num_of_tasks
+    if let Some(value) = arguments.num_of_tasks {
+        config.set_num_of_tasks(value);
+        return format!("Set num_of_tasks to {value}");
+    }
+
     "No options given, Try -h to see configurable options!".to_owned()
 }
 
