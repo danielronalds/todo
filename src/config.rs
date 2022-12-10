@@ -122,8 +122,8 @@ impl Default for Config {
 mod tests {
     use super::*;
 
-    /// Tests if the constructor works as expected
     #[test]
+    /// Tests if the constructor works as expected
     fn constructor_works() {
         let new_config = Config::new();
 
@@ -136,16 +136,16 @@ mod tests {
         )
     }
 
-    /// Tests current_list works as expected
     #[test]
+    /// Tests current_list works as expected
     fn current_list_works() {
         let config = Config::new();
 
         assert_eq!(config.current_list(), String::from("Main"))
     }
 
-    /// Tests if is_valid_list works as expected
     #[test]
+    /// Tests if is_valid_list works as expected
     fn is_valid_list_works() {
         let config = Config::new();
 
@@ -153,8 +153,8 @@ mod tests {
         assert_eq!(config.is_valid_list(&String::from("Not Valid")), false);
     }
 
-    /// Tests if set_current_list works as expected
     #[test]
+    /// Tests if set_current_list works as expected
     fn set_current_list_works() {
         let mut config = Config::new();
 
@@ -167,8 +167,8 @@ mod tests {
         assert_eq!(config.current_list(), listname)
     }
 
-    /// Tests if set_current_list fails if the list doesn't exist
     #[test]
+    /// Tests if set_current_list fails if the list doesn't exist
     fn set_current_list_fails_if_list_doesnt_exist() {
         let mut config = Config::new();
 
@@ -179,8 +179,8 @@ mod tests {
         assert_eq!(error, ListErrors::ListDoesntExist)
     }
 
-    /// Tests if add_list works as expected
     #[test]
+    /// Tests if add_list works as expected
     fn add_list_works() {
         let mut config = Config::new();
         
@@ -191,8 +191,8 @@ mod tests {
         assert_eq!(config.lists, vec![String::from("Main"), listname])
     }
 
-    /// Tests if add_list fails if the list already exists
     #[test]
+    /// Tests if add_list fails if the list already exists
     fn add_list_fails_if_list_already_exists() {
         let mut config = Config::new();
         

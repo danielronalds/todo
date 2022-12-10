@@ -143,6 +143,7 @@ mod tests {
     }
 
     #[test]
+    /// Checks if the constructor uses the right list
     fn constructor_right_list() {
         let description = String::from("This is a simple task!");
 
@@ -166,6 +167,7 @@ mod tests {
     }
 
     #[test]
+    /// Checks if the constructor will provide the right error when handed an empty list
     fn constructor_fails_on_empty_list() {
         let description = String::from("This is a simple task!");
 
