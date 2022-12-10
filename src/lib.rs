@@ -294,32 +294,30 @@ fn task_id_to_index(task_id: usize) -> usize {
 /// arguments:   The arguments form the cli
 pub fn manage_lists(config: &mut Config, arguments: ListCommand) -> String {
     // Checking if the user wants to create a list
-    match arguments.create {
-        Some(list_name) => match config.add_list(list_name) {
+    if let Some(list_name) = arguments.create {
+        match config.add_list(list_name) {
             Ok(_) => return "List addded!".to_owned(),
             Err(err) => match err {
                 ListErrors::ListAlreadyExists => return "That list already exists!".to_owned(),
                 _ => return "This error cannot occur".to_owned(),
             },
-        },
-        None => (),
+        };
     }
 
     // Checking if the user wants to switch to a list
-    match arguments.switch {
-        Some(list_name) => match config.set_current_list(list_name) {
+    if let Some(list_name) = arguments.switch {
+        match config.set_current_list(list_name) {
             Ok(_) => return "Switched Lists!".to_owned(),
             Err(err) => match err {
                 ListErrors::ListDoesntExist => return "That list doesn't exist!".to_owned(),
                 _ => return "This error cannot occur".to_owned(),
             },
-        },
-        None => (),
-    }
+        };
+    };
 
     // Checking if the user wants to delete a list
-    match arguments.delete {
-        Some(list_name) => match config.delete_list(list_name) {
+    if let Some(list_name) = arguments.create {
+        match config.delete_list(list_name) {
             Ok(_) => return "Deleted List!".to_owned(),
             Err(err) => match err {
                 ListErrors::ListDoesntExist => return "That list doesn't exist!".to_owned(),
@@ -328,9 +326,8 @@ pub fn manage_lists(config: &mut Config, arguments: ListCommand) -> String {
                 }
                 _ => return "This error cannot occur".to_owned(),
             },
-        },
-        None => (),
-    }
+        };
+    };
 
     // Default behaviour is listing the lists
     config.lists_to_string()
@@ -374,7 +371,11 @@ pub fn manage_config(config: &mut Config, arguments: ConfigCommand) -> String {
 
     format!(
         "{}\n{}",
-        format!("{}                   {}", "Option".underline(), "Value".underline()),
+        format!(
+            "{}                   {}",
+            "Option".underline(),
+            "Value".underline()
+        ),
         config.config_options_to_string()
     )
 }
