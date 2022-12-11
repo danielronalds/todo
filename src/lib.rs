@@ -149,6 +149,16 @@ pub fn sort_list(tasks: &mut Vec<Task>) -> Result<(), &'static str> {
     }
 }
 
+/// Removes any Completed task in the given vec
+///
+/// Parameters
+/// tasks:   The task vec to sort
+pub fn cleanup_list(tasks: &mut Vec<Task>) -> &'static str {
+    tasks.retain(|task| task.status() != TaskStatus::Completed);
+
+    "Removed completed Tasks!"
+}
+
 /// Creates a new task. This handles any errors and returns an appropriate error message
 /// This approach will most likely change however, or this function moved
 ///
@@ -470,6 +480,51 @@ mod tests {
                 .unwrap(),
             ]
         );
+    }
+
+    #[test]
+    /// Tests if the cleanup_list function works as expected
+    fn cleanup_list_works() {
+        let mut tasks = vec![
+            Task::new(
+                String::from("A basic task"),
+                TaskStatus::Completed,
+                String::from("Main"),
+            )
+            .unwrap(),
+            Task::new(
+                String::from("Another basic task"),
+                TaskStatus::InProgress,
+                String::from("Main"),
+            )
+            .unwrap(),
+            Task::new(
+                String::from("Yet another basic task"),
+                TaskStatus::NotStarted,
+                String::from("Main"),
+            )
+            .unwrap(),
+        ];
+
+        cleanup_list(&mut tasks);
+
+        assert_eq!(
+            tasks,
+            vec![
+                Task::new(
+                    String::from("Another basic task"),
+                    TaskStatus::InProgress,
+                    String::from("Main"),
+                )
+                .unwrap(),
+                Task::new(
+                    String::from("Yet another basic task"),
+                    TaskStatus::NotStarted,
+                    String::from("Main"),
+                )
+                .unwrap(),
+            ]
+        )
     }
 
     #[test]

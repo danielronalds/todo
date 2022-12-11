@@ -36,6 +36,8 @@ fn main() {
             Err(err) => eprintln!("{}", err),
         },
 
+        args::Commands::Cleanup => println!("{}", todo::cleanup_list(&mut tasks_vec)),
+
         args::Commands::Add(arguments) => {
             match todo::new_task(arguments, &config) {
                 Ok(task) => tasks_vec.push(task),
