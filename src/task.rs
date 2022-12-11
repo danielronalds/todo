@@ -89,12 +89,6 @@ impl Task {
     pub fn update_status(&mut self, new_status: TaskStatus) {
         self.status = new_status;
     }
-
-    /// TODO: REMOVE THIS 
-    /// Returns the struct as a string that can be written to a file
-    pub fn to_save_string(&self) -> String {
-        format!("{}|{:?}", self.description(), self.status())
-    }
 }
 
 impl fmt::Display for Task {
@@ -224,19 +218,5 @@ mod tests {
             .unwrap_err();
 
         assert_eq!(err, TaskErrors::EmptyDescription)
-    }
-
-    #[test]
-    /// Checks if the to_save_string method works
-    fn to_save_string_works() {
-        let description = String::from("This is a saved task!");
-
-        let list = String::from("main");
-
-        let task = Task::new(description, TaskStatus::NotStarted, list).unwrap();
-        
-        let expected_output = String::from("This is a saved task!|NotStarted");
-
-        assert_eq!(expected_output, task.to_save_string())
     }
 }
