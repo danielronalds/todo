@@ -18,7 +18,7 @@ pub enum Commands {
     /// Sorts the tasks in the current list 
     Sort,
     /// Removes any completed tasks in the current list
-    Cleanup,
+    Cleanup(CleanupCommand),
     /// Add a task to the tasklist
     Add(AddCommand),
     /// Update an existing tasks description
@@ -35,6 +35,12 @@ pub enum Commands {
     List(ListCommand),
     /// For configuring todo in this project
     Config(ConfigCommand)
+}
+
+#[derive(Debug, Args)]
+pub struct CleanupCommand {
+    #[arg(short, long)]
+    pub all: bool,
 }
 
 #[derive(Debug, Args)]

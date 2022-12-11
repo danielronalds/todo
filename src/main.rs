@@ -25,6 +25,8 @@ fn main() {
 
     let mut tasks_vec = filtered_vecs.0;
 
+    let mut other_tasks = filtered_vecs.1;
+
     match args.command {
         args::Commands::Tasks => match todo::list_tasks(&tasks_vec, &config) {
             Ok(_) => (),
@@ -36,7 +38,10 @@ fn main() {
             Err(err) => eprintln!("{}", err),
         },
 
-        args::Commands::Cleanup => println!("{}", todo::cleanup_list(&mut tasks_vec)),
+        args::Commands::Cleanup(arguments) => println!(
+            "{}",
+            todo::cleanup_list(&mut tasks_vec, &mut other_tasks, arguments)
+        ),
 
         args::Commands::Add(arguments) => {
             match todo::new_task(arguments, &config) {
@@ -75,7 +80,7 @@ fn main() {
     }
 
     // Adding the other tasks back into the tasks_vec
-    tasks_vec.extend(filtered_vecs.1);
+    tasks_vec.extend(other_tasks);
 
     // Ensuring all tasks belong to a valid list
     tasks_vec.retain(|task| config.is_valid_list(&task.list()));

@@ -8,8 +8,8 @@ mod program_state;
 mod task_management;
 
 use crate::args::{
-    AddCommand, ConfigCommand, DeleteCommand, FinishCommand, ListCommand, RestartCommand,
-    StartCommand, UpdateCommand,
+    AddCommand, CleanupCommand, ConfigCommand, DeleteCommand, FinishCommand, ListCommand,
+    RestartCommand, StartCommand, UpdateCommand,
 };
 
 use std::fs;
@@ -153,10 +153,23 @@ pub fn sort_list(tasks: &mut Vec<Task>) -> Result<(), &'static str> {
 ///
 /// Parameters
 /// tasks:   The task vec to sort
-pub fn cleanup_list(tasks: &mut Vec<Task>) -> &'static str {
+pub fn cleanup_list(
+    tasks: &mut Vec<Task>,
+    other_tasks: &mut Vec<Task>,
+    arguments: CleanupCommand,
+) -> &'static str {
+    // Removing completed tasks from the current list
     tasks.retain(|task| task.status() != TaskStatus::Completed);
 
-    "Removed completed Tasks!"
+    // Removing completed tasks from all the lists if the all flag is used
+    if arguments.all {
+        other_tasks.retain(|task| task.status() != TaskStatus::Completed);
+
+        // Early returning a different message to print
+        return "Removed all Completed Tasks!";
+    }
+
+    "Removed Completed Tasks from the current list!"
 }
 
 /// Creates a new task. This handles any errors and returns an appropriate error message
@@ -485,6 +498,8 @@ mod tests {
     #[test]
     /// Tests if the cleanup_list function works as expected
     fn cleanup_list_works() {
+        let arguments = CleanupCommand { all: false };
+
         let mut tasks = vec![
             Task::new(
                 String::from("A basic task"),
@@ -506,10 +521,103 @@ mod tests {
             .unwrap(),
         ];
 
-        cleanup_list(&mut tasks);
+        let mut other_tasks = vec![Task::new(
+            String::from("A basic task"),
+            TaskStatus::Completed,
+            String::from("Main"),
+        )
+        .unwrap()];
+
+        cleanup_list(&mut tasks, &mut other_tasks, arguments);
 
         assert_eq!(
             tasks,
+            vec![
+                Task::new(
+                    String::from("Another basic task"),
+                    TaskStatus::InProgress,
+                    String::from("Main"),
+                )
+                .unwrap(),
+                Task::new(
+                    String::from("Yet another basic task"),
+                    TaskStatus::NotStarted,
+                    String::from("Main"),
+                )
+                .unwrap(),
+            ]
+        )
+    }
+
+    #[test]
+    /// Tests if cleanup_list works if the all flag is added
+    fn cleanup_list_with_all_flag_works() {
+        let arguments = CleanupCommand { all: true };
+
+        let mut tasks = vec![
+            Task::new(
+                String::from("A basic task"),
+                TaskStatus::Completed,
+                String::from("Main"),
+            )
+            .unwrap(),
+            Task::new(
+                String::from("Another basic task"),
+                TaskStatus::InProgress,
+                String::from("Main"),
+            )
+            .unwrap(),
+            Task::new(
+                String::from("Yet another basic task"),
+                TaskStatus::NotStarted,
+                String::from("Main"),
+            )
+            .unwrap(),
+        ];
+
+        let mut other_tasks = vec![
+            Task::new(
+                String::from("A basic task"),
+                TaskStatus::Completed,
+                String::from("Main"),
+            )
+            .unwrap(),
+            Task::new(
+                String::from("Another basic task"),
+                TaskStatus::InProgress,
+                String::from("Main"),
+            )
+            .unwrap(),
+            Task::new(
+                String::from("Yet another basic task"),
+                TaskStatus::NotStarted,
+                String::from("Main"),
+            )
+            .unwrap(),
+        ];
+
+        cleanup_list(&mut tasks, &mut other_tasks, arguments);
+
+        assert_eq!(
+            tasks,
+            vec![
+                Task::new(
+                    String::from("Another basic task"),
+                    TaskStatus::InProgress,
+                    String::from("Main"),
+                )
+                .unwrap(),
+                Task::new(
+                    String::from("Yet another basic task"),
+                    TaskStatus::NotStarted,
+                    String::from("Main"),
+                )
+                .unwrap(),
+            ]
+        );
+
+        assert_eq!(
+            other_tasks,
             vec![
                 Task::new(
                     String::from("Another basic task"),
