@@ -2,6 +2,8 @@ use serde::{Deserialize, Serialize};
 
 use colored::Colorize;
 
+use std::fmt::Write;
+
 /// Const for representing the default value for num_of_tasks
 const DEFAULT_NUM_OF_TASKS: usize = 4;
 
@@ -182,26 +184,40 @@ impl Config {
     pub fn config_options_to_string(&self) -> String {
         let mut options_string = String::new();
 
-        options_string.push_str(&format!(
-            "always_show_task_ids     {}\n",
+        writeln!(
+            options_string,
+            "always_show_task_ids     {}",
             self.always_show_task_ids()
-        ));
-        options_string.push_str(&format!(
-            "smart_task_ids           {}\n",
+        )
+        .unwrap();
+
+        writeln!(
+            options_string,
+            "smart_task_ids           {}",
             self.smart_task_ids()
-        ));
-        options_string.push_str(&format!(
-            "num_of_tasks             {}\n",
+        )
+        .unwrap();
+
+        writeln!(
+            options_string,
+            "num_of_tasks             {}",
             self.num_of_tasks()
-        ));
-        options_string.push_str(&format!(
-            "always_show_list_names   {}\n",
+        )
+        .unwrap();
+
+        writeln!(
+            options_string,
+            "always_show_list_names   {}",
             self.always_show_list_names()
-        ));
-        options_string.push_str(&format!(
-            "smart_list_names         {}\n",
+        )
+        .unwrap();
+
+        writeln!(
+            options_string,
+            "smart_list_names         {}",
             self.smart_list_names()
-        ));
+        )
+        .unwrap();
 
         options_string
     }

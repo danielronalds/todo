@@ -370,12 +370,9 @@ pub fn manage_config(config: &mut Config, arguments: ConfigCommand) -> String {
     }
 
     format!(
-        "{}\n{}",
-        format!(
-            "{}                   {}",
-            "Option".underline(),
-            "Value".underline()
-        ),
+        "{}                   {}\n{}",
+        "Option".underline(),
+        "Value".underline(),
         config.config_options_to_string()
     )
 }
