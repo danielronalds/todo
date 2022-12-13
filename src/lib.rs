@@ -339,7 +339,7 @@ pub fn manage_lists(config: &mut Config, arguments: ListCommand) -> String {
     };
 
     // Checking if the user wants to delete a list
-    if let Some(list_name) = arguments.create {
+    if let Some(list_name) = arguments.delete {
         match config.delete_list(list_name) {
             Ok(_) => return "Deleted List!".to_owned(),
             Err(err) => match err {
