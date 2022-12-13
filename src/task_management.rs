@@ -64,8 +64,13 @@ pub fn list_all_tasks(tasks: &Vec<Task>, other_tasks: &Vec<Task>, config: &Confi
 
     // Looping through all of the lists in the config
     for list in config.lists_iter() {
-        // Printing the current list
-        println!("{}", list.bold());
+        // Printing the current list, and if it is the current list a bright green ✔ will be added
+        if list == &config.current_list() {
+            println!("{} {}", list.clone(), "✔".bright_green());
+        } else {
+            println!("{}", list.bold());
+        }
+
         // Looping through all of the tasks and printing ones that are in the current list
         for task in all_tasks.iter() {
             if &task.list() == list {
