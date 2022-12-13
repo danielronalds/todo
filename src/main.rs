@@ -28,10 +28,12 @@ fn main() {
     let mut other_tasks = filtered_vecs.1;
 
     match args.command {
-        args::Commands::Tasks(_) => match todo::list_tasks(&tasks_vec, &config) {
-            Ok(_) => (),
-            Err(err) => eprintln!("{}", err),
-        },
+        args::Commands::Tasks(arguments) => {
+            match todo::list_tasks(&tasks_vec, &other_tasks, &config, arguments) {
+                Ok(_) => (),
+                Err(err) => eprintln!("{}", err),
+            }
+        }
 
         args::Commands::Sort => match todo::sort_list(&mut tasks_vec) {
             Ok(_) => (),
