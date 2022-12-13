@@ -85,7 +85,7 @@ pub struct UpdateCommand {
 pub struct ListCommand {
     #[arg(short, long)]
     /// Create a new list
-    pub create: Option<String>,
+    pub new: Option<String>,
 
     #[arg(short, long)]
     /// Switch to a list

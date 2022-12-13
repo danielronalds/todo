@@ -317,7 +317,7 @@ fn task_id_to_index(task_id: usize) -> usize {
 /// arguments:   The arguments form the cli
 pub fn manage_lists(config: &mut Config, arguments: ListCommand) -> String {
     // Checking if the user wants to create a list
-    if let Some(list_name) = arguments.create {
+    if let Some(list_name) = arguments.new {
         match config.add_list(list_name) {
             Ok(_) => return "List addded!".to_owned(),
             Err(err) => match err {
