@@ -5,10 +5,10 @@ use crate::config::Config;
 use std::fs::{self, File};
 
 /// Const for storing the file name to write the tasks to
-const TASK_FILE_NAME: &str = ".todo/tasks.testing";
+const TASK_FILE_NAME: &str = ".todo/tasks.csv";
 
 /// Const for storing the file name to write the config to
-const CONFIG_FILE_NAME: &str = ".todo/config.testing";
+const CONFIG_FILE_NAME: &str = ".todo/config.yaml";
 
 /// Enum for storing possible serialization errros
 pub enum SerializationErrors {
