@@ -136,7 +136,7 @@ pub fn list_tasks(
             match err {
                 // This is the only possible error
                 TaskManagementErrors::EmptyTasklist => {
-                    return Err("There are no tasks in the list!")
+                    return Err("There are no tasks in any list!")
                 }
                 // Covering any other errors for now in case the function changes
                 _ => return Err("Unknown error!"),
@@ -145,15 +145,16 @@ pub fn list_tasks(
         return Ok(());
     }
 
-    // TODO refactor this
-    match task_management::list_tasks(tasks, config) {
-        Ok(_) => Ok(()),
-        Err(err) => match err {
-            TaskManagementErrors::EmptyTasklist => Err("There are no tasks in the list!"),
+    if let Err(err) = task_management::list_tasks(tasks, config) {
+        match err {
+            // This is the only possible error
+            TaskManagementErrors::EmptyTasklist => return Err("There are no tasks in the list!"),
             // Covering any other errors for now in case the function changes
-            _ => Err("An unknown error has occured!"),
-        },
-    }
+            _ => return Err("An unknown error has occured!"),
+        }
+    };
+
+    Ok(())
 }
 
 /// Sorts the tasks in the given vec
