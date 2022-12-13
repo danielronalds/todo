@@ -44,6 +44,34 @@ pub fn list_tasks(tasks: &Vec<Task>, config: &Config) -> Result<(), TaskManageme
     Ok(())
 }
 
+/// Lists all of the tasks in the tasks vec
+///
+/// Parameters
+/// tasks:          The vec of tasks in the active list
+/// other_tasks:    The vec containing tasks not currently in the active list
+/// config:         The user's config
+pub fn list_all_tasks(tasks: &Vec<Task>, other_tasks: &Vec<Task>, config: &Config) {
+    // Creating a vec that contains all of the tasks
+    let mut all_tasks: Vec<Task> = Vec::new();
+    // Populating the vec with all of the tasks
+    all_tasks.extend(tasks.to_vec());
+    all_tasks.extend(other_tasks.to_vec());
+
+    // Looping through all of the lists in the config
+    for list in config.lists_iter() {
+        // Printing the current list
+        println!("{}", list.bold());
+        // Looping through all of the tasks and printing ones that are in the current list
+        for task in all_tasks.iter() {
+            if &task.list() == list {
+                println!("{task}");
+            }
+        }
+
+        println!();
+    }
+}
+
 /// Sorts the given task vec in the order Completed, InProgress, NotStarted
 ///
 /// Parameters:
