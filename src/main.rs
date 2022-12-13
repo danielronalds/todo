@@ -28,7 +28,7 @@ fn main() {
     let mut other_tasks = filtered_vecs.1;
 
     match args.command {
-        args::Commands::Tasks => match todo::list_tasks(&tasks_vec, &config) {
+        args::Commands::Tasks(_) => match todo::list_tasks(&tasks_vec, &config) {
             Ok(_) => (),
             Err(err) => eprintln!("{}", err),
         },
