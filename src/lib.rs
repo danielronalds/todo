@@ -9,7 +9,7 @@ mod task_management;
 
 use crate::args::{
     AddCommand, CleanupCommand, ConfigCommand, DeleteCommand, FinishCommand, ListCommand,
-    RestartCommand, StartCommand, UpdateCommand,
+    RestartCommand, StartCommand, TasksCommand, UpdateCommand,
 };
 
 use std::fs;
@@ -122,17 +122,39 @@ pub fn filter_task_vec(task_vec: Vec<Task>, config: &Config) -> (Vec<Task>, Vec<
 /// Lists the tasks in the given vec
 ///
 /// Parameters
-/// tasks:    The task vec to list
-/// config:   The user's config
-pub fn list_tasks(tasks: &Vec<Task>, config: &Config) -> Result<(), &'static str> {
-    match task_management::list_tasks(tasks, config) {
-        Ok(_) => Ok(()),
-        Err(err) => match err {
-            TaskManagementErrors::EmptyTasklist => Err("There are no tasks in the list!"),
-            // Covering any other errors for now in case the function changes
-            _ => Err("An unknown error has occured!"),
-        },
+/// tasks:       The task vec to list
+/// config:      The user's config
+/// arguments:   The arguments for the command from the cli
+pub fn list_tasks(
+    tasks: &Vec<Task>,
+    other_tasks: &Vec<Task>,
+    config: &Config,
+    arguments: TasksCommand,
+) -> Result<(), &'static str> {
+    if arguments.all {
+        if let Err(err) = task_management::list_all_tasks(tasks, other_tasks, config) {
+            match err {
+                // This is the only possible error
+                TaskManagementErrors::EmptyTasklist => {
+                    return Err("There are no tasks in any list!")
+                }
+                // Covering any other errors for now in case the function changes
+                _ => return Err("Unknown error!"),
+            };
+        };
+        return Ok(());
     }
+
+    if let Err(err) = task_management::list_tasks(tasks, config) {
+        match err {
+            // This is the only possible error
+            TaskManagementErrors::EmptyTasklist => return Err("There are no tasks in the list!"),
+            // Covering any other errors for now in case the function changes
+            _ => return Err("An unknown error has occured!"),
+        }
+    };
+
+    Ok(())
 }
 
 /// Sorts the tasks in the given vec

@@ -41,6 +41,11 @@ impl Config {
         }
     }
 
+    // Returns a cloned iterator of the lists vec
+    pub fn lists_iter(&self) -> std::slice::Iter<String> {
+        self.lists.iter().clone()
+    }
+
     /// Gets the length of the lists vec
     pub fn lists_len(&self) -> usize {
         self.lists.len()

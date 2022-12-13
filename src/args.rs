@@ -14,7 +14,7 @@ pub struct TodoArgs {
 #[derive(Debug, Subcommand)]
 pub enum Commands {
     /// Lists the tasks in the current list
-    Tasks,
+    Tasks(TasksCommand),
     /// Sorts the tasks in the current list 
     Sort,
     /// Removes any completed tasks in the current list
@@ -35,6 +35,13 @@ pub enum Commands {
     List(ListCommand),
     /// For configuring todo in this project
     Config(ConfigCommand)
+}
+
+#[derive(Debug, Args)]
+pub struct TasksCommand {
+    #[arg(short, long)]
+    /// Lists all tasks instead of only the tasks in your current list
+    pub all: bool,
 }
 
 #[derive(Debug, Args)]
