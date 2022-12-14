@@ -4,6 +4,8 @@ use crate::config::Config;
 
 use colored::Colorize;
 
+use std::fmt::Write;
+
 /// Enum for storing TaskManagementErrors
 #[derive(Debug, PartialEq, Eq)]
 pub enum TaskManagementErrors {
@@ -17,14 +19,16 @@ pub enum TaskManagementErrors {
 /// Parameters
 /// tasks:    The vec of tasks to list
 /// config:   The user's config
-pub fn list_tasks(tasks: &Vec<Task>, config: &Config) -> Result<(), TaskManagementErrors> {
+pub fn list_tasks(tasks: &Vec<Task>, config: &Config) -> Result<String, TaskManagementErrors> {
     if tasks.is_empty() {
         return Err(TaskManagementErrors::EmptyTasklist);
     }
 
+    let mut list = String::new();
+
     // Checking if the listname should be printed
     if config.always_show_list_names() || (config.smart_list_names() && config.lists_len() > 1) {
-        println!("{}", config.current_list().bold());
+        writeln!(list, "{}", config.current_list().bold()).unwrap();
     }
 
     let mut task_id = 1;
@@ -33,15 +37,15 @@ pub fn list_tasks(tasks: &Vec<Task>, config: &Config) -> Result<(), TaskManageme
         if config.always_show_task_ids()
             || (config.smart_task_ids() && tasks.len() >= config.num_of_tasks())
         {
-            println!("{}. {}", task_id, task);
+            writeln!(list, "{}. {}", task_id, task).unwrap();
         } else {
-            println!("{}", task);
+            writeln!(list, "{}", task).unwrap();
         }
 
         task_id += 1;
     }
 
-    Ok(())
+    Ok(list)
 }
 
 /// Lists all of the tasks in the tasks vec
@@ -50,7 +54,7 @@ pub fn list_tasks(tasks: &Vec<Task>, config: &Config) -> Result<(), TaskManageme
 /// tasks:          The vec of tasks in the active list
 /// other_tasks:    The vec containing tasks not currently in the active list
 /// config:         The user's config
-pub fn list_all_tasks(tasks: &[Task], other_tasks: &[Task], config: &Config) -> Result<(), TaskManagementErrors> {
+pub fn list_all_tasks(tasks: &[Task], other_tasks: &[Task], config: &Config) -> Result<String, TaskManagementErrors> {
     // Creating a vec that contains all of the tasks
     let mut all_tasks: Vec<Task> = Vec::new();
     // Populating the vec with all of the tasks
@@ -62,26 +66,28 @@ pub fn list_all_tasks(tasks: &[Task], other_tasks: &[Task], config: &Config) -> 
         return Err(TaskManagementErrors::EmptyTasklist);
     }
 
+    let mut list_of_tasks = String::new();
+
     // Looping through all of the lists in the config
     for list in config.lists_iter() {
         // Printing the current list, and if it is the current list a bright green ✔ will be added
         if list == &config.current_list() {
-            println!("{} {}", list.clone(), "✔".bright_green());
+            writeln!(list_of_tasks, "{} {}", list.clone(), "✔".bright_green()).unwrap();
         } else {
-            println!("{}", list.bold());
+            writeln!(list_of_tasks, "{}", list.bold()).unwrap();
         }
 
         // Looping through all of the tasks and printing ones that are in the current list
         for task in all_tasks.iter() {
             if &task.list() == list {
-                println!("{task}");
+                writeln!(list_of_tasks, "{task}").unwrap();
             }
         }
 
-        println!();
+        writeln!(list_of_tasks).unwrap();
     }
 
-    Ok(())
+    Ok(list_of_tasks)
 }
 
 /// Sorts the given task vec in the order Completed, InProgress, NotStarted

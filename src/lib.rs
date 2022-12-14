@@ -151,7 +151,7 @@ pub fn list_tasks(
     other_tasks: &[Task],
     config: &Config,
     arguments: TasksCommand,
-) -> Result<(), &'static str> {
+) -> Result<String, &'static str> {
     // Seeing if the user wants to sort the current list
     if arguments.sort {
         // Ignoring the error this produces as if the list is empty then the listing of the
@@ -161,30 +161,28 @@ pub fn list_tasks(
 
     // Seeing if the user wants to list all lists
     if arguments.all {
-        if let Err(err) = task_management::list_all_tasks(tasks, other_tasks, config) {
-            match err {
+        match task_management::list_all_tasks(tasks, other_tasks, config) {
+            Ok(list) => return Ok(list),
+            Err(err) => match err {
                 // This is the only possible error
                 TaskManagementErrors::EmptyTasklist => {
                     return Err("There are no tasks in any list!")
                 }
                 // Covering any other errors for now in case the function changes
-                _ => return Err("Unknown error!"),
-            };
-        };
-        return Ok(());
+                _ => return Err("An unknown error has occured!"),
+            },
+        }
     }
 
-    // Else print the current list, not else cauesed used to prevent nesting
-    if let Err(err) = task_management::list_tasks(tasks, config) {
-        match err {
+    match task_management::list_tasks(tasks, config) {
+        Ok(list) => Ok(list),
+        Err(err) => match err {
             // This is the only possible error
-            TaskManagementErrors::EmptyTasklist => return Err("There are no tasks in the list!"),
+            TaskManagementErrors::EmptyTasklist => Err("There are no tasks in the list!"),
             // Covering any other errors for now in case the function changes
-            _ => return Err("An unknown error has occured!"),
-        }
-    };
-
-    Ok(())
+            _ => Err("An unknown error has occured!"),
+        },
+    }
 }
 
 /// Sorts the tasks in the given vec
