@@ -152,6 +152,14 @@ pub fn list_tasks(
     config: &Config,
     arguments: TasksCommand,
 ) -> Result<(), &'static str> {
+    // Seeing if the user wants to sort the current list
+    if arguments.sort {
+        // Ignoring the error this produces as if the list is empty then the listing of the
+        // function will print the same error
+        task_management::sort_tasks(tasks).unwrap_or(());
+    }
+
+    // Seeing if the user wants to list all lists
     if arguments.all {
         if let Err(err) = task_management::list_all_tasks(tasks, other_tasks, config) {
             match err {
@@ -166,17 +174,7 @@ pub fn list_tasks(
         return Ok(());
     }
 
-    if arguments.sort {
-        if let Err(err) = task_management::sort_tasks(tasks) {
-            match err {
-                TaskManagementErrors::EmptyTasklist => {
-                    return Err("There are no tasks in the list!")
-                }
-                _ => return Err("An unknown error has occured!"),
-            }
-        };
-    }
-
+    // Else print the current list, not else cauesed used to prevent nesting
     if let Err(err) = task_management::list_tasks(tasks, config) {
         match err {
             // This is the only possible error

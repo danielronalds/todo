@@ -45,7 +45,7 @@ pub struct TasksCommand {
     /// Lists all tasks instead of only the tasks in your current list
     pub all: bool,
     #[arg(short, long)]
-    /// Sorts the current active list, doesn't work with the used with all flag
+    /// Sorts the current list only, even if the --all flag is used
     pub sort: bool,
 }
 
