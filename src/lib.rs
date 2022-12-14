@@ -253,7 +253,15 @@ pub fn update_task(tasks: &mut Vec<Task>, arguments: UpdateCommand) -> &'static 
     // Converting the task_id to an index
     let index = task_id_to_index(arguments.task_id);
 
-    match task_management::update_task_description(tasks, index, arguments.new_description) {
+    // Getting the description
+    let mut description = arguments.new_description;
+
+    // Appending the new description if the append flag was used
+    if arguments.append {
+        description = tasks[index].description() + &description;
+    }
+
+    match task_management::update_task_description(tasks, index, description) {
         Ok(_) => "Task updated successfully!",
         Err(err) => match err {
             UpdateTaskErrors::ManagementErrors(error) => match error {
