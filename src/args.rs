@@ -34,7 +34,9 @@ pub enum Commands {
     /// For viewing, creating, and deleting lists
     List(ListCommand),
     /// For configuring todo in this project
-    Config(ConfigCommand)
+    Config(ConfigCommand),
+    /// Deletes the .todo directory, with the config and tasks file
+    Nuke
 }
 
 #[derive(Debug, Args)]

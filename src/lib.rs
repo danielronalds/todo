@@ -97,6 +97,27 @@ pub fn write_config_file(config: Config) -> Result<(), &'static str> {
     }
 }
 
+/// Deletes the .todo file and everything in it
+pub fn nuke_todo() -> &'static str {
+    // Asking the user if they'd like to create a tasks file in the directory
+    println!("Are you sure you want to delete todo in this directory? [y/N]");
+
+    let mut answer = String::new();
+
+    std::io::stdin().read_line(&mut answer).unwrap();
+
+    let answer = answer.trim().to_lowercase();
+
+    if answer == "y" || answer == "yes" {
+        match fs::remove_dir_all(".todo") {
+            Ok(_) => return "The .todo dir has been nuked!",
+            Err(_) => return "The .todo dir couldn't be nuked!"
+        }
+    }
+
+    ""
+}
+
 /// Consumes the given vec and returns two vecs of tasks, with the first one containing all the
 /// tasks in the current list, and the second containg the rest of the tasks
 ///
