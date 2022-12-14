@@ -1,3 +1,4 @@
 /target
 .tasks.testing
-/.todo
+.todo/config.testing
+.todo/tasks.testing

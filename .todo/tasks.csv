@@ -1,0 +1,9 @@
+description,status,list
+Add an append flag to the update command which appends rather than completely replaces,Completed,Features
+Look into wrapping the print out of tasks to 80 characters..?,NotStarted,Features
+Add a command that create a list with the same name as the current git branch?,NotStarted,Features
+Add config options for turning off feedback?,NotStarted,Features
+Look into adding a sort all command?,NotStarted,Features
+Look into renaming lists,NotStarted,Features
+"Add a way to update a tasks list, maybe a flag on the update command? could add a --no-edit flag too?",NotStarted,Features
+Make stuff pretty!,NotStarted,Changes
