@@ -111,7 +111,7 @@ pub fn nuke_todo() -> &'static str {
     if answer == "y" || answer == "yes" {
         match fs::remove_dir_all(".todo") {
             Ok(_) => return "The .todo dir has been nuked!",
-            Err(_) => return "The .todo dir couldn't be nuked!"
+            Err(_) => return "The .todo dir couldn't be nuked!",
         }
     }
 
@@ -147,7 +147,7 @@ pub fn filter_task_vec(task_vec: Vec<Task>, config: &Config) -> (Vec<Task>, Vec<
 /// config:      The user's config
 /// arguments:   The arguments for the command from the cli
 pub fn list_tasks(
-    tasks: &Vec<Task>,
+    tasks: &mut Vec<Task>,
     other_tasks: &Vec<Task>,
     config: &Config,
     arguments: TasksCommand,
@@ -164,6 +164,17 @@ pub fn list_tasks(
             };
         };
         return Ok(());
+    }
+
+    if arguments.sort {
+        if let Err(err) = task_management::sort_tasks(tasks) {
+            match err {
+                TaskManagementErrors::EmptyTasklist => {
+                    return Err("There are no tasks in the list!")
+                }
+                _ => return Err("An unknown error has occured!"),
+            }
+        };
     }
 
     if let Err(err) = task_management::list_tasks(tasks, config) {

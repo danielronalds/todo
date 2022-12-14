@@ -29,7 +29,7 @@ fn main() {
 
     match args.command {
         args::Commands::Tasks(arguments) => {
-            match todo::list_tasks(&tasks_vec, &other_tasks, &config, arguments) {
+            match todo::list_tasks(&mut tasks_vec, &other_tasks, &config, arguments) {
                 Ok(_) => (),
                 Err(err) => eprintln!("{}", err),
             }
