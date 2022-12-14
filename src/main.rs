@@ -30,7 +30,7 @@ fn main() {
     match args.command {
         args::Commands::Tasks(arguments) => {
             match todo::list_tasks(&mut tasks_vec, &other_tasks, &config, arguments) {
-                Ok(_) => (),
+                Ok(list) => println!("{}", list),
                 Err(err) => eprintln!("{}", err),
             }
         }

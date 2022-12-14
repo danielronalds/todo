@@ -87,8 +87,13 @@ pub struct RestartCommand {
 pub struct UpdateCommand {
     /// The Task ID of the task to update
     pub task_id: usize,
+
     /// The new desciption of the task
-    pub new_description: String
+    pub new_description: String,
+
+    #[arg(short, long)]
+    /// Whether to append to the task instead of replacing the whole desciption. No space added!
+    pub append: bool,
 }
 
 #[derive(Debug, Args)]
