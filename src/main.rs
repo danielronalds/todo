@@ -79,6 +79,12 @@ fn main() {
         args::Commands::Config(arguments) => {
             println!("{}", todo::manage_config(&mut config, arguments));
         }
+
+        args::Commands::Nuke => {
+            println!("{}", todo::nuke_todo());
+            // Exiting the program so that it doesn't attempt to serialise the program state
+            process::exit(1);
+        }
     }
 
     // Adding the other tasks back into the tasks_vec
