@@ -29,16 +29,11 @@ fn main() {
 
     match args.command {
         args::Commands::Tasks(arguments) => {
-            match todo::list_tasks(&tasks_vec, &other_tasks, &config, arguments) {
+            match todo::list_tasks(&mut tasks_vec, &other_tasks, &config, arguments) {
                 Ok(_) => (),
                 Err(err) => eprintln!("{}", err),
             }
         }
-
-        args::Commands::Sort => match todo::sort_list(&mut tasks_vec) {
-            Ok(_) => (),
-            Err(err) => eprintln!("{}", err),
-        },
 
         args::Commands::Cleanup(arguments) => println!(
             "{}",

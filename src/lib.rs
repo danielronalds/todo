@@ -111,7 +111,7 @@ pub fn nuke_todo() -> &'static str {
     if answer == "y" || answer == "yes" {
         match fs::remove_dir_all(".todo") {
             Ok(_) => return "The .todo dir has been nuked!",
-            Err(_) => return "The .todo dir couldn't be nuked!"
+            Err(_) => return "The .todo dir couldn't be nuked!",
         }
     }
 
@@ -147,11 +147,19 @@ pub fn filter_task_vec(task_vec: Vec<Task>, config: &Config) -> (Vec<Task>, Vec<
 /// config:      The user's config
 /// arguments:   The arguments for the command from the cli
 pub fn list_tasks(
-    tasks: &Vec<Task>,
+    tasks: &mut Vec<Task>,
     other_tasks: &Vec<Task>,
     config: &Config,
     arguments: TasksCommand,
 ) -> Result<(), &'static str> {
+    // Seeing if the user wants to sort the current list
+    if arguments.sort {
+        // Ignoring the error this produces as if the list is empty then the listing of the
+        // function will print the same error
+        task_management::sort_tasks(tasks).unwrap_or(());
+    }
+
+    // Seeing if the user wants to list all lists
     if arguments.all {
         if let Err(err) = task_management::list_all_tasks(tasks, other_tasks, config) {
             match err {
@@ -166,6 +174,7 @@ pub fn list_tasks(
         return Ok(());
     }
 
+    // Else print the current list, not else cauesed used to prevent nesting
     if let Err(err) = task_management::list_tasks(tasks, config) {
         match err {
             // This is the only possible error
