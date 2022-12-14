@@ -35,11 +35,6 @@ fn main() {
             }
         }
 
-        args::Commands::Sort => match todo::sort_list(&mut tasks_vec) {
-            Ok(_) => (),
-            Err(err) => eprintln!("{}", err),
-        },
-
         args::Commands::Cleanup(arguments) => println!(
             "{}",
             todo::cleanup_list(&mut tasks_vec, &mut other_tasks, arguments)
