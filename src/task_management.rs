@@ -50,7 +50,7 @@ pub fn list_tasks(tasks: &Vec<Task>, config: &Config) -> Result<(), TaskManageme
 /// tasks:          The vec of tasks in the active list
 /// other_tasks:    The vec containing tasks not currently in the active list
 /// config:         The user's config
-pub fn list_all_tasks(tasks: &Vec<Task>, other_tasks: &Vec<Task>, config: &Config) -> Result<(), TaskManagementErrors> {
+pub fn list_all_tasks(tasks: &[Task], other_tasks: &[Task], config: &Config) -> Result<(), TaskManagementErrors> {
     // Creating a vec that contains all of the tasks
     let mut all_tasks: Vec<Task> = Vec::new();
     // Populating the vec with all of the tasks

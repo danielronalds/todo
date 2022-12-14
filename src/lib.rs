@@ -148,7 +148,7 @@ pub fn filter_task_vec(task_vec: Vec<Task>, config: &Config) -> (Vec<Task>, Vec<
 /// arguments:   The arguments for the command from the cli
 pub fn list_tasks(
     tasks: &mut Vec<Task>,
-    other_tasks: &Vec<Task>,
+    other_tasks: &[Task],
     config: &Config,
     arguments: TasksCommand,
 ) -> Result<(), &'static str> {
