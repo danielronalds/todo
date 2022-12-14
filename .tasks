@@ -1,8 +1,0 @@
-true|true|5|Features|true
-Features|General|Bugs
-A list all command, so that the user can view all their tasks with headings for each tasklist|Completed|Features
-Make it so that when the user creates a tasklist it is auto switched to|Completed|Features
-A tasklist remove command so that the user does not have to be in the tasklist they want to delete|NotStarted|Features
-A config feature for smart tasklist titles, so that when there is more than one tasklist a title is automatically shown|NotStarted|Features
-Search command for certain tasks|NotStarted|Features
-Update function headers so they use rustdoc formatting|Completed|General
