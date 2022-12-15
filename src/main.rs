@@ -96,10 +96,13 @@ fn main() {
         }
 
         args::Commands::List(arguments) => {
-            println!("{}", todo::manage_lists(&mut config, arguments));
+            if let Some(message) = todo::manage_lists(&mut config, arguments) {
+                println!("{}", message);
+            }
         }
 
         args::Commands::Config(arguments) => {
+            // This will also be shown, so that the user knows what is happening with their config
             println!("{}", todo::manage_config(&mut config, arguments));
         }
 
