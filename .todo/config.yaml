@@ -1,0 +1,9 @@
+always_show_list_names: false
+always_show_task_ids: false
+smart_task_ids: true
+num_of_tasks: 4
+smart_list_names: true
+current_list: Features
+lists:
+- Features
+- Changes

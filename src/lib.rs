@@ -373,45 +373,69 @@ fn task_id_to_index(task_id: usize) -> usize {
 /// Parameters
 /// config:   The config to manage the list from
 /// arguments:   The arguments form the cli
-pub fn manage_lists(config: &mut Config, arguments: ListCommand) -> String {
+pub fn manage_lists(config: &mut Config, arguments: ListCommand) -> Option<String> {
     // Checking if the user wants to create a list
     if let Some(list_name) = arguments.new {
+        let return_message;
+
         match config.add_list(list_name) {
-            Ok(_) => return "List addded!".to_owned(),
+            Ok(_) => return_message = "List addded!".to_owned(),
             Err(err) => match err {
-                ListErrors::ListAlreadyExists => return "That list already exists!".to_owned(),
-                _ => return "This error cannot occur".to_owned(),
+                ListErrors::ListAlreadyExists => return_message = "That list already exists!".to_owned(),
+                _ => return_message = "This error cannot occur".to_owned(),
             },
         };
+
+        if !config.command_feedback() {
+            return None;
+        }
+
+        return Some(return_message);
     }
 
     // Checking if the user wants to switch to a list
     if let Some(list_name) = arguments.switch {
+        let return_message;
+
         match config.set_current_list(list_name) {
-            Ok(_) => return "Switched Lists!".to_owned(),
+            Ok(_) => return_message = "Switched Lists!".to_owned(),
             Err(err) => match err {
-                ListErrors::ListDoesntExist => return "That list doesn't exist!".to_owned(),
-                _ => return "This error cannot occur".to_owned(),
+                ListErrors::ListDoesntExist => return_message = "That list doesn't exist!".to_owned(),
+                _ => return_message = "This error cannot occur".to_owned(),
             },
         };
+
+        if !config.command_feedback() {
+            return None;
+        }
+
+        return Some(return_message);
     };
 
     // Checking if the user wants to delete a list
     if let Some(list_name) = arguments.delete {
+        let return_message;
+
         match config.delete_list(list_name) {
-            Ok(_) => return "Deleted List!".to_owned(),
+            Ok(_) => return_message = "Deleted List!".to_owned(),
             Err(err) => match err {
-                ListErrors::ListDoesntExist => return "That list doesn't exist!".to_owned(),
+                ListErrors::ListDoesntExist => return_message = "That list doesn't exist!".to_owned(),
                 ListErrors::ListCannotBeDeleted => {
-                    return "You must have at least one list!".to_owned()
+                    return_message = "You must have at least one list!".to_owned()
                 }
-                _ => return "This error cannot occur".to_owned(),
+                _ => return_message = "This error cannot occur".to_owned(),
             },
         };
+
+        if !config.command_feedback() {
+            return None;
+        }
+
+        return Some(return_message);
     };
 
     // Default behaviour is listing the lists
-    config.lists_to_string()
+    Some(config.lists_to_string())
 }
 
 /// Manages the configure command, which allows the user to change behaviour about the program
@@ -430,6 +454,12 @@ pub fn manage_config(config: &mut Config, arguments: ConfigCommand) -> String {
     if let Some(value) = arguments.always_show_list_name {
         config.set_always_show_list_names(value);
         return format!("Set always_show_list_name to {value}");
+    }
+
+    // Checks if the user wants to change command_feedback
+    if let Some(value) = arguments.command_feedback {
+        config.set_command_feedback(value);
+        return format!("Set command_feedback to {value}");
     }
 
     // Checks if the user wants to change smart_list_names
