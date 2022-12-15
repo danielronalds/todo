@@ -122,6 +122,10 @@ pub struct ConfigCommand {
     pub smart_task_ids: Option<bool>,
 
     #[arg(long)]
+    /// Whether to print command outputs, doesn't work for all commands
+    pub command_feedback: Option<bool>,
+
+    #[arg(long)]
     /// The number of tasks for task ids to be shown when smart_task_id is on
     pub num_of_tasks: Option<usize>,
 
