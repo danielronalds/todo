@@ -79,7 +79,7 @@ fn main() {
         }
 
         args::Commands::Config(arguments) => {
-            print_info(&todo::manage_config(&mut config, arguments));
+            println!("{}", todo::manage_config(&mut config, arguments));
         }
 
         args::Commands::Nuke => {

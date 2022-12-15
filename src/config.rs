@@ -20,6 +20,7 @@ pub enum ListErrors {
 pub struct Config {
     always_show_list_names: bool,
     always_show_task_ids: bool,
+    command_feedback: bool,
     smart_task_ids: bool,
     num_of_tasks: usize,
     smart_list_names: bool,
@@ -33,6 +34,7 @@ impl Config {
         Config {
             always_show_list_names: false,
             always_show_task_ids: false,
+            command_feedback: true,
             smart_task_ids: true,
             num_of_tasks: DEFAULT_NUM_OF_TASKS,
             smart_list_names: true,
@@ -104,6 +106,16 @@ impl Config {
     /// Sets the value of num_of_tasks
     pub fn set_num_of_tasks(&mut self, value: usize) {
         self.num_of_tasks = value;
+    }
+
+    /// Gets the value of command_feedback
+    pub fn command_feedback(&self) -> bool {
+        self.command_feedback
+    }
+
+    /// Sets the value of command_feedback
+    pub fn set_command_feedback(&mut self, value: bool) {
+        self.command_feedback = value;
     }
 
     /// Sets the current list
@@ -205,6 +217,13 @@ impl Config {
 
         writeln!(
             options_string,
+            "command_feedback         {}",
+            self.command_feedback()
+        )
+        .unwrap();
+
+        writeln!(
+            options_string,
             "num_of_tasks             {}",
             self.num_of_tasks()
         )
@@ -248,6 +267,7 @@ mod tests {
             Config {
                 always_show_list_names: false,
                 always_show_task_ids: false,
+                command_feedback: true,
                 smart_task_ids: true,
                 num_of_tasks: DEFAULT_NUM_OF_TASKS,
                 smart_list_names: true,
@@ -345,6 +365,24 @@ mod tests {
         config.set_num_of_tasks(3);
 
         assert_eq!(config.num_of_tasks(), 3);
+    }
+
+    #[test]
+    /// Tests if command_feedback works
+    fn command_feedback_works() {
+        let config = Config::new();
+
+        assert_eq!(config.command_feedback, config.command_feedback())
+    }
+
+    #[test]
+    /// Tests if set_always_show_task_ids works
+    fn set_command_feedback_works() {
+        let mut config = Config::new();
+
+        config.set_command_feedback(false);
+
+        assert!(!config.always_show_task_ids())
     }
 
     #[test]
