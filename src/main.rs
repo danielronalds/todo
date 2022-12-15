@@ -38,44 +38,65 @@ fn main() {
             }
         }
 
-        args::Commands::Cleanup(arguments) => print_info(todo::cleanup_list(
-            &mut tasks_vec,
-            &mut other_tasks,
-            arguments,
-        )),
+        args::Commands::Cleanup(arguments) => {
+            if config.command_feedback() {
+                print_info(todo::cleanup_list(
+                    &mut tasks_vec,
+                    &mut other_tasks,
+                    arguments,
+                ))
+            }
+        }
 
         args::Commands::Add(arguments) => {
             match todo::new_task(arguments, &config) {
                 Ok(task) => {
                     tasks_vec.push(task);
-                    print_info("Task added!")
+                    if config.command_feedback() {
+                        print_info("Task added!")
+                    }
                 }
                 Err(err) => print_info(err),
             };
         }
 
         args::Commands::Delete(arguments) => {
-            print_info(todo::delete_task(&mut tasks_vec, arguments));
+            let message = todo::delete_task(&mut tasks_vec, arguments);
+            if config.command_feedback() {
+                print_info(message);
+            }
         }
 
         args::Commands::Start(arguments) => {
-            print_info(todo::start_task(&mut tasks_vec, arguments));
+            let message = todo::start_task(&mut tasks_vec, arguments);
+            if config.command_feedback() {
+                print_info(message);
+            }
         }
 
         args::Commands::Finish(arguments) => {
-            print_info(todo::finish_task(&mut tasks_vec, arguments));
+            let message = todo::finish_task(&mut tasks_vec, arguments);
+            if config.command_feedback() {
+                print_info(message);
+            }
         }
 
         args::Commands::Restart(arguments) => {
-            print_info(todo::restart_task(&mut tasks_vec, arguments));
+            let message = todo::restart_task(&mut tasks_vec, arguments);
+            if config.command_feedback() {
+                print_info(message);
+            }
         }
 
         args::Commands::Update(arguments) => {
-            print_info(todo::update_task(&mut tasks_vec, arguments));
+            let message = todo::update_task(&mut tasks_vec, arguments);
+            if config.command_feedback() {
+                print_info(message);
+            }
         }
 
         args::Commands::List(arguments) => {
-            print_info(&todo::manage_lists(&mut config, arguments));
+            println!("{}", todo::manage_lists(&mut config, arguments));
         }
 
         args::Commands::Config(arguments) => {
@@ -83,6 +104,8 @@ fn main() {
         }
 
         args::Commands::Nuke => {
+            // This will be printed regardless of the config option as the user should always know
+            // that this command worked
             print_info(todo::nuke_todo());
             // Exiting the program so that it doesn't attempt to serialise the program state
             process::exit(1);
