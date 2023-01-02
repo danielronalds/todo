@@ -244,6 +244,49 @@ pub fn new_task(arguments: AddCommand, config: &Config) -> Result<Task, &'static
     Ok(task)
 }
 
+/// Triggers the add_mode, which creates a prompt that allows the user to add task rapidly, by only
+/// having to type the tasks description
+///
+/// Parameters
+/// tasks:    The task vec to add the tasks too
+/// config:   The user's config
+pub fn add_mode(tasks: &mut Vec<Task>, config: &Config) {
+    // Opening blurb
+    println!("You have entered add mode, to add a task type the description and press enter, to exit type x and then enter");
+
+    // Beginning the loop
+    loop {
+        let mut description = String::new();
+
+        // Getting the user input
+        print!("> ");
+        std::io::stdin().read_line(&mut description).unwrap();
+
+        // Checking if the user wants to exit
+        if description.to_lowercase() == "x" {
+            println!("Exited!");
+            return;
+        }
+
+        // Attempting to create the task, and if there is an error printing it and continuing to 
+        // the next iteration of the loop 
+        match new_task(AddCommand { description }, config) {
+            Ok(task) => tasks.push(task),
+            Err(err) => {
+                print_info(err);
+                continue;
+            }
+        }
+    }
+}
+
+/// Pretty prints the given message to the console
+pub fn print_info(message: &str) {
+    let symbol = format!("[{}]", "!".bright_blue()).bold();
+
+    println!("{} {}", symbol, message)
+}
+
 /// Updates the description of the task at the given task_id in the given task vec
 ///
 /// Parameters
@@ -381,7 +424,9 @@ pub fn manage_lists(config: &mut Config, arguments: ListCommand) -> Option<Strin
         match config.add_list(list_name) {
             Ok(_) => return_message = "List addded!".to_owned(),
             Err(err) => match err {
-                ListErrors::ListAlreadyExists => return_message = "That list already exists!".to_owned(),
+                ListErrors::ListAlreadyExists => {
+                    return_message = "That list already exists!".to_owned()
+                }
                 _ => return_message = "This error cannot occur".to_owned(),
             },
         };
@@ -400,7 +445,9 @@ pub fn manage_lists(config: &mut Config, arguments: ListCommand) -> Option<Strin
         match config.set_current_list(list_name) {
             Ok(_) => return_message = "Switched Lists!".to_owned(),
             Err(err) => match err {
-                ListErrors::ListDoesntExist => return_message = "That list doesn't exist!".to_owned(),
+                ListErrors::ListDoesntExist => {
+                    return_message = "That list doesn't exist!".to_owned()
+                }
                 _ => return_message = "This error cannot occur".to_owned(),
             },
         };
@@ -419,7 +466,9 @@ pub fn manage_lists(config: &mut Config, arguments: ListCommand) -> Option<Strin
         match config.delete_list(list_name) {
             Ok(_) => return_message = "Deleted List!".to_owned(),
             Err(err) => match err {
-                ListErrors::ListDoesntExist => return_message = "That list doesn't exist!".to_owned(),
+                ListErrors::ListDoesntExist => {
+                    return_message = "That list doesn't exist!".to_owned()
+                }
                 ListErrors::ListCannotBeDeleted => {
                     return_message = "You must have at least one list!".to_owned()
                 }

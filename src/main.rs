@@ -1,6 +1,5 @@
 use std::process;
 
-use colored::Colorize;
 
 use clap::Parser;
 
@@ -8,6 +7,8 @@ use todo::args;
 use todo::args::TodoArgs;
 
 use todo::task::Task;
+
+use todo::print_info;
 
 fn main() {
     let args = TodoArgs::parse();
@@ -130,10 +131,4 @@ fn main() {
     if let Err(err) = todo::write_config_file(config) {
         print_info(err);
     }
-}
-
-fn print_info(message: &str) {
-    let symbol = format!("[{}]", "!".bright_blue()).bold();
-
-    println!("{} {}", symbol, message)
 }
