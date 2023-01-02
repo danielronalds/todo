@@ -8,7 +8,7 @@ mod program_state;
 mod task_management;
 
 use crate::args::{
-    AddCommand, CleanupCommand, ConfigCommand, DeleteCommand, FinishCommand, ListCommand,
+    CleanupCommand, ConfigCommand, DeleteCommand, FinishCommand, ListCommand,
     RestartCommand, StartCommand, TasksCommand, UpdateCommand,
 };
 
@@ -409,9 +409,7 @@ fn task_id_to_index(task_id: usize) -> usize {
 
     // Take one off of the index if not already zero (to prevent runtime panic) as Task ID's start
     // at 1 not 0
-    if index != 0 {
-        index -= 1;
-    }
+    index = index.saturating_sub(1);
 
     index
 }
