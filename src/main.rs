@@ -61,6 +61,8 @@ fn main() {
             };
         }
 
+        args::Commands::AddMode => todo::add_mode(&mut tasks_vec, &config),
+
         args::Commands::Delete(arguments) => {
             let message = todo::delete_task(&mut tasks_vec, arguments);
             if config.command_feedback() {

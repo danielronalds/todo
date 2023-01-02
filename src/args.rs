@@ -19,6 +19,8 @@ pub enum Commands {
     Cleanup(CleanupCommand),
     /// Add a task to the tasklist
     Add(AddCommand),
+    /// Add many tasks quickly to the current tasklist
+    AddMode,
     /// Update an existing tasks description
     Update(UpdateCommand),
     /// Deletes a task from the list

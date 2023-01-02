@@ -252,15 +252,17 @@ pub fn new_task(arguments: AddCommand, config: &Config) -> Result<Task, &'static
 /// config:   The user's config
 pub fn add_mode(tasks: &mut Vec<Task>, config: &Config) {
     // Opening blurb
-    println!("You have entered add mode, to add a task type the description and press enter, to exit type x and then enter");
+    print_info("To add a task type the description and press enter, to exit type x");
 
     // Beginning the loop
     loop {
         let mut description = String::new();
 
         // Getting the user input
-        print!("> ");
         std::io::stdin().read_line(&mut description).unwrap();
+
+        // Trimming the output
+        description = description.trim().to_string();
 
         // Checking if the user wants to exit
         if description.to_lowercase() == "x" {
@@ -271,7 +273,10 @@ pub fn add_mode(tasks: &mut Vec<Task>, config: &Config) {
         // Attempting to create the task, and if there is an error printing it and continuing to 
         // the next iteration of the loop 
         match new_task(AddCommand { description }, config) {
-            Ok(task) => tasks.push(task),
+            Ok(task) => {
+                tasks.push(task);
+                println!("Added task!");
+            },
             Err(err) => {
                 print_info(err);
                 continue;
