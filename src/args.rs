@@ -17,10 +17,8 @@ pub enum Commands {
     Tasks(TasksCommand),
     /// Removes any completed tasks in the current list
     Cleanup(CleanupCommand),
-    /// Add a task to the tasklist
+    /// Add a task to the tasklist. Not providing a description enters add mode
     Add(AddCommand),
-    /// Add many tasks quickly to the current tasklist
-    AddMode,
     /// Update an existing tasks description
     Update(UpdateCommand),
     /// Deletes a task from the list
@@ -58,7 +56,7 @@ pub struct CleanupCommand {
 #[derive(Debug, Args)]
 pub struct AddCommand {
     /// The description of the task you're adding to the list
-    pub description: String
+    pub description: Option<String>
 }
 
 #[derive(Debug, Args)]

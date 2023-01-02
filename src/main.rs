@@ -1,6 +1,5 @@
 use std::process;
 
-
 use clap::Parser;
 
 use todo::args;
@@ -50,18 +49,22 @@ fn main() {
         }
 
         args::Commands::Add(arguments) => {
-            match todo::new_task(arguments, &config) {
-                Ok(task) => {
-                    tasks_vec.push(task);
-                    if config.command_feedback() {
-                        print_info("Task added!")
+            // If the user provides a description, add the task with that description
+            if let Some(description) = arguments.description {
+                match todo::new_task(description, &config) {
+                    Ok(task) => {
+                        tasks_vec.push(task);
+                        if config.command_feedback() {
+                            print_info("Task added!")
+                        }
                     }
-                }
-                Err(err) => print_info(err),
-            };
+                    Err(err) => print_info(err),
+                };
+            } else {
+                // Else enter add_mode
+                todo::add_mode(&mut tasks_vec, &config);
+            }
         }
-
-        args::Commands::AddMode => todo::add_mode(&mut tasks_vec, &config),
 
         args::Commands::Delete(arguments) => {
             let message = todo::delete_task(&mut tasks_vec, arguments);

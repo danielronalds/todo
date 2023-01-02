@@ -228,10 +228,10 @@ pub fn cleanup_list(
 /// Parameters
 /// arguments:   The arguments for the command from the cli
 /// config:      The user's config
-pub fn new_task(arguments: AddCommand, config: &Config) -> Result<Task, &'static str> {
+pub fn new_task(arguments: String, config: &Config) -> Result<Task, &'static str> {
     let list = config.current_list();
 
-    let task = match Task::new(arguments.description, TaskStatus::NotStarted, list) {
+    let task = match Task::new(arguments, TaskStatus::NotStarted, list) {
         Ok(task) => task,
         Err(err) => match err {
             TaskErrors::EmptyDescription => {
@@ -272,7 +272,7 @@ pub fn add_mode(tasks: &mut Vec<Task>, config: &Config) {
 
         // Attempting to create the task, and if there is an error printing it and continuing to 
         // the next iteration of the loop 
-        match new_task(AddCommand { description }, config) {
+        match new_task(description, config) {
             Ok(task) => {
                 tasks.push(task);
                 println!("Added task!");
@@ -559,9 +559,9 @@ mod tests {
 
         let expected_task = Task::new(description.clone(), TaskStatus::NotStarted, list).unwrap();
 
-        let arguments = AddCommand { description };
+        let arguments = AddCommand { description: Some(description) };
 
-        let genereated_task = new_task(arguments, &config).unwrap();
+        let genereated_task = new_task(arguments.description.unwrap(), &config).unwrap();
 
         assert_eq!(expected_task, genereated_task)
     }
