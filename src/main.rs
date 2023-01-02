@@ -1,13 +1,13 @@
 use std::process;
 
-use colored::Colorize;
-
 use clap::Parser;
 
 use todo::args;
 use todo::args::TodoArgs;
 
 use todo::task::Task;
+
+use todo::print_info;
 
 fn main() {
     let args = TodoArgs::parse();
@@ -49,15 +49,21 @@ fn main() {
         }
 
         args::Commands::Add(arguments) => {
-            match todo::new_task(arguments, &config) {
-                Ok(task) => {
-                    tasks_vec.push(task);
-                    if config.command_feedback() {
-                        print_info("Task added!")
+            // If the user provides a description, add the task with that description
+            if let Some(description) = arguments.description {
+                match todo::new_task(description, &config) {
+                    Ok(task) => {
+                        tasks_vec.push(task);
+                        if config.command_feedback() {
+                            print_info("Task added!")
+                        }
                     }
-                }
-                Err(err) => print_info(err),
-            };
+                    Err(err) => print_info(err),
+                };
+            } else {
+                // Else enter add_mode
+                todo::add_mode(&mut tasks_vec, &config);
+            }
         }
 
         args::Commands::Delete(arguments) => {
@@ -130,10 +136,4 @@ fn main() {
     if let Err(err) = todo::write_config_file(config) {
         print_info(err);
     }
-}
-
-fn print_info(message: &str) {
-    let symbol = format!("[{}]", "!".bright_blue()).bold();
-
-    println!("{} {}", symbol, message)
 }
