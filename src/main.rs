@@ -49,20 +49,21 @@ fn main() {
         }
 
         args::Commands::Add(arguments) => {
-            // If the user provides a description, add the task with that description
-            if let Some(description) = arguments.description {
-                match todo::new_task(description, &config) {
-                    Ok(task) => {
-                        tasks_vec.push(task);
-                        if config.command_feedback() {
-                            print_info("Task added!")
+            // If the user provides a description, add the task with that description, otherwise
+            // enter add mode
+            match arguments.description {
+                Some(description) => {
+                    match todo::new_task(description, &config) {
+                        Ok(task) => {
+                            tasks_vec.push(task);
+                            if config.command_feedback() {
+                                print_info("Task added!")
+                            }
                         }
-                    }
-                    Err(err) => print_info(err),
-                };
-            } else {
-                // Else enter add_mode
-                todo::add_mode(&mut tasks_vec, &config);
+                        Err(err) => print_info(err),
+                    };
+                },
+                None => todo::add_mode(&mut tasks_vec, &config),
             }
         }
 

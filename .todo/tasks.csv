@@ -1,5 +1,5 @@
 description,status,list
-"Add an add mode, that puts the user into a prompt that allows them to quickly add tasks to the list",InProgress,Features
+"Add an add mode, that puts the user into a prompt that allows them to quickly add tasks to the list",Completed,Features
 Look into wrapping the print out of tasks to 80 characters..?,NotStarted,Features
 Add a command that create a list with the same name as the current git branch?,NotStarted,Features
 Look into adding a sort all command?,NotStarted,Features
