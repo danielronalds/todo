@@ -8,8 +8,8 @@ mod program_state;
 mod task_management;
 
 use crate::args::{
-    CleanupCommand, ConfigCommand, DeleteCommand, FinishCommand, ListCommand,
-    RestartCommand, StartCommand, TasksCommand, UpdateCommand,
+    CleanupCommand, ConfigCommand, DeleteCommand, FinishCommand, ListCommand, RestartCommand,
+    StartCommand, TasksCommand, UpdateCommand,
 };
 
 use std::fs;
@@ -266,17 +266,21 @@ pub fn add_mode(tasks: &mut Vec<Task>, config: &Config) {
 
         // Checking if the user wants to exit
         if description.to_lowercase() == "x" {
-            println!("Exited!");
+            if config.command_feedback() {
+                print_info("Exited!");
+            }
             return;
         }
 
-        // Attempting to create the task, and if there is an error printing it and continuing to 
-        // the next iteration of the loop 
+        // Attempting to create the task, and if there is an error printing it and continuing to
+        // the next iteration of the loop
         match new_task(description, config) {
             Ok(task) => {
                 tasks.push(task);
-                println!("Added task!");
-            },
+                if config.command_feedback() {
+                    print_info("Added task!");
+                }
+            }
             Err(err) => {
                 print_info(err);
                 continue;
@@ -557,7 +561,9 @@ mod tests {
 
         let expected_task = Task::new(description.clone(), TaskStatus::NotStarted, list).unwrap();
 
-        let arguments = AddCommand { description: Some(description) };
+        let arguments = AddCommand {
+            description: Some(description),
+        };
 
         let genereated_task = new_task(arguments.description.unwrap(), &config).unwrap();
 
