@@ -345,7 +345,7 @@ pub fn delete_task(tasks: &mut Vec<Task>, arguments: DeleteCommand) -> &'static 
         let index = task_id_to_index(indexs[i]);
 
         // Using an if let here as I don't care about the Ok variant
-        if let Err(_) = task_management::delete_task(tasks, index) {
+        if task_management::delete_task(tasks, index).is_err() {
             return "Task doesn't exist!";
         }
     }
@@ -367,8 +367,9 @@ pub fn start_task(tasks: &mut Vec<Task>, arguments: StartCommand) -> &'static st
     // Sorting the indexes and removing duplicates
     let indexes = sort_and_filter_task_ids(arguments.task_ids);
 
-    for i in 0..indexes.len() {
-        let index = task_id_to_index(indexes[i]);
+    for index in &indexes {
+        let index = task_id_to_index(*index);
+
         // Using an if let statement as only the Err variant is needed
         if let Err(err) = task_management::update_task_status(tasks, index, TaskStatus::InProgress)
         {
