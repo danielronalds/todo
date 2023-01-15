@@ -68,7 +68,7 @@ pub struct DeleteCommand {
 #[derive(Debug, Args)]
 pub struct StartCommand {
     /// The Task ID of the task to start
-    pub task_id: usize
+    pub task_ids: Vec<usize>
 }
 
 #[derive(Debug, Args)]
