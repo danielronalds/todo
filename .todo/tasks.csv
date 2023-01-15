@@ -1,9 +1,9 @@
 description,status,list
 "Add an add mode, that puts the user into a prompt that allows them to quickly add tasks to the list",Completed,Features
+Look into modfiying the restart finish and start commands so that the user can update multiple tasks at a time. If possible the delete command too,Completed,Features
 Look into wrapping the print out of tasks to 80 characters..?,NotStarted,Features
 Add a command that create a list with the same name as the current git branch?,NotStarted,Features
 Look into adding a sort all command?,NotStarted,Features
 Look into renaming lists,NotStarted,Features
 "Add a way to update a tasks list, maybe a flag on the update command? could add a --no-edit flag too?",NotStarted,Features
-Look into modfiying the restart finish and start commands so that the user can update multiple tasks at a time,NotStarted,Features
 Add dates!,NotStarted,Features
