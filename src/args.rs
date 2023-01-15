@@ -61,8 +61,8 @@ pub struct AddCommand {
 
 #[derive(Debug, Args)]
 pub struct DeleteCommand {
-    /// The Task ID of the task to delete
-    pub task_id: usize
+    /// The Task ID's of the task's to delete
+    pub task_ids: Vec<usize>
 }
 
 #[derive(Debug, Args)]

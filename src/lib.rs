@@ -82,7 +82,6 @@ pub fn read_config_file() -> Config {
 }
 
 /// Write the given Config to the config file
-///
 /// Parameters
 /// config:   The Config to write to the config file
 pub fn write_config_file(config: Config) -> Result<(), &'static str> {
@@ -329,20 +328,35 @@ pub fn update_task(tasks: &mut Vec<Task>, arguments: UpdateCommand) -> &'static 
     }
 }
 
-/// Deletes a task from the list. This function handles the errors and returns a str containing a
-/// messge to print
+/// Deletes a task/s from the list. This function handles the errors and returns a str containing a
+/// message to print
 ///
 /// Parameters
 /// tasks:       The task vec to delete from
 /// arguments:   The arguments for the command from the cli
 pub fn delete_task(tasks: &mut Vec<Task>, arguments: DeleteCommand) -> &'static str {
-    // Taking one off of the index as Task ID's start at 1 not 0
-    let index = arguments.task_id - 1;
+    // Sorting the indexes and removing duplicates
+    let mut indexs = arguments.task_ids;
+    indexs.sort();
+    indexs.dedup();
 
-    match task_management::delete_task(tasks, index) {
-        Ok(_) => "Task deleted!",
-        // There is only one possible error for this so no need to match them
-        Err(_) => "Task doesn't exist!",
+    // Looping through the given indexes in reverse order to remove them to prevent deleting the
+    // wrong items or attempting to delete at an index that is no longer in the bounds of the vec
+    for i in (0..indexs.len()).rev() {
+        // Converting the index to a task id
+        let index = task_id_to_index(indexs[i]);
+
+        // Using an if let here as I don't care about the Ok variant
+        if let Err(_) = task_management::delete_task(tasks, index) {
+            return "Task doesn't exist!";
+        }
+    }
+
+    // Returning different messages based on whether there were multiple tasks to delete
+    if indexs.len() > 1 {
+        "Tasks deleted!"
+    } else {
+        "Task deleted!"
     }
 }
 
@@ -779,6 +793,41 @@ mod tests {
                 .unwrap(),
             ]
         )
+    }
+
+    #[test]
+    /// Tests if the delete_task function returns the correct messages
+    fn delete_task_returns_correct_message() {
+        let tasks = vec![
+            Task::new(
+                String::from("Another basic task"),
+                TaskStatus::InProgress,
+                String::from("Main"),
+            )
+            .unwrap(),
+            Task::new(
+                String::from("Yet another basic task"),
+                TaskStatus::NotStarted,
+                String::from("Main"),
+            )
+            .unwrap(),
+        ];
+
+        // Declaring multiple task ids
+        let arguments = DeleteCommand {
+            task_ids: vec![1, 2],
+        };
+
+        // Asserting a plural tasks is returned when there are multiple tasks
+        assert_eq!(delete_task(&mut tasks.clone(), arguments), "Tasks deleted!");
+
+        // Declaring a singular task id
+        let arguments = DeleteCommand {
+            task_ids: vec![1],
+        };
+
+        // Asserting a plural tasks is returned when there are multiple tasks
+        assert_eq!(delete_task(&mut tasks.clone(), arguments), "Task deleted!");
     }
 
     #[test]
