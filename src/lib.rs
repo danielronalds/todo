@@ -353,7 +353,7 @@ pub fn delete_task(tasks: &mut Vec<Task>, arguments: DeleteCommand) -> &'static 
     // Returning different messages based on whether there were multiple tasks to delete
     if indexs.len() > 1 {
         return "Tasks deleted!";
-    } 
+    }
 
     "Task deleted!"
 }
@@ -385,7 +385,7 @@ pub fn start_task(tasks: &mut Vec<Task>, arguments: StartCommand) -> &'static st
 
     // Returning a success message with a plural if more than one task was started
     if indexes.len() > 1 {
-        return "Tasks has been started!"
+        return "Tasks have been started!";
     }
 
     "Tasks has been started!"
@@ -397,17 +397,29 @@ pub fn start_task(tasks: &mut Vec<Task>, arguments: StartCommand) -> &'static st
 /// tasks:       The task vec the tasks belongs to
 /// arguments:   The arguments for the command from the cli
 pub fn finish_task(tasks: &mut Vec<Task>, arguments: FinishCommand) -> &'static str {
-    // Converting the task_id to an index
-    let index = task_id_to_index(arguments.task_id);
+    // Sorting the indexes and removing duplicates
+    let indexes = sort_and_filter_task_ids(arguments.task_ids);
 
-    match task_management::update_task_status(tasks, index, TaskStatus::Completed) {
-        Ok(_) => "Task has been completed!",
-        Err(err) => match err {
-            TaskManagementErrors::TaskAlreadyGivenStatus => "Task is already Completed",
-            TaskManagementErrors::TaskDoesntExist => "Task doesn't exist",
-            TaskManagementErrors::EmptyTasklist => "No tasks found!",
-        },
+    for index in &indexes {
+        let index = task_id_to_index(*index);
+
+        if let Err(err) = task_management::update_task_status(tasks, index, TaskStatus::Completed) {
+            let error_message = match err {
+                TaskManagementErrors::TaskAlreadyGivenStatus => "Task is already completed",
+                TaskManagementErrors::TaskDoesntExist => "Task doesn't exist",
+                TaskManagementErrors::EmptyTasklist => "No tasks found!",
+            };
+
+            return error_message;
+        }
     }
+
+    // Returning a success message with a plural if more than one task was completed
+    if indexes.len() > 1 {
+        return "Tasks have been completed!"
+    }
+
+    "Task has been completed!"
 }
 
 /// Restarts the task at the given id in the given tasks vec
@@ -922,6 +934,33 @@ mod tests {
         delete_task(&mut tasks_vec, arguments);
 
         assert_eq!(tasks_vec.len(), 0);
+    }
+
+    #[test]
+    fn finish_task_with_multiple_task_ids_works() {
+        let mut tasks_vec = vec![
+            Task::new(
+                String::from("Another basic task"),
+                TaskStatus::NotStarted,
+                String::from("Main"),
+            )
+            .unwrap(),
+            Task::new(
+                String::from("Yet another basic task"),
+                TaskStatus::NotStarted,
+                String::from("Main"),
+            )
+            .unwrap(),
+        ];
+
+        let arguments = FinishCommand {
+            task_ids: vec![1, 2],
+        };
+
+        finish_task(&mut tasks_vec, arguments);
+
+        assert_eq!(tasks_vec[0].status(), TaskStatus::Completed);
+        assert_eq!(tasks_vec[1].status(), TaskStatus::Completed);
     }
 
     #[test]

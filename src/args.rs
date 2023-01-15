@@ -74,7 +74,7 @@ pub struct StartCommand {
 #[derive(Debug, Args)]
 pub struct FinishCommand {
     /// The Task ID of the task to finish
-    pub task_id: usize
+    pub task_ids: Vec<usize>
 }
 
 #[derive(Debug, Args)]
