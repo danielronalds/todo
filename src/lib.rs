@@ -898,6 +898,33 @@ mod tests {
     }
 
     #[test]
+    /// Tests if the start command works with multiple ids
+    fn delete_task_with_multiple_task_ids_works() {
+        let mut tasks_vec = vec![
+            Task::new(
+                String::from("Another basic task"),
+                TaskStatus::NotStarted,
+                String::from("Main"),
+            )
+            .unwrap(),
+            Task::new(
+                String::from("Yet another basic task"),
+                TaskStatus::NotStarted,
+                String::from("Main"),
+            )
+            .unwrap(),
+        ];
+
+        let arguments = DeleteCommand {
+            task_ids: vec![1, 2],
+        };
+
+        delete_task(&mut tasks_vec, arguments);
+
+        assert_eq!(tasks_vec.len(), 0);
+    }
+
+    #[test]
     fn sort_and_filter_task_ids_works() {
         let indexes = vec![1, 2, 2, 5, 1];
 
