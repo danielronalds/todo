@@ -416,7 +416,7 @@ pub fn finish_task(tasks: &mut Vec<Task>, arguments: FinishCommand) -> &'static 
 
     // Returning a success message with a plural if more than one task was completed
     if indexes.len() > 1 {
-        return "Tasks have been completed!"
+        return "Tasks have been completed!";
     }
 
     "Task has been completed!"
@@ -428,17 +428,30 @@ pub fn finish_task(tasks: &mut Vec<Task>, arguments: FinishCommand) -> &'static 
 /// tasks:       The task vec the tasks belongs to
 /// arguments:   The arguments for the command from the cli
 pub fn restart_task(tasks: &mut Vec<Task>, arguments: RestartCommand) -> &'static str {
-    // Converting the task_id to an index
-    let index = task_id_to_index(arguments.task_id);
+    // Sorting the indexes and removing duplicates
+    let indexes = sort_and_filter_task_ids(arguments.task_ids);
 
-    match task_management::update_task_status(tasks, index, TaskStatus::NotStarted) {
-        Ok(_) => "Task has been restarted!",
-        Err(err) => match err {
-            TaskManagementErrors::TaskAlreadyGivenStatus => "Task is already Not Started",
-            TaskManagementErrors::TaskDoesntExist => "Task doesn't exist",
-            TaskManagementErrors::EmptyTasklist => "No tasks found!",
-        },
+    for index in &indexes {
+        let index = task_id_to_index(*index);
+
+        if let Err(err) = task_management::update_task_status(tasks, index, TaskStatus::NotStarted)
+        {
+            let error_message = match err {
+                TaskManagementErrors::TaskAlreadyGivenStatus => "Task is already Not Started",
+                TaskManagementErrors::TaskDoesntExist => "Task doesn't exist",
+                TaskManagementErrors::EmptyTasklist => "No tasks found!",
+            };
+
+            return error_message;
+        }
     }
+
+    // Returning a success message with a plural if more than one task was completed
+    if indexes.len() > 1 {
+        return "Tasks have been restarted!";
+    }
+
+    "Task has been restarted!"
 }
 
 /// Converts a task_id to an index, preventing a runtime panic from attempting to subtract with
@@ -937,6 +950,7 @@ mod tests {
     }
 
     #[test]
+    /// Tests if the finish_task function works with multiple task ids
     fn finish_task_with_multiple_task_ids_works() {
         let mut tasks_vec = vec![
             Task::new(
@@ -961,6 +975,34 @@ mod tests {
 
         assert_eq!(tasks_vec[0].status(), TaskStatus::Completed);
         assert_eq!(tasks_vec[1].status(), TaskStatus::Completed);
+    }
+
+    #[test]
+    /// Tests if the restart_task function works with multiple task ids
+    fn restart_task_with_multiple_task_ids_works() {
+        let mut tasks_vec = vec![
+            Task::new(
+                String::from("Another basic task"),
+                TaskStatus::Completed,
+                String::from("Main"),
+            )
+            .unwrap(),
+            Task::new(
+                String::from("Yet another basic task"),
+                TaskStatus::InProgress,
+                String::from("Main"),
+            )
+            .unwrap(),
+        ];
+
+        let arguments = RestartCommand {
+            task_ids: vec![1, 2],
+        };
+
+        restart_task(&mut tasks_vec, arguments);
+
+        assert_eq!(tasks_vec[0].status(), TaskStatus::NotStarted);
+        assert_eq!(tasks_vec[1].status(), TaskStatus::NotStarted);
     }
 
     #[test]

@@ -80,7 +80,7 @@ pub struct FinishCommand {
 #[derive(Debug, Args)]
 pub struct RestartCommand {
     /// The Task ID of the task to finish
-    pub task_id: usize
+    pub task_ids: Vec<usize>
 }
 
 #[derive(Debug, Args)]
