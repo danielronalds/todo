@@ -8,8 +8,8 @@ mod program_state;
 mod task_management;
 
 use crate::args::{
-    CleanupCommand, ConfigCommand, DeleteCommand, FinishCommand, ListCommand,
-    RestartCommand, StartCommand, TasksCommand, UpdateCommand,
+    CleanupCommand, ConfigCommand, DeleteCommand, FinishCommand, ListCommand, RestartCommand,
+    StartCommand, TasksCommand, UpdateCommand,
 };
 
 use std::fs;
@@ -82,7 +82,6 @@ pub fn read_config_file() -> Config {
 }
 
 /// Write the given Config to the config file
-///
 /// Parameters
 /// config:   The Config to write to the config file
 pub fn write_config_file(config: Config) -> Result<(), &'static str> {
@@ -266,17 +265,21 @@ pub fn add_mode(tasks: &mut Vec<Task>, config: &Config) {
 
         // Checking if the user wants to exit
         if description.to_lowercase() == "x" {
-            println!("Exited!");
+            if config.command_feedback() {
+                print_info("Exited!");
+            }
             return;
         }
 
-        // Attempting to create the task, and if there is an error printing it and continuing to 
-        // the next iteration of the loop 
+        // Attempting to create the task, and if there is an error printing it and continuing to
+        // the next iteration of the loop
         match new_task(description, config) {
             Ok(task) => {
                 tasks.push(task);
-                println!("Added task!");
-            },
+                if config.command_feedback() {
+                    print_info("Added task!");
+                }
+            }
             Err(err) => {
                 print_info(err);
                 continue;
@@ -325,40 +328,68 @@ pub fn update_task(tasks: &mut Vec<Task>, arguments: UpdateCommand) -> &'static 
     }
 }
 
-/// Deletes a task from the list. This function handles the errors and returns a str containing a
-/// messge to print
+/// Deletes a task/s from the list. This function handles the errors and returns a str containing a
+/// message to print
 ///
 /// Parameters
 /// tasks:       The task vec to delete from
 /// arguments:   The arguments for the command from the cli
 pub fn delete_task(tasks: &mut Vec<Task>, arguments: DeleteCommand) -> &'static str {
-    // Taking one off of the index as Task ID's start at 1 not 0
-    let index = arguments.task_id - 1;
+    // Sorting the indexes and removing duplicates
+    let indexs = sort_and_filter_task_ids(arguments.task_ids);
 
-    match task_management::delete_task(tasks, index) {
-        Ok(_) => "Task deleted!",
-        // There is only one possible error for this so no need to match them
-        Err(_) => "Task doesn't exist!",
+    // Looping through the given indexes in reverse order to remove them to prevent deleting the
+    // wrong items or attempting to delete at an index that is no longer in the bounds of the vec
+    for i in (0..indexs.len()).rev() {
+        // Converting the index to a task id
+        let index = task_id_to_index(indexs[i]);
+
+        // Using an if let here as I don't care about the Ok variant
+        if task_management::delete_task(tasks, index).is_err() {
+            return "Task doesn't exist!";
+        }
     }
+
+    // Returning different messages based on whether there were multiple tasks to delete
+    if indexs.len() > 1 {
+        return "Tasks deleted!";
+    }
+
+    "Task deleted!"
 }
 
-/// Starts the task at the given id in the given tasks vec
+/// Starts the tasks at the given ids in the given tasks vec
 ///
 /// Parameters
 /// tasks:       The task vec the tasks belongs to
 /// arguments:   The arguments for the command from the cli
 pub fn start_task(tasks: &mut Vec<Task>, arguments: StartCommand) -> &'static str {
-    // Converting the task_id to an index
-    let index = task_id_to_index(arguments.task_id);
+    // Sorting the indexes and removing duplicates
+    let indexes = sort_and_filter_task_ids(arguments.task_ids);
 
-    match task_management::update_task_status(tasks, index, TaskStatus::InProgress) {
-        Ok(_) => "Task has been started!",
-        Err(err) => match err {
-            TaskManagementErrors::TaskAlreadyGivenStatus => "Task is already In Progress",
-            TaskManagementErrors::TaskDoesntExist => "Task doesn't exist",
-            TaskManagementErrors::EmptyTasklist => "No tasks found!",
-        },
+    for index in &indexes {
+        let index = task_id_to_index(*index);
+
+        // Using an if let statement as only the Err variant is needed
+        if let Err(err) = task_management::update_task_status(tasks, index, TaskStatus::InProgress)
+        {
+            // Generating the error message
+            let error_message = match err {
+                TaskManagementErrors::TaskAlreadyGivenStatus => "Task is already in progress!",
+                TaskManagementErrors::TaskDoesntExist => "Task doesn't exist",
+                TaskManagementErrors::EmptyTasklist => "No tasks found!",
+            };
+
+            return error_message;
+        }
     }
+
+    // Returning a success message with a plural if more than one task was started
+    if indexes.len() > 1 {
+        return "Tasks have been started!";
+    }
+
+    "Tasks has been started!"
 }
 
 /// Finishes the task at the given id in the given tasks vec
@@ -367,17 +398,29 @@ pub fn start_task(tasks: &mut Vec<Task>, arguments: StartCommand) -> &'static st
 /// tasks:       The task vec the tasks belongs to
 /// arguments:   The arguments for the command from the cli
 pub fn finish_task(tasks: &mut Vec<Task>, arguments: FinishCommand) -> &'static str {
-    // Converting the task_id to an index
-    let index = task_id_to_index(arguments.task_id);
+    // Sorting the indexes and removing duplicates
+    let indexes = sort_and_filter_task_ids(arguments.task_ids);
 
-    match task_management::update_task_status(tasks, index, TaskStatus::Completed) {
-        Ok(_) => "Task has been completed!",
-        Err(err) => match err {
-            TaskManagementErrors::TaskAlreadyGivenStatus => "Task is already Completed",
-            TaskManagementErrors::TaskDoesntExist => "Task doesn't exist",
-            TaskManagementErrors::EmptyTasklist => "No tasks found!",
-        },
+    for index in &indexes {
+        let index = task_id_to_index(*index);
+
+        if let Err(err) = task_management::update_task_status(tasks, index, TaskStatus::Completed) {
+            let error_message = match err {
+                TaskManagementErrors::TaskAlreadyGivenStatus => "Task is already completed",
+                TaskManagementErrors::TaskDoesntExist => "Task doesn't exist",
+                TaskManagementErrors::EmptyTasklist => "No tasks found!",
+            };
+
+            return error_message;
+        }
     }
+
+    // Returning a success message with a plural if more than one task was completed
+    if indexes.len() > 1 {
+        return "Tasks have been completed!";
+    }
+
+    "Task has been completed!"
 }
 
 /// Restarts the task at the given id in the given tasks vec
@@ -386,17 +429,30 @@ pub fn finish_task(tasks: &mut Vec<Task>, arguments: FinishCommand) -> &'static 
 /// tasks:       The task vec the tasks belongs to
 /// arguments:   The arguments for the command from the cli
 pub fn restart_task(tasks: &mut Vec<Task>, arguments: RestartCommand) -> &'static str {
-    // Converting the task_id to an index
-    let index = task_id_to_index(arguments.task_id);
+    // Sorting the indexes and removing duplicates
+    let indexes = sort_and_filter_task_ids(arguments.task_ids);
 
-    match task_management::update_task_status(tasks, index, TaskStatus::NotStarted) {
-        Ok(_) => "Task has been restarted!",
-        Err(err) => match err {
-            TaskManagementErrors::TaskAlreadyGivenStatus => "Task is already Not Started",
-            TaskManagementErrors::TaskDoesntExist => "Task doesn't exist",
-            TaskManagementErrors::EmptyTasklist => "No tasks found!",
-        },
+    for index in &indexes {
+        let index = task_id_to_index(*index);
+
+        if let Err(err) = task_management::update_task_status(tasks, index, TaskStatus::NotStarted)
+        {
+            let error_message = match err {
+                TaskManagementErrors::TaskAlreadyGivenStatus => "Task is already Not Started",
+                TaskManagementErrors::TaskDoesntExist => "Task doesn't exist",
+                TaskManagementErrors::EmptyTasklist => "No tasks found!",
+            };
+
+            return error_message;
+        }
     }
+
+    // Returning a success message with a plural if more than one task was completed
+    if indexes.len() > 1 {
+        return "Tasks have been restarted!";
+    }
+
+    "Task has been restarted!"
 }
 
 /// Converts a task_id to an index, preventing a runtime panic from attempting to subtract with
@@ -540,6 +596,14 @@ pub fn manage_config(config: &mut Config, arguments: ConfigCommand) -> String {
     )
 }
 
+/// Sorts and removes duplicates in the given Vec<usize>
+fn sort_and_filter_task_ids(mut indexes: Vec<usize>) -> Vec<usize> {
+    // Sorting the indexes and removing duplicates
+    indexes.sort();
+    indexes.dedup();
+    indexes
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -557,7 +621,9 @@ mod tests {
 
         let expected_task = Task::new(description.clone(), TaskStatus::NotStarted, list).unwrap();
 
-        let arguments = AddCommand { description: Some(description) };
+        let arguments = AddCommand {
+            description: Some(description),
+        };
 
         let genereated_task = new_task(arguments.description.unwrap(), &config).unwrap();
 
@@ -776,6 +842,39 @@ mod tests {
     }
 
     #[test]
+    /// Tests if the delete_task function returns the correct messages
+    fn delete_task_returns_correct_message() {
+        let tasks = vec![
+            Task::new(
+                String::from("Another basic task"),
+                TaskStatus::InProgress,
+                String::from("Main"),
+            )
+            .unwrap(),
+            Task::new(
+                String::from("Yet another basic task"),
+                TaskStatus::NotStarted,
+                String::from("Main"),
+            )
+            .unwrap(),
+        ];
+
+        // Declaring multiple task ids
+        let arguments = DeleteCommand {
+            task_ids: vec![1, 2],
+        };
+
+        // Asserting a plural tasks is returned when there are multiple tasks
+        assert_eq!(delete_task(&mut tasks.clone(), arguments), "Tasks deleted!");
+
+        // Declaring a singular task id
+        let arguments = DeleteCommand { task_ids: vec![1] };
+
+        // Asserting a plural tasks is returned when there are multiple tasks
+        assert_eq!(delete_task(&mut tasks.clone(), arguments), "Task deleted!");
+    }
+
+    #[test]
     /// Tests if the task_id_to_index function works
     fn task_id_to_index_works() {
         let task_id: usize = 1;
@@ -794,5 +893,125 @@ mod tests {
         let index = task_id_to_index(task_id);
 
         assert_eq!(index, 0)
+    }
+
+    #[test]
+    /// Tests if the start command works with multiple ids
+    fn start_task_with_multiple_task_ids_works() {
+        let mut tasks_vec = vec![
+            Task::new(
+                String::from("Another basic task"),
+                TaskStatus::NotStarted,
+                String::from("Main"),
+            )
+            .unwrap(),
+            Task::new(
+                String::from("Yet another basic task"),
+                TaskStatus::NotStarted,
+                String::from("Main"),
+            )
+            .unwrap(),
+        ];
+
+        let arguments = StartCommand {
+            task_ids: vec![1, 2],
+        };
+
+        start_task(&mut tasks_vec, arguments);
+
+        assert_eq!(tasks_vec[0].status(), TaskStatus::InProgress);
+        assert_eq!(tasks_vec[1].status(), TaskStatus::InProgress);
+    }
+
+    #[test]
+    /// Tests if the start command works with multiple ids
+    fn delete_task_with_multiple_task_ids_works() {
+        let mut tasks_vec = vec![
+            Task::new(
+                String::from("Another basic task"),
+                TaskStatus::NotStarted,
+                String::from("Main"),
+            )
+            .unwrap(),
+            Task::new(
+                String::from("Yet another basic task"),
+                TaskStatus::NotStarted,
+                String::from("Main"),
+            )
+            .unwrap(),
+        ];
+
+        let arguments = DeleteCommand {
+            task_ids: vec![1, 2],
+        };
+
+        delete_task(&mut tasks_vec, arguments);
+
+        assert_eq!(tasks_vec.len(), 0);
+    }
+
+    #[test]
+    /// Tests if the finish_task function works with multiple task ids
+    fn finish_task_with_multiple_task_ids_works() {
+        let mut tasks_vec = vec![
+            Task::new(
+                String::from("Another basic task"),
+                TaskStatus::NotStarted,
+                String::from("Main"),
+            )
+            .unwrap(),
+            Task::new(
+                String::from("Yet another basic task"),
+                TaskStatus::NotStarted,
+                String::from("Main"),
+            )
+            .unwrap(),
+        ];
+
+        let arguments = FinishCommand {
+            task_ids: vec![1, 2],
+        };
+
+        finish_task(&mut tasks_vec, arguments);
+
+        assert_eq!(tasks_vec[0].status(), TaskStatus::Completed);
+        assert_eq!(tasks_vec[1].status(), TaskStatus::Completed);
+    }
+
+    #[test]
+    /// Tests if the restart_task function works with multiple task ids
+    fn restart_task_with_multiple_task_ids_works() {
+        let mut tasks_vec = vec![
+            Task::new(
+                String::from("Another basic task"),
+                TaskStatus::Completed,
+                String::from("Main"),
+            )
+            .unwrap(),
+            Task::new(
+                String::from("Yet another basic task"),
+                TaskStatus::InProgress,
+                String::from("Main"),
+            )
+            .unwrap(),
+        ];
+
+        let arguments = RestartCommand {
+            task_ids: vec![1, 2],
+        };
+
+        restart_task(&mut tasks_vec, arguments);
+
+        assert_eq!(tasks_vec[0].status(), TaskStatus::NotStarted);
+        assert_eq!(tasks_vec[1].status(), TaskStatus::NotStarted);
+    }
+
+    #[test]
+    fn sort_and_filter_task_ids_works() {
+        let indexes = vec![1, 2, 2, 5, 1];
+
+        let indexes = sort_and_filter_task_ids(indexes);
+
+        assert_eq!(indexes, vec![1, 2, 5]);
     }
 }
