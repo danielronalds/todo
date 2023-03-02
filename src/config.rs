@@ -398,8 +398,8 @@ mod tests {
     fn is_valid_list_works() {
         let config = Config::new();
 
-        assert_eq!(config.is_valid_list(&String::from("Main")), true);
-        assert_eq!(config.is_valid_list(&String::from("Not Valid")), false);
+        assert!(config.is_valid_list(&String::from("Main")));
+        assert!(!config.is_valid_list(&String::from("Not Valid")));
     }
 
     #[test]
@@ -423,7 +423,7 @@ mod tests {
 
         let listname = String::from("Dev");
 
-        let error = config.set_current_list(listname.clone()).unwrap_err();
+        let error = config.set_current_list(listname).unwrap_err();
 
         assert_eq!(error, ListErrors::ListDoesntExist)
     }
@@ -449,7 +449,7 @@ mod tests {
 
         config.add_list(listname.clone()).unwrap();
 
-        let error = config.add_list(listname.clone()).unwrap_err();
+        let error = config.add_list(listname).unwrap_err();
 
         assert_eq!(error, ListErrors::ListAlreadyExists)
     }
@@ -463,7 +463,7 @@ mod tests {
 
         config.add_list(listname.clone()).unwrap();
 
-        config.delete_list(listname.clone()).unwrap();
+        config.delete_list(listname).unwrap();
 
         assert_eq!(config.lists, vec![String::from("Main")])
     }

@@ -844,7 +844,7 @@ mod tests {
     #[test]
     /// Tests if the delete_task function returns the correct messages
     fn delete_task_returns_correct_message() {
-        let tasks = vec![
+        let mut tasks = vec![
             Task::new(
                 String::from("Another basic task"),
                 TaskStatus::InProgress,
@@ -871,7 +871,7 @@ mod tests {
         let arguments = DeleteCommand { task_ids: vec![1] };
 
         // Asserting a plural tasks is returned when there are multiple tasks
-        assert_eq!(delete_task(&mut tasks.clone(), arguments), "Task deleted!");
+        assert_eq!(delete_task(&mut tasks, arguments), "Task deleted!");
     }
 
     #[test]
